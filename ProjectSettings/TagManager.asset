@@ -41,3 +41,12 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Background
+    uniqueID: 563450379
+    locked: 0
+  - name: Obs+Guards
+    uniqueID: 2575038615
+    locked: 0
+  - name: Party
+    uniqueID: 550491337
+    locked: 0
