@@ -10,6 +10,8 @@ public class LevelController : MonoBehaviour
     private HighlightManager hm;
     [SerializeField]
     private PlayerManager pm;
+    [SerializeField]
+    private GuardManager gm;
     //Get a reference to necessary grid items
     [SerializeField]
     private Grid grid;
@@ -27,6 +29,10 @@ public class LevelController : MonoBehaviour
     /// Dictionary that holds all tileData objects
     /// </summary>
     private Dictionary<TileBase, TileData> dataFromTiles;
+    /// <summary>
+    /// Field to control if the game runs player or CPU logic
+    /// </summary>
+    private bool playerTurn;
     //TODO: REPLACE TO TRIGGER ON LEVEL LOAD ONCE WE IMPLEMENT THAT
     bool spawnHighlights;
 
@@ -34,6 +40,7 @@ public class LevelController : MonoBehaviour
     void Start()
     {
         spawnHighlights = false;
+        playerTurn = true;
         pm.party.Init();
 
         dataFromTiles = new Dictionary<TileBase, TileData>();
@@ -50,14 +57,29 @@ public class LevelController : MonoBehaviour
     void Update()
     {
         if (!spawnHighlights)
-            hm.HighlightTiles(pm.party);
-
-        if (Input.GetMouseButtonDown(0)&&validClick())
         {
-            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            pm.MovePlayer(mousePosition);
-            pm.party.UpdateTick();
-            hm.HighlightTiles(pm.party);
+            hm.HighlightTiles(pm.party, gm.guardList, dataFromTiles);
+            spawnHighlights = true;
+        }
+
+        if (playerTurn)
+        {
+            if (Input.GetMouseButtonDown(0) && validClick())
+            {
+                Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                pm.MovePlayer(mousePosition);
+                pm.party.UpdateTick();
+                playerTurn = false;
+            }
+        }
+        else
+        {
+            //Clear all of the highlights while the CPU takes its turn
+            hm.ClearHighlights();
+            gm.MoveGuards(dataFromTiles);
+            //Call at the end of cpu loop so highlight does not appear until the CPU turn is completed
+            hm.HighlightTiles(pm.party, gm.guardList, dataFromTiles);
+            playerTurn = true;
         }
     }
 

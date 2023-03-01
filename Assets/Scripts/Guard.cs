@@ -8,22 +8,24 @@ using System.Collections.Generic;
 public class Guard : DynamicObject
 {
     /// <summary>
-    /// List of grid positions that this Guard will move on
+    /// Controls whether this guard can walk or not
     /// </summary>
-    public List<Vector3Int> path;
+    public bool canMove;
 
     /// <summary>
     /// Index of the current tile position (in path) that this Guard occupies
     /// </summary>
-    public int currentPathIndex = 0;
+    public Directions facing;
 
     public override void UpdateTick()
     {
-        currentPathIndex++;
-        if (currentPathIndex >= path.Count)
-            currentPathIndex = 0;
+        //currentPathIndex++;
+        //if (currentPathIndex >= path.Count)
+        //    currentPathIndex = 0;
         
         // Move/animate this guard to its new position along the path
-        StartCoroutine(Move(path[currentPathIndex]));
+        //StartCoroutine(Move(path[currentPathIndex]));
+
+
     }
 }

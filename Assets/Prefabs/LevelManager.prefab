@@ -45,9 +45,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   highlightMap: {fileID: 0}
+  wallMap: {fileID: 0}
   moveHColor: {r: 0.9056604, g: 0.8018581, b: 0.10594514, a: 0.18431373}
   abilityHColor: {r: 0, g: 0, b: 0, a: 0}
-  guardLOSColor: {r: 0, g: 0, b: 0, a: 0}
+  guardLOSColor: {r: 0.9622642, g: 0.24873616, b: 0.24873616, a: 0.13725491}
   clearColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &7277537200466364003
 GameObject:
@@ -80,6 +81,7 @@ Transform:
   m_Children:
   - {fileID: 7277537201348297647}
   - {fileID: 7277537200258545585}
+  - {fileID: 1465920649583655637}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -97,6 +99,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hm: {fileID: 7277537200258545586}
   pm: {fileID: 7277537201348297646}
+  gm: {fileID: 1115582497044602977}
   grid: {fileID: 0}
   floorMap: {fileID: 0}
   wallMap: {fileID: 0}
@@ -150,3 +153,49 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   floorMap: {fileID: 0}
   party: {fileID: 0}
+--- !u!1 &7598415183404839788
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1465920649583655637}
+  - component: {fileID: 1115582497044602977}
+  m_Layer: 0
+  m_Name: GuardController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1465920649583655637
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7598415183404839788}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7277537200466364001}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1115582497044602977
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7598415183404839788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aba40c37f9bc96c4fbe8eb5d63f2cf7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guardList: []
+  wallMap: {fileID: 0}
