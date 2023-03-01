@@ -47,21 +47,7 @@ public class HighlightManager : MonoBehaviour
     {
         ClearHighlights();
 
-        //Calculate how player highlights are drawn
-        Vector3Int gridPosition = highlightMap.WorldToCell(party.transform.position);
-
-        for(int x=-1; x<=1; x++)
-        {
-            for(int y=-1; y<=1; y++)
-            {
-                float distanceFromPlayer = Mathf.Abs(x) + Mathf.Abs(y);
-                if(distanceFromPlayer == 1)
-                {
-                    Vector3Int travTile = new Vector3Int(gridPosition.x + x, gridPosition.y + y, 0);
-                    HighlightMoves(travTile);
-                }
-            }
-        }
+        Vector3Int gridPosition;
 
         //Calculate and draw guard lines of sight
         foreach(Guard guard in guards)
@@ -128,6 +114,22 @@ public class HighlightManager : MonoBehaviour
                     break;
             }
         }
+
+        //Calculate how player highlights are drawn
+        gridPosition = highlightMap.WorldToCell(party.transform.position);
+
+        for (int x = -1; x <= 1; x++)
+        {
+            for (int y = -1; y <= 1; y++)
+            {
+                float distanceFromPlayer = Mathf.Abs(x) + Mathf.Abs(y);
+                if (distanceFromPlayer == 1)
+                {
+                    Vector3Int travTile = new Vector3Int(gridPosition.x + x, gridPosition.y + y, 0);
+                    HighlightMoves(travTile);
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -162,9 +164,23 @@ public class HighlightManager : MonoBehaviour
 
         foreach(var tile in highlightedMoves)
         {
-            highlightMap.SetTileFlags(tile.Key, TileFlags.None);
-            highlightMap.SetColor(gridPosition, moveHColor);
-            highlightMap.SetTileFlags(gridPosition, TileFlags.LockColor);
+            //Check if highlights overlap and mix colors of highlights
+            if (highlightedLOS.ContainsKey(tile.Key))
+            {
+                Color result = new Color(0, 0, 0, 0);
+                result += moveHColor;
+                result += guardLOSColor;
+                result /= 2;
+                highlightMap.SetTileFlags(tile.Key, TileFlags.None);
+                highlightMap.SetColor(gridPosition, result);
+                highlightMap.SetTileFlags(gridPosition, TileFlags.LockColor);
+            }
+            else
+            {
+                highlightMap.SetTileFlags(tile.Key, TileFlags.None);
+                highlightMap.SetColor(gridPosition, moveHColor);
+                highlightMap.SetTileFlags(gridPosition, TileFlags.LockColor);
+            }
         }
     }
 
