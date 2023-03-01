@@ -67,6 +67,22 @@ public class GuardManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Check if the given party object is sharing a tile with any guard
+    /// If so, return true
+    /// </summary>
+    /// <param name="party"></param>
+    /// <returns></returns>
+    public bool TouchingParty(Party party)
+    {
+        foreach(Guard guard in guardList)
+        {
+            if (guard.transform.position == party.transform.position)
+                return true;
+        }
+        return false;
+    }
+
     private Vector3Int toTranslate(Guard guard)
     {
         switch (guard.facing)

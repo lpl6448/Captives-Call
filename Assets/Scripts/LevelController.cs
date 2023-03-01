@@ -12,6 +12,8 @@ public class LevelController : MonoBehaviour
     private PlayerManager pm;
     [SerializeField]
     private GuardManager gm;
+    [SerializeField]
+    private ResetScene rs;
     //Get a reference to necessary grid items
     [SerializeField]
     private Grid grid;
@@ -79,6 +81,8 @@ public class LevelController : MonoBehaviour
             gm.MoveGuards(dataFromTiles);
             //Call at the end of cpu loop so highlight does not appear until the CPU turn is completed
             hm.HighlightTiles(pm.party, gm.guardList, dataFromTiles);
+            //Check if player is in the guardLOS
+            guardAttack();
             playerTurn = true;
         }
     }
@@ -100,5 +104,12 @@ public class LevelController : MonoBehaviour
             accessible = dataFromTiles[clickedTile].isAccessible;
 
         return ((Mathf.Abs(dX) + Mathf.Abs(dY)) == 1)&&accessible;
+    }
+
+    private void guardAttack()
+    {
+        if (hm.HighlightedLOS.ContainsKey(hm.HighlightMap.WorldToCell(pm.party.transform.position)) ||
+            gm.TouchingParty(pm.party))
+            rs.Reset();
     }
 }

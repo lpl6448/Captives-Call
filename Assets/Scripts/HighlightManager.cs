@@ -15,6 +15,10 @@ public class HighlightManager : MonoBehaviour
 
     private Dictionary<Vector3Int, float> highlightedMoves, highlightedLOS;
 
+    //Property to allow LevelManager to check the guard's line of sight
+    public Dictionary<Vector3Int, float> HighlightedLOS { get { return highlightedLOS; } }
+    public Tilemap HighlightMap { get { return highlightMap; } }
+
     // Start is called before the first frame update
     void Start()
     {
