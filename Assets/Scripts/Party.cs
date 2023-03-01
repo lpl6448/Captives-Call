@@ -21,7 +21,18 @@ public class Party : DynamicObject
     /// <summary>
     /// The PartyMember whose turn it is
     /// </summary>
-    public PartyMember CurrentMember => partyMembers[currentMemberIndex];
+    public PartyMember currentMember;
+
+    /// <summary>
+    /// List containing the sprites for each character in the party
+    /// </summary>
+    [SerializeField]
+    private List<Sprite> sprites;
+
+    /// <summary>
+    /// Dictionary allows sprites to be selected with PartyMember enum as a key
+    /// </summary>
+    private Dictionary<PartyMember, Sprite> charSprites;
 
     /// <summary>
     /// After every turn, update the active PartyMember
@@ -31,6 +42,11 @@ public class Party : DynamicObject
         currentMemberIndex++;
         if (currentMemberIndex >= partyMembers.Count)
             currentMemberIndex = 0;
+        currentMember = partyMembers[currentMemberIndex];
+
+        //Change sprite to current member
+        SpriteRenderer spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        spriteRenderer.sprite = charSprites[currentMember];
     }
 
     /// <summary>
@@ -41,5 +57,16 @@ public class Party : DynamicObject
     public IEnumerator UseAbility(Vector3Int target)
     {
         yield break; // Remove once the actions are implemented
+    }
+
+    public void Init()
+    {
+        currentMember = partyMembers[currentMemberIndex];
+        charSprites = new Dictionary<PartyMember, Sprite>();
+        Debug.Log(PartyMember.Warlock);
+        charSprites.Add(PartyMember.Warlock, sprites[0]);
+        charSprites.Add(PartyMember.Wizard, sprites[1]);
+        charSprites.Add(PartyMember.Pickpocket, sprites[2]);
+        charSprites.Add(PartyMember.Sailor, sprites[3]);
     }
 }
