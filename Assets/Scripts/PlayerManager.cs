@@ -28,11 +28,16 @@ public class PlayerManager : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// Move the party to the tile that the player clicks on
+    /// </summary>
+    /// <param name="worldPosition"></param>
     public void MovePlayer(Vector2 worldPosition)
     {
         Vector3Int gridPosition = floorMap.WorldToCell(worldPosition);
 
         party.transform.position = floorMap.CellToWorld(gridPosition);
+        //TODO: REMOVE THIS LINE AFTER FIXING GAMEOBJECT ANCHOR POINT ISSUE
         party.transform.Translate(0.5f, 0.5f, 0.0f);
     }
 }

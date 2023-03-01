@@ -35,6 +35,11 @@ public class HighlightManager : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// Highlights all tiles that the player can click on.
+    /// Different color highlights differentiate if a tile can be moved to or influenced via abilities
+    /// </summary>
+    /// <param name="party"></param>
     public void HighlightTiles(Party party)
     {
         foreach (var tile in highlightedMoves)
@@ -62,6 +67,10 @@ public class HighlightManager : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Highlight the tiles that the party can click to move to
+    /// </summary>
+    /// <param name="gridPosition"></param>
     private void HighlightMoves(Vector3Int gridPosition)
     {
         if (!highlightedMoves.ContainsKey(gridPosition))

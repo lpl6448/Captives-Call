@@ -59,11 +59,13 @@ public class Party : DynamicObject
         yield break; // Remove once the actions are implemented
     }
 
+    /// <summary>
+    /// Set the currentMember field to the current member and load all character sprites
+    /// </summary>
     public void Init()
     {
         currentMember = partyMembers[currentMemberIndex];
         charSprites = new Dictionary<PartyMember, Sprite>();
-        Debug.Log(PartyMember.Warlock);
         charSprites.Add(PartyMember.Warlock, sprites[0]);
         charSprites.Add(PartyMember.Wizard, sprites[1]);
         charSprites.Add(PartyMember.Pickpocket, sprites[2]);
