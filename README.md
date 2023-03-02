@@ -1,2 +1,2 @@
 # Game 2
- Game 2 for IGME 330
+ Game 2 for IGME 320

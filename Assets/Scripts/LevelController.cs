@@ -6,6 +6,12 @@ using UnityEngine.SceneManagement;
 
 public class LevelController : MonoBehaviour
 {
+    /// <summary>
+    /// Singleton variable (if we want to use this convention) to allow easy access
+    /// to the LevelController from any script in the scene
+    /// </summary>
+    public static LevelController Instance;
+
     //Get a reference to all controllers in the scene
     [SerializeField]
     private HighlightManager hm;
@@ -38,11 +44,83 @@ public class LevelController : MonoBehaviour
     /// </summary>
     private Dictionary<TileBase, TileData> dataFromTiles;
     /// <summary>
+    /// Diciontary that holds all DynamicObjects currently on the grid
+    /// </summary>
+    private Dictionary<Vector2Int, List<DynamicObject>> dynamicObjectsGrid;
+    /// <summary>
     /// Field to control if the game runs player or CPU logic
     /// </summary>
     private bool playerTurn;
     //TODO: REPLACE TO TRIGGER ON LEVEL LOAD ONCE WE IMPLEMENT THAT
     bool spawnHighlights;
+
+    /// <summary>
+    /// Gets a list of all DynamicObjects currently occupying the given tile
+    /// </summary>
+    /// <param name="tile">2D integer vector of the tile to check</param>
+    /// <returns>List of all DynamicObjects occupying the tile</returns>
+    public List<DynamicObject> GetDynamicObjectsOnTile(Vector2Int tile)
+    {
+        if (dynamicObjectsGrid.TryGetValue(tile, out List<DynamicObject> list))
+            return list;
+        else
+            return new List<DynamicObject>();
+    }
+
+    /// <summary>
+    /// Gets a list of all DynamicObjects, of type T, currently occupying the given tile
+    /// </summary>
+    /// <param name="tile">2D integer vector of the tile to check</param>
+    /// <returns>List of all DynamicObjects, of type T, occupying the tile</returns>
+    public List<T> GetDynamicObjectsOnTile<T>(Vector2Int tile) where T : DynamicObject
+    {
+        if (dynamicObjectsGrid.TryGetValue(tile, out List<DynamicObject> allList))
+        {
+            List<T> list = new List<T>();
+            foreach (DynamicObject dobj in allList)
+                if (dobj is T)
+                    list.Add(dobj as T);
+            return list;
+        }
+        else
+            return new List<T>();
+    }
+
+    /// <summary>
+    /// Adds the given DynamicObject to the DynamicObjects grid, to allow for easy querying later on
+    /// </summary>
+    /// <param name="tile">2D integer vector of the tile that the DynamicObject occupies</param>
+    /// <param name="dobj">DynamicObject to add</param>
+    public void AddDynamicObject(Vector2Int tile, DynamicObject dobj)
+    {
+        if (dynamicObjectsGrid.TryGetValue(tile, out List<DynamicObject> list))
+            list.Add(dobj);
+        else
+            dynamicObjectsGrid.Add(tile, new List<DynamicObject>() { dobj });
+    }
+
+    /// <summary>
+    /// Removes the given DynamicObject from the DynamicObjects grid (used if it is deleted or has moved to a new tile)
+    /// </summary>
+    /// <param name="tile">2D integer vector of the tile that the DynamicObject occupied before</param>
+    /// <param name="dobj">DynamicObject to remove</param>
+    public bool RemoveDynamicObject(Vector2Int tile, DynamicObject dobj)
+    {
+        if (dynamicObjectsGrid.TryGetValue(tile, out List<DynamicObject> list))
+        {
+            bool removed = list.Remove(dobj);
+            if (list.Count == 0)
+                dynamicObjectsGrid.Remove(tile);
+            return removed;
+        }
+        else
+            return false;
+    }
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -52,9 +130,10 @@ public class LevelController : MonoBehaviour
         pm.party.Init();
 
         dataFromTiles = new Dictionary<TileBase, TileData>();
-        foreach(var tileData in tileDatas)
+        dynamicObjectsGrid = new Dictionary<Vector2Int, List<DynamicObject>>();
+        foreach (var tileData in tileDatas)
         {
-            foreach(var tile in tileData.tiles)
+            foreach (var tile in tileData.tiles)
             {
                 dataFromTiles.Add(tile, tileData);
             }
@@ -82,7 +161,7 @@ public class LevelController : MonoBehaviour
                 pm.MovePlayer(mousePosition);
                 pm.party.UpdateTick();
                 //Check if the party has reached the exit
-                if(grid.WorldToCell(pm.party.transform.position)==grid.WorldToCell(exit.transform.position))
+                if (grid.WorldToCell(pm.party.transform.position) == grid.WorldToCell(exit.transform.position))
                 {
                     SceneManager.LoadScene(nextLevel);
                     return;
@@ -112,14 +191,24 @@ public class LevelController : MonoBehaviour
     {
         Vector3Int gridPosition = grid.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
         Vector3Int partyPos = grid.WorldToCell(pm.party.transform.position);
-        int dX = gridPosition.x-partyPos.x;
-        int dY = gridPosition.y-partyPos.y;
-        TileBase clickedTile = wallMap.GetTile(gridPosition);
-        bool accessible=true;
-        if (clickedTile != null)
-            accessible = dataFromTiles[clickedTile].isAccessible;
+        int dX = gridPosition.x - partyPos.x;
+        int dY = gridPosition.y - partyPos.y;
 
-        return ((Mathf.Abs(dX) + Mathf.Abs(dY)) == 1)&&accessible;
+        // The tile can only be moved to if it is one tile away from the party position
+        if (Mathf.Abs(dX) + Mathf.Abs(dY) != 1)
+            return false;
+
+        // Check base map tiles for movement validity
+        TileBase clickedTile = wallMap.GetTile(gridPosition);
+        if (clickedTile != null && !dataFromTiles[clickedTile].isAccessible)
+            return false;
+
+        // Check dynamic objects for movement validity
+        foreach (DynamicObject dobj in GetDynamicObjectsOnTile((Vector2Int)gridPosition))
+            if (!dobj.IsTraversable(pm.party))
+                return false;
+
+        return true;
     }
 
     private void guardAttack()

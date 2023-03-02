@@ -8,11 +8,6 @@ using System.Collections;
 public abstract class Obstacle : DynamicObject
 {
     /// <summary>
-    /// Whether other DynamicObjects can occupy the same space as this Obstacle
-    /// </summary>
-    public abstract bool IsTraversable { get; }
-
-    /// <summary>
     /// Whether the line of sight is blocked by this Obstacle
     /// </summary>
     public abstract bool BlocksLOS { get; }

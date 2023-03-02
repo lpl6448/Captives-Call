@@ -17,6 +17,11 @@ public class Guard : DynamicObject
     /// </summary>
     public Directions facing;
 
+    public override bool IsTraversable(DynamicObject mover)
+    {
+        return true; // Currently, the Party can occupy the same tile as a Guard (but the game ends instantly)
+    }
+
     public override void UpdateTick()
     {
         //currentPathIndex++;

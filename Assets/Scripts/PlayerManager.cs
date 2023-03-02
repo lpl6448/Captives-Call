@@ -25,7 +25,7 @@ public class PlayerManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     /// <summary>
@@ -36,6 +36,7 @@ public class PlayerManager : MonoBehaviour
     {
         Vector3Int gridPosition = floorMap.WorldToCell(worldPosition);
 
+        party.Move(gridPosition);
         party.transform.position = floorMap.CellToWorld(gridPosition);
         //TODO: REMOVE THIS LINE AFTER FIXING GAMEOBJECT ANCHOR POINT ISSUE
         party.transform.Translate(0.5f, 0.5f, 0.0f);
