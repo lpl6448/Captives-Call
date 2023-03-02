@@ -7,4 +7,5 @@ public enum Directions
     Down,
     Left,
     Right,
+    Static
 }

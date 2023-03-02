@@ -128,6 +128,10 @@ public class LevelController : MonoBehaviour
         spawnHighlights = false;
         playerTurn = true;
         pm.party.Init();
+        foreach(Guard guard in gm.guardList)
+        {
+            guard.InitSprites();
+        }
 
         dataFromTiles = new Dictionary<TileBase, TileData>();
         dynamicObjectsGrid = new Dictionary<Vector2Int, List<DynamicObject>>();

@@ -50,16 +50,16 @@ public class GuardManager : MonoBehaviour
                     switch (guard.facing)
                     {
                         case Directions.Up:
-                            guard.facing = Directions.Down;
+                            guard.ChangeDirections(Directions.Down);
                             break;
                         case Directions.Down:
-                            guard.facing = Directions.Up;
+                            guard.ChangeDirections(Directions.Up);
                             break;
                         case Directions.Left:
-                            guard.facing = Directions.Right;
+                            guard.ChangeDirections(Directions.Right);
                             break;
                         case Directions.Right:
-                            guard.facing = Directions.Left;
+                            guard.ChangeDirections(Directions.Left);
                             break;
                     }
                 }
