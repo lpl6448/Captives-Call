@@ -16,7 +16,7 @@ public class Party : DynamicObject
     /// <summary>
     /// Index of the PartyMember whose turn it is (from partyMembers)
     /// </summary>
-    public int currentMemberIndex = 0;
+    private int currentMemberIndex = 0;
 
     /// <summary>
     /// The PartyMember whose turn it is
@@ -44,9 +44,7 @@ public class Party : DynamicObject
             currentMemberIndex = 0;
         currentMember = partyMembers[currentMemberIndex];
 
-        //Change sprite to current member
-        SpriteRenderer spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
-        spriteRenderer.sprite = charSprites[currentMember];
+        UpdateSprite();
     }
 
     /// <summary>
@@ -70,5 +68,13 @@ public class Party : DynamicObject
         charSprites.Add(PartyMember.Wizard, sprites[1]);
         charSprites.Add(PartyMember.Pickpocket, sprites[2]);
         charSprites.Add(PartyMember.Sailor, sprites[3]);
+        UpdateSprite();
+    }
+
+    public void UpdateSprite()
+    {
+        //Change sprite to current member
+        SpriteRenderer spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        spriteRenderer.sprite = charSprites[currentMember];
     }
 }
