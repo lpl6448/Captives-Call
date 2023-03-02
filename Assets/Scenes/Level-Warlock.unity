@@ -176,7 +176,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5.9755874
+  orthographic size: 5.5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -218,21 +218,25 @@ PrefabInstance:
       propertyPath: m_Name
       value: Level-Warlock
       objectReference: {fileID: 0}
+    - target: {fileID: 2755701676530803486, guid: 377410b370256774a99893b002eade03, type: 3}
+      propertyPath: nextLevel
+      value: Level-FullParty
+      objectReference: {fileID: 0}
     - target: {fileID: 5348901690167967717, guid: 377410b370256774a99893b002eade03, type: 3}
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5348901690167967717, guid: 377410b370256774a99893b002eade03, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.9994853
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5348901690167967717, guid: 377410b370256774a99893b002eade03, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.0021378957
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5348901690167967717, guid: 377410b370256774a99893b002eade03, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.00017182203
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5348901690167967717, guid: 377410b370256774a99893b002eade03, type: 3}
       propertyPath: m_LocalRotation.w

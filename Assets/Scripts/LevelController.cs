@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.SceneManagement;
 
 public class LevelController : MonoBehaviour
 {
@@ -21,6 +22,11 @@ public class LevelController : MonoBehaviour
     private Tilemap floorMap;
     [SerializeField]
     private Tilemap wallMap;
+    //Get references to objects needed to advance to next level
+    [SerializeField]
+    private string nextLevel;
+    [SerializeField]
+    private GameObject exit;
     /// <summary>
     /// Field to hold TileData scriptable objects
     /// </summary>
@@ -58,6 +64,10 @@ public class LevelController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Check to close the game on "esc" press
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Application.Quit();
+
         if (!spawnHighlights)
         {
             hm.HighlightTiles(pm.party, gm.guardList, dataFromTiles);
@@ -71,6 +81,12 @@ public class LevelController : MonoBehaviour
                 Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 pm.MovePlayer(mousePosition);
                 pm.party.UpdateTick();
+                //Check if the party has reached the exit
+                if(grid.WorldToCell(pm.party.transform.position)==grid.WorldToCell(exit.transform.position))
+                {
+                    SceneManager.LoadScene(nextLevel);
+                    return;
+                }
                 playerTurn = false;
             }
         }

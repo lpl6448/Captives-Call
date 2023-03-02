@@ -130,6 +130,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1720085434151030326, guid: 4a68f304d33595749bb5890fa4fec140, type: 3}
+      propertyPath: nextLevel
+      value: Level-Warlock
+      objectReference: {fileID: 0}
     - target: {fileID: 1720085434321146696, guid: 4a68f304d33595749bb5890fa4fec140, type: 3}
       propertyPath: m_RootOrder
       value: 1
