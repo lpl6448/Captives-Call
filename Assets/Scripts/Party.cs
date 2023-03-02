@@ -34,6 +34,13 @@ public class Party : DynamicObject
     /// </summary>
     private Dictionary<PartyMember, Sprite> charSprites;
 
+    public override bool IsTraversable(DynamicObject mover)
+    {
+        if (mover is Party)
+            return false; // Multiple Parties (if we implement them) cannot occupy the same space
+        return true;
+    }
+
     /// <summary>
     /// After every turn, update the active PartyMember
     /// </summary>

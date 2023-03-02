@@ -8,6 +8,13 @@ using System.Collections;
 public abstract class DynamicObject : MonoBehaviour
 {
     /// <summary>
+    /// Returns whether another DynamicObject can move onto the same tile as this one
+    /// </summary>
+    /// <param name="mover">DynamicObject that is moving</param>
+    /// <returns>Whether the mover can occupy the same tile as this DynamicObject</returns>
+    public abstract bool IsTraversable(DynamicObject mover);
+
+    /// <summary>
     /// Current position (x, y) on the tile grid of this DynamicObject
     /// </summary>
     public Vector3Int TilePosition => tilePosition;
@@ -24,7 +31,9 @@ public abstract class DynamicObject : MonoBehaviour
     /// <param name="tilePosition">New grid position</param>
     public void UpdateTilePosition(Vector3Int tilePosition)
     {
+        LevelController.Instance.RemoveDynamicObject((Vector2Int)this.tilePosition, this);
         this.tilePosition = tilePosition;
+        LevelController.Instance.AddDynamicObject((Vector2Int)this.tilePosition, this);
     }
 
     /// <summary>
@@ -37,11 +46,10 @@ public abstract class DynamicObject : MonoBehaviour
     /// but it can be overloaded to allow for animation (using the IEnumerator)
     /// </summary>
     /// <param name="tilePosition">New grid position</param>
-    /// <returns>IEnumerator used for coroutines</returns>
-    public virtual IEnumerator Move(Vector3Int tilePosition)
+    /// <returns>IEnumerator used for coroutines (unused currently)</returns>
+    public virtual void Move(Vector3Int tilePosition)
     {
         UpdateTilePosition(tilePosition);
         // Once the tilemap is set up, we can set the position of this object according to its grid (or animate it in a separate function eventually)
-        yield break;
     }
 }
