@@ -204,7 +204,7 @@ public class LevelController : MonoBehaviour
 
         // Check base map tiles for movement validity
         TileBase clickedTile = wallMap.GetTile(gridPosition);
-        if (clickedTile != null && !dataFromTiles[clickedTile].isAccessible)
+        if (clickedTile != null && !dataFromTiles[clickedTile].isPartyAccessible)
             return false;
 
         // Check dynamic objects for movement validity

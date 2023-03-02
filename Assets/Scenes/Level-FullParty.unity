@@ -134,6 +134,14 @@ PrefabInstance:
       propertyPath: nextLevel
       value: Level-Warlock
       objectReference: {fileID: 0}
+    - target: {fileID: 1720085434151030326, guid: 4a68f304d33595749bb5890fa4fec140, type: 3}
+      propertyPath: tileDatas.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1720085434151030326, guid: 4a68f304d33595749bb5890fa4fec140, type: 3}
+      propertyPath: tileDatas.Array.data[3]
+      value: 
+      objectReference: {fileID: 11400000, guid: acfb537d9cd0ec84d8057c25c6685f79, type: 2}
     - target: {fileID: 1720085434321146696, guid: 4a68f304d33595749bb5890fa4fec140, type: 3}
       propertyPath: m_RootOrder
       value: 1

@@ -12,4 +12,6 @@ public class TileData : ScriptableObject
     public TileBase[] tiles;
 
     public bool isAccessible;
+
+    public bool isPartyAccessible;
 }
