@@ -126,6 +126,28 @@ public class LevelController : MonoBehaviour
             return false;
     }
 
+    /// <summary>
+    /// Converts a world position to a grid position within the tilemap.
+    /// (This function is just a convenient wrapper for floorMap.WorldToCell().
+    /// </summary>
+    /// <param name="worldPosition">World position</param>
+    /// <returns>Equivalent grid position</returns>
+    public Vector3Int WorldToCell(Vector3 worldPosition)
+    {
+        return floorMap.WorldToCell(worldPosition);
+    }
+
+    /// <summary>
+    /// Converts a grid position within the tilemap to a world position.
+    /// (This function is just a convenient wrapper for floorMap.WorldToCell().
+    /// </summary>
+    /// <param name="gridPosition">Cell/grid position</param>
+    /// <returns>Equivalent world position</returns>
+    public Vector3 CellToWorld(Vector3Int gridPosition)
+    {
+        return floorMap.CellToWorld(gridPosition);
+    }
+
     private void Awake()
     {
         Instance = this;
@@ -171,19 +193,30 @@ public class LevelController : MonoBehaviour
 
         if (playerTurn)
         {
-            if (Input.GetMouseButtonDown(0) && validClick())
+            if (Input.GetMouseButtonDown(0))
             {
-                DoPreMovement();
-                Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                pm.MovePlayer(mousePosition);
-                //Check if the party has reached the exit
-                if (grid.WorldToCell(pm.party.transform.position) == grid.WorldToCell(exit.transform.position))
+                Vector3Int clickGrid = grid.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                bool canMove = validMovementClick(clickGrid);
+                bool canUseAbility = validAbilityClick(clickGrid);
+                if (canMove || canUseAbility)
                 {
-                    SceneManager.LoadScene(nextLevel);
-                    return;
+                    DoPreAction();
+
+                    if (canUseAbility)
+                        pm.party.UseAbility(clickGrid);
+                    else
+                        pm.party.Move(clickGrid);
+
+                    //Check if the party has reached the exit
+                    if (grid.WorldToCell(pm.party.transform.position) == grid.WorldToCell(exit.transform.position))
+                    {
+                        SceneManager.LoadScene(nextLevel);
+                        return;
+                    }
+
+                    DoPostAction();
+                    playerTurn = false;
                 }
-                DoPostMovement();
-                playerTurn = false;
             }
         }
         else
@@ -200,31 +233,30 @@ public class LevelController : MonoBehaviour
     }
 
     /// <summary>
-    /// Runs PreMovement() on all activeDynamicObjects
+    /// Runs PreAction() on all activeDynamicObjects
     /// </summary>
-    private void DoPreMovement()
+    private void DoPreAction()
     {
         foreach (DynamicObject dobj in activeDynamicObjects)
-            dobj.PreMovement();
+            dobj.PreAction();
     }
 
     /// <summary>
-    /// Runs PostMovement() on all activeDynamicObjects
+    /// Runs PostAction() on all activeDynamicObjects
     /// </summary>
-    private void DoPostMovement()
+    private void DoPostAction()
     {
         foreach (DynamicObject dobj in activeDynamicObjects)
-            dobj.PostMovement();
+            dobj.PostAction();
     }
 
     /// <summary>
-    /// Returns false is clicking on a tile outside of movement range
+    /// Returns false if clicking on a tile outside of movement range
     /// Also returns false if clicking on a tile marked isAccessible=false
     /// </summary>
     /// <returns></returns>
-    private bool validClick()
+    private bool validMovementClick(Vector3Int gridPosition)
     {
-        Vector3Int gridPosition = grid.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
         Vector3Int partyPos = grid.WorldToCell(pm.party.transform.position);
         int dX = gridPosition.x - partyPos.x;
         int dY = gridPosition.y - partyPos.y;
@@ -244,6 +276,15 @@ public class LevelController : MonoBehaviour
                 return false;
 
         return true;
+    }
+
+    /// <summary>
+    /// Returns true if clicking on a tile that the current PartyMember can use an ability on
+    /// </summary>
+    /// <returns></returns>
+    private bool validAbilityClick(Vector3Int gridPosition)
+    {
+        return pm.party.CanUseAbility(gridPosition);
     }
 
     private void guardAttack()

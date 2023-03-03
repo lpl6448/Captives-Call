@@ -44,7 +44,7 @@ public class Party : DynamicObject
     /// <summary>
     /// After every turn, update the active PartyMember
     /// </summary>
-    public override void PostMovement()
+    public override void PostAction()
     {
         currentMemberIndex++;
         if (currentMemberIndex >= partyMembers.Count)
@@ -62,6 +62,29 @@ public class Party : DynamicObject
     public void UseAbility(Vector3Int target)
     {
 
+    }
+
+    /// <summary>
+    /// Checks whether the action associated with the current PartyMember can be done
+    /// on the given target position (if applicable to the ability)
+    /// </summary>
+    /// <param name="target">Optional grid position passed in for the ability</param>
+    /// <returns>Whether the current PartyMember can use their ability on the target</returns>
+    public bool CanUseAbility(Vector3Int target)
+    {
+        switch (currentMember)
+        {
+            case PartyMember.Warlock:
+                // Telekinetic Push
+                if (Mathf.Abs(target.x - TilePosition.x) + Mathf.Abs(target.y - TilePosition.y) != 1)
+                    return false;
+                
+                // Placeholder return statement, will check if the target is a boulder in the future
+                return false;
+        }
+
+        // For any unimplemented PartyMembers, return false
+        return false;
     }
 
     /// <summary>

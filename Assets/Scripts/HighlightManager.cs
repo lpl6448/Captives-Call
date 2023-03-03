@@ -9,7 +9,7 @@ public class HighlightManager : MonoBehaviour
     private Tilemap highlightMap;
     [SerializeField]
     private Tilemap wallMap;
-    
+
     [SerializeField]
     private Color moveHColor, abilityHColor, guardLOSColor, clearColor;
 
@@ -22,11 +22,11 @@ public class HighlightManager : MonoBehaviour
     {
         highlighted = new Dictionary<Vector3Int, Highlight>();
         //Make all highlight tiles clear
-        for(int x = -6; x<4; x++)
+        for (int x = -6; x < 4; x++)
         {
-            for(int y = -5; y<5; y++)
+            for (int y = -5; y < 5; y++)
             {
-                highlightMap.SetTileFlags(new Vector3Int(x,y,0), TileFlags.None);
+                highlightMap.SetTileFlags(new Vector3Int(x, y, 0), TileFlags.None);
                 highlightMap.SetColor(new Vector3Int(x, y, 0), clearColor);
                 highlightMap.SetTileFlags(new Vector3Int(x, y, 0), TileFlags.LockColor);
             }
@@ -36,7 +36,7 @@ public class HighlightManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     /// <summary>
@@ -79,15 +79,15 @@ public class HighlightManager : MonoBehaviour
         Vector3Int gridPosition;
 
         //Calculate and draw guard lines of sight
-        foreach(Guard guard in guards)
+        foreach (Guard guard in guards)
         {
             gridPosition = highlightMap.WorldToCell(guard.transform.position);
             Vector3Int LOSTile;
             switch (guard.facing)
             {
                 case Directions.Up:
-                    LOSTile = new Vector3Int(gridPosition.x, gridPosition.y+1, 0);
-                    for (int i=0; i<2; i++)
+                    LOSTile = new Vector3Int(gridPosition.x, gridPosition.y + 1, 0);
+                    for (int i = 0; i < 2; i++)
                     {
                         TileBase target = wallMap.GetTile(LOSTile);
                         bool accessible = true;
@@ -100,7 +100,7 @@ public class HighlightManager : MonoBehaviour
                     }
                     break;
                 case Directions.Down:
-                    LOSTile = new Vector3Int(gridPosition.x, gridPosition.y-1, 0);
+                    LOSTile = new Vector3Int(gridPosition.x, gridPosition.y - 1, 0);
                     for (int i = 0; i < 2; i++)
                     {
                         TileBase target = wallMap.GetTile(LOSTile);
@@ -114,7 +114,7 @@ public class HighlightManager : MonoBehaviour
                     }
                     break;
                 case Directions.Left:
-                    LOSTile = new Vector3Int(gridPosition.x-1, gridPosition.y, 0);
+                    LOSTile = new Vector3Int(gridPosition.x - 1, gridPosition.y, 0);
                     for (int i = 0; i < 2; i++)
                     {
                         TileBase target = wallMap.GetTile(LOSTile);
@@ -128,7 +128,7 @@ public class HighlightManager : MonoBehaviour
                     }
                     break;
                 case Directions.Right:
-                    LOSTile = new Vector3Int(gridPosition.x+1, gridPosition.y, 0);
+                    LOSTile = new Vector3Int(gridPosition.x + 1, gridPosition.y, 0);
                     for (int i = 0; i < 2; i++)
                     {
                         TileBase target = wallMap.GetTile(LOSTile);
@@ -147,6 +147,7 @@ public class HighlightManager : MonoBehaviour
         //Calculate how player highlights are drawn
         gridPosition = highlightMap.WorldToCell(party.transform.position);
 
+        // Highlight all tiles that the party can move to and all tiles that an ability can be used on
         for (int x = -1; x <= 1; x++)
         {
             for (int y = -1; y <= 1; y++)
@@ -156,6 +157,12 @@ public class HighlightManager : MonoBehaviour
                 {
                     Vector3Int travTile = new Vector3Int(gridPosition.x + x, gridPosition.y + y, 0);
                     HighlightMoves(travTile);
+
+                    // For now, we can assume that all abilities act upon a particular tile, but if we add abilities
+                    // in the future that are just general world actions (like stasis), we would need some kind of UI
+                    // call to action for these.
+                    if (party.CanUseAbility(travTile))
+                        HighlightAbility(travTile);
                 }
             }
         }
@@ -189,6 +196,11 @@ public class HighlightManager : MonoBehaviour
     private void HighlightGuardLOS(Vector3Int gridPosition)
     {
         AddHighlight(gridPosition, Highlight.LineOfSight);
+    }
+
+    private void HighlightAbility(Vector3Int gridPosition)
+    {
+        AddHighlight(gridPosition, Highlight.Ability);
     }
 
     /// <summary>

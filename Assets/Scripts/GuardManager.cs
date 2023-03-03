@@ -39,13 +39,9 @@ public class GuardManager : MonoBehaviour
                 bool accessible = true;
                 if (target != null)
                     accessible = dataFromTiles[target].isAccessible;
-                if (accessible)
+                if (!accessible)
                 {
-                    guard.transform.Translate(translate); 
-                }
-                else
-                {
-                    guard.transform.Translate(-1 * translate);
+                    gridPosition -= translate * 2;
                     //Reverse guard.facing
                     switch (guard.facing)
                     {

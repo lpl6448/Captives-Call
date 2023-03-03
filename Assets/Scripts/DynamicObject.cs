@@ -44,12 +44,12 @@ public abstract class DynamicObject : MonoBehaviour
     /// <summary>
     /// Called once at the beginning of every turn.
     /// </summary>
-    public virtual void PreMovement() { }
+    public virtual void PreAction() { }
 
     /// <summary>
     /// Called directly after the Party has moved.
     /// </summary>
-    public virtual void PostMovement() { }
+    public virtual void PostAction() { }
 
     /// <summary>
     /// Moves this DynamicObject to the new tile position. By default, the object teleports,
@@ -60,6 +60,8 @@ public abstract class DynamicObject : MonoBehaviour
     public virtual void Move(Vector3Int tilePosition)
     {
         UpdateTilePosition(tilePosition);
-        // Once the tilemap is set up, we can set the position of this object according to its grid (or animate it in a separate function eventually)
+        transform.position = LevelController.Instance.CellToWorld(TilePosition);
+        //TODO: REMOVE THIS LINE AFTER FIXING GAMEOBJECT ANCHOR POINT ISSUE
+        transform.Translate(0.5f, 0.5f, 0.0f);
     }
 }
