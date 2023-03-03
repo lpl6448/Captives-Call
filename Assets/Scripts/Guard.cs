@@ -37,7 +37,6 @@ public class Guard : DynamicObject
     /// </summary>
     public override void Initialize()
     {
-        Debug.Log("Guard Init");
         sprites = new Dictionary<Directions, Sprite>();
         sprites.Add(Directions.Up, loadSprites[0]);
         sprites.Add(Directions.Down, loadSprites[1]);
