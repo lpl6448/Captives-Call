@@ -134,6 +134,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Level-Warlock
       objectReference: {fileID: 0}
+    - target: {fileID: 2755701676336075470, guid: 377410b370256774a99893b002eade03, type: 3}
+      propertyPath: abilityHColor.a
+      value: 0.25490198
+      objectReference: {fileID: 0}
+    - target: {fileID: 2755701676336075470, guid: 377410b370256774a99893b002eade03, type: 3}
+      propertyPath: abilityHColor.b
+      value: 0.709
+      objectReference: {fileID: 0}
+    - target: {fileID: 2755701676336075470, guid: 377410b370256774a99893b002eade03, type: 3}
+      propertyPath: abilityHColor.g
+      value: 0.27154702
+      objectReference: {fileID: 0}
+    - target: {fileID: 2755701676336075470, guid: 377410b370256774a99893b002eade03, type: 3}
+      propertyPath: abilityHColor.r
+      value: 0.44330838
+      objectReference: {fileID: 0}
     - target: {fileID: 2755701676530803486, guid: 377410b370256774a99893b002eade03, type: 3}
       propertyPath: nextLevel
       value: Level-WzP
