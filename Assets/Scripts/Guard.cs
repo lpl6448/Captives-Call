@@ -32,22 +32,10 @@ public class Guard : DynamicObject
         return true; // Currently, the Party can occupy the same tile as a Guard (but the game ends instantly)
     }
 
-    public override void UpdateTick()
-    {
-        //currentPathIndex++;
-        //if (currentPathIndex >= path.Count)
-        //    currentPathIndex = 0;
-        
-        // Move/animate this guard to its new position along the path
-        //StartCoroutine(Move(path[currentPathIndex]));
-
-        //
-    }
-
     /// <summary>
     /// Initialize and fill dictionary with the guard sprites
     /// </summary>
-    public void InitSprites()
+    public override void Initialize()
     {
         sprites = new Dictionary<Directions, Sprite>();
         sprites.Add(Directions.Up, loadSprites[0]);

@@ -38,11 +38,20 @@ public class LevelController : MonoBehaviour
     /// </summary>
     [SerializeField]
     private List<TileData> tileDatas;
+    /// <summary>
+    /// List of all DynamicObjects present at the beginning of the level
+    /// </summary>
+    [SerializeField]
+    private List<DynamicObject> initialDynamicObjects;
 
     /// <summary>
     /// Dictionary that holds all tileData objects
     /// </summary>
     private Dictionary<TileBase, TileData> dataFromTiles;
+    /// <summary>
+    /// List of all currently active DynamicObjects, used for iteration
+    /// </summary>
+    private List<DynamicObject> activeDynamicObjects;
     /// <summary>
     /// Diciontary that holds all DynamicObjects currently on the grid
     /// </summary>
@@ -127,11 +136,11 @@ public class LevelController : MonoBehaviour
     {
         spawnHighlights = false;
         playerTurn = true;
-        pm.party.Init();
-        foreach(Guard guard in gm.guardList)
-        {
-            guard.InitSprites();
-        }
+
+        // Initialize all DynamicObjects
+        activeDynamicObjects = new List<DynamicObject>(initialDynamicObjects);
+        foreach (DynamicObject dobj in activeDynamicObjects)
+            dobj.Initialize();
 
         dataFromTiles = new Dictionary<TileBase, TileData>();
         dynamicObjectsGrid = new Dictionary<Vector2Int, List<DynamicObject>>();
@@ -161,15 +170,16 @@ public class LevelController : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0) && validClick())
             {
+                DoPreMovement();
                 Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 pm.MovePlayer(mousePosition);
-                pm.party.UpdateTick();
                 //Check if the party has reached the exit
                 if (grid.WorldToCell(pm.party.transform.position) == grid.WorldToCell(exit.transform.position))
                 {
                     SceneManager.LoadScene(nextLevel);
                     return;
                 }
+                DoPostMovement();
                 playerTurn = false;
             }
         }
@@ -184,6 +194,24 @@ public class LevelController : MonoBehaviour
             guardAttack();
             playerTurn = true;
         }
+    }
+
+    /// <summary>
+    /// Runs PreMovement() on all activeDynamicObjects
+    /// </summary>
+    private void DoPreMovement()
+    {
+        foreach (DynamicObject dobj in activeDynamicObjects)
+            dobj.PreMovement();
+    }
+
+    /// <summary>
+    /// Runs PostMovement() on all activeDynamicObjects
+    /// </summary>
+    private void DoPostMovement()
+    {
+        foreach (DynamicObject dobj in activeDynamicObjects)
+            dobj.PostMovement();
     }
 
     /// <summary>

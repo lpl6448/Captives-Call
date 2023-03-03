@@ -654,6 +654,18 @@ PrefabInstance:
       propertyPath: tileDatas.Array.data[2]
       value: 
       objectReference: {fileID: 11400000, guid: 4fc7997a89f538143a6030c0e32cfc36, type: 2}
+    - target: {fileID: 7277537200466364002, guid: bd2978dfa49d4c746969e86243596e29, type: 3}
+      propertyPath: initialDynamicObjects.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7277537200466364002, guid: bd2978dfa49d4c746969e86243596e29, type: 3}
+      propertyPath: initialDynamicObjects.Array.data[0]
+      value: 
+      objectReference: {fileID: 1720085433200689435}
+    - target: {fileID: 7277537200466364002, guid: bd2978dfa49d4c746969e86243596e29, type: 3}
+      propertyPath: initialDynamicObjects.Array.data[1]
+      value: 
+      objectReference: {fileID: 1056858327731670466}
     - target: {fileID: 7277537200466364003, guid: bd2978dfa49d4c746969e86243596e29, type: 3}
       propertyPath: m_Name
       value: LevelManager

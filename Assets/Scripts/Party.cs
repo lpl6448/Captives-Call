@@ -44,7 +44,7 @@ public class Party : DynamicObject
     /// <summary>
     /// After every turn, update the active PartyMember
     /// </summary>
-    public override void UpdateTick()
+    public override void PostMovement()
     {
         currentMemberIndex++;
         if (currentMemberIndex >= partyMembers.Count)
@@ -58,16 +58,16 @@ public class Party : DynamicObject
     /// Performs the action associated with the current PartyMember
     /// </summary>
     /// <param name="target">Optional grid position passed in for the action</param>
-    /// <returns>IEnumerator used for coroutines (for animating)</returns>
-    public IEnumerator UseAbility(Vector3Int target)
+    /// <returns>IEnumerator used for coroutines (for animating--unused currently)</returns>
+    public void UseAbility(Vector3Int target)
     {
-        yield break; // Remove once the actions are implemented
+
     }
 
     /// <summary>
     /// Set the currentMember field to the current member and load all character sprites
     /// </summary>
-    public void Init()
+    public override void Initialize()
     {
         currentMember = partyMembers[currentMemberIndex];
         charSprites = new Dictionary<PartyMember, Sprite>();

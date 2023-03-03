@@ -37,9 +37,19 @@ public abstract class DynamicObject : MonoBehaviour
     }
 
     /// <summary>
-    /// Called once at the beginning of every turn. (AI movement, for example, would occur here.)
+    /// Called once at the initialization of the level.
     /// </summary>
-    public virtual void UpdateTick() { }
+    public virtual void Initialize() { }
+
+    /// <summary>
+    /// Called once at the beginning of every turn.
+    /// </summary>
+    public virtual void PreMovement() { }
+
+    /// <summary>
+    /// Called directly after the Party has moved.
+    /// </summary>
+    public virtual void PostMovement() { }
 
     /// <summary>
     /// Moves this DynamicObject to the new tile position. By default, the object teleports,
