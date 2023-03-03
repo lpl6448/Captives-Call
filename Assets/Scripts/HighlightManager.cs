@@ -13,17 +13,14 @@ public class HighlightManager : MonoBehaviour
     [SerializeField]
     private Color moveHColor, abilityHColor, guardLOSColor, clearColor;
 
-    private Dictionary<Vector3Int, float> highlightedMoves, highlightedLOS;
+    private Dictionary<Vector3Int, Highlight> highlighted;
 
-    //Property to allow LevelManager to check the guard's line of sight
-    public Dictionary<Vector3Int, float> HighlightedLOS { get { return highlightedLOS; } }
     public Tilemap HighlightMap { get { return highlightMap; } }
 
     // Start is called before the first frame update
     void Start()
     {
-        highlightedMoves = new Dictionary<Vector3Int, float>();
-        highlightedLOS = new Dictionary<Vector3Int, float>();
+        highlighted = new Dictionary<Vector3Int, Highlight>();
         //Make all highlight tiles clear
         for(int x = -6; x<4; x++)
         {
@@ -40,6 +37,34 @@ public class HighlightManager : MonoBehaviour
     void Update()
     {
         
+    }
+
+    /// <summary>
+    /// Adds the given highlight to the highlighted dictionary using the gridPosition.
+    /// If the tile is already highlighted, it "adds" this highlight onto it, allowing for
+    /// different types of highlights overlaid on top of each other.
+    /// </summary>
+    /// <param name="gridPosition">Grid position to add the highlight to</param>
+    /// <param name="highlight">Highlight type that will be added</param>
+    private void AddHighlight(Vector3Int gridPosition, Highlight highlight)
+    {
+        if (!highlighted.ContainsKey(gridPosition))
+            highlighted.Add(gridPosition, highlight);
+        else
+            highlighted[gridPosition] |= highlight;
+    }
+
+    /// <summary>
+    /// Checks whether the given tile position is currently highlighted as a LOS tile
+    /// </summary>
+    /// <param name="gridPosition">Grid tile position to check</param>
+    /// <returns>Whether the gridPosition is highlighted as an LOS tile</returns>
+    public bool HasLOS(Vector3Int gridPosition)
+    {
+        if (highlighted.TryGetValue(gridPosition, out Highlight highlight))
+            return highlight.HasFlag(Highlight.LineOfSight);
+        else
+            return false;
     }
 
     /// <summary>
@@ -134,6 +159,8 @@ public class HighlightManager : MonoBehaviour
                 }
             }
         }
+
+        UpdateHighlightMap();
     }
 
     /// <summary>
@@ -141,20 +168,13 @@ public class HighlightManager : MonoBehaviour
     /// </summary>
     public void ClearHighlights()
     {
-        foreach (var tile in highlightedMoves)
+        foreach (var tile in highlighted)
         {
             highlightMap.SetTileFlags(tile.Key, TileFlags.None);
             highlightMap.SetColor(tile.Key, clearColor);
             highlightMap.SetTileFlags(tile.Key, TileFlags.LockColor);
         }
-        foreach (var tile in highlightedLOS)
-        {
-            highlightMap.SetTileFlags(tile.Key, TileFlags.None);
-            highlightMap.SetColor(tile.Key, clearColor);
-            highlightMap.SetTileFlags(tile.Key, TileFlags.LockColor);
-        }
-        highlightedMoves.Clear();
-        highlightedLOS.Clear();
+        highlighted.Clear();
     }
 
     /// <summary>
@@ -163,40 +183,48 @@ public class HighlightManager : MonoBehaviour
     /// <param name="gridPosition"></param>
     private void HighlightMoves(Vector3Int gridPosition)
     {
-        if (!highlightedMoves.ContainsKey(gridPosition))
-            highlightedMoves.Add(gridPosition, 0f);
-
-        foreach(var tile in highlightedMoves)
-        {
-            //Check if highlights overlap and mix colors of highlights
-            if (highlightedLOS.ContainsKey(tile.Key))
-            {
-                Color result = new Color(0, 0, 0, 0);
-                result += moveHColor;
-                result += guardLOSColor;
-                result /= 2;
-                highlightMap.SetTileFlags(tile.Key, TileFlags.None);
-                highlightMap.SetColor(gridPosition, result);
-                highlightMap.SetTileFlags(gridPosition, TileFlags.LockColor);
-            }
-            else
-            {
-                highlightMap.SetTileFlags(tile.Key, TileFlags.None);
-                highlightMap.SetColor(gridPosition, moveHColor);
-                highlightMap.SetTileFlags(gridPosition, TileFlags.LockColor);
-            }
-        }
+        AddHighlight(gridPosition, Highlight.Movement);
     }
 
     private void HighlightGuardLOS(Vector3Int gridPosition)
     {
-        if (!highlightedLOS.ContainsKey(gridPosition))
-            highlightedLOS.Add(gridPosition, 0f);
+        AddHighlight(gridPosition, Highlight.LineOfSight);
+    }
 
-        foreach(var tile in highlightedLOS)
+    /// <summary>
+    /// Updates the color of every tile inside of the highlighted dictionary
+    /// </summary>
+    private void UpdateHighlightMap()
+    {
+        foreach (var tile in highlighted)
         {
-            highlightMap.SetTileFlags(tile.Key, TileFlags.None);
-            highlightMap.SetColor(gridPosition, guardLOSColor);
+            Vector3Int gridPosition = tile.Key;
+            Highlight highlight = tile.Value;
+
+            // Overlay/blend corresponding colors for each highlight
+            // This isn't technically accurate color blending, but it's what I could get to work for now.
+            Color color = Color.clear;
+            int count = 0;
+            if (highlight.HasFlag(Highlight.Movement))
+            {
+                color += moveHColor;
+                count++;
+            }
+            if (highlight.HasFlag(Highlight.Ability))
+            {
+                color += abilityHColor;
+                count++;
+            }
+            if (highlight.HasFlag(Highlight.LineOfSight))
+            {
+                color += guardLOSColor;
+                count++;
+            }
+            color /= count;
+
+            // Update the highlight map
+            highlightMap.SetTileFlags(gridPosition, TileFlags.None);
+            highlightMap.SetColor(gridPosition, color);
             highlightMap.SetTileFlags(gridPosition, TileFlags.LockColor);
         }
     }

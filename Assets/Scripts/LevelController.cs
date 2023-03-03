@@ -245,7 +245,7 @@ public class LevelController : MonoBehaviour
 
     private void guardAttack()
     {
-        if (hm.HighlightedLOS.ContainsKey(hm.HighlightMap.WorldToCell(pm.party.transform.position)) ||
+        if (hm.HasLOS(hm.HighlightMap.WorldToCell(pm.party.transform.position)) ||
             gm.TouchingParty(pm.party))
             rs.Reset();
     }
