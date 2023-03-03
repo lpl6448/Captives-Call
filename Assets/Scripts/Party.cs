@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Tilemaps;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -38,6 +39,23 @@ public class Party : DynamicObject
     {
         if (mover is Party)
             return false; // Multiple Parties (if we implement them) cannot occupy the same space
+        if (mover is Boulder)
+            return false;
+        return true;
+    }
+
+    public override bool CanMove(Vector3Int tilePosition)
+    {
+        // Party cannot move to a tile with a wall on it, unless it is brush
+        TileBase tile = LevelController.Instance.wallMap.GetTile(tilePosition);
+        if (tile != null && !LevelController.Instance.GetTileData(tile).isPartyAccessible)
+            return false;
+
+        // Party cannot move to a tile with another DynamicObject on it if the object is not traversable
+        foreach (DynamicObject collidingObj in LevelController.Instance.GetDynamicObjectsOnTile((Vector2Int)tilePosition))
+            if (!collidingObj.IsTraversable(this))
+                return false;
+
         return true;
     }
 
@@ -61,7 +79,16 @@ public class Party : DynamicObject
     /// <returns>IEnumerator used for coroutines (for animating--unused currently)</returns>
     public void UseAbility(Vector3Int target)
     {
-
+        switch (currentMember)
+        {
+            case PartyMember.Warlock:
+                // Telekinetic Push
+                // Since CanUseAbility returned true, there must be a boulder on the target tile that can move
+                Boulder boulder = LevelController.Instance.GetDynamicObjectsOnTile<Boulder>((Vector2Int)target)[0];
+                Vector3Int movementDir = target - TilePosition;
+                boulder.Move(target + movementDir);
+                break;
+        }
     }
 
     /// <summary>
@@ -78,8 +105,17 @@ public class Party : DynamicObject
                 // Telekinetic Push
                 if (Mathf.Abs(target.x - TilePosition.x) + Mathf.Abs(target.y - TilePosition.y) != 1)
                     return false;
-                
-                // Placeholder return statement, will check if the target is a boulder in the future
+
+                List<Boulder> boulders = LevelController.Instance.GetDynamicObjectsOnTile<Boulder>((Vector2Int)target);
+                if (boulders.Count > 0)
+                {
+                    Boulder boulder = boulders[0];
+                    Vector3Int movementDir = target - TilePosition;
+                    // Check if the boulder on the target space can move forward
+                    if (boulder.CanMove(target + movementDir))
+                        return true;
+                    return false;
+                }
                 return false;
         }
 

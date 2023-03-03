@@ -35,10 +35,7 @@ public class GuardManager : MonoBehaviour
             {
                 Vector3Int translate = toTranslate(guard);
                 Vector3Int gridPosition = wallMap.WorldToCell(guard.transform.position + translate);
-                TileBase target = wallMap.GetTile(gridPosition);
-                bool accessible = true;
-                if (target != null)
-                    accessible = dataFromTiles[target].isAccessible;
+                bool accessible = guard.CanMove(gridPosition);
                 if (!accessible)
                 {
                     gridPosition -= translate * 2;

@@ -24,10 +24,8 @@ public class LevelController : MonoBehaviour
     //Get a reference to necessary grid items
     [SerializeField]
     private Grid grid;
-    [SerializeField]
-    private Tilemap floorMap;
-    [SerializeField]
-    private Tilemap wallMap;
+    public Tilemap floorMap;
+    public Tilemap wallMap;
     //Get references to objects needed to advance to next level
     [SerializeField]
     private string nextLevel;
@@ -127,6 +125,20 @@ public class LevelController : MonoBehaviour
     }
 
     /// <summary>
+    /// Retrieves the TileData corresponding to a specific tile on the tilemap,
+    /// or null if there is no data for that tile.
+    /// </summary>
+    /// <param name="tile">TileBase from the tilemap</param>
+    /// <returns>Corresponding TileData (or null)</returns>
+    public TileData GetTileData(TileBase tile)
+    {
+        if (dataFromTiles.TryGetValue(tile, out TileData data))
+            return data;
+        else
+            return null;
+    }
+
+    /// <summary>
     /// Converts a world position to a grid position within the tilemap.
     /// (This function is just a convenient wrapper for floorMap.WorldToCell().
     /// </summary>
@@ -161,14 +173,15 @@ public class LevelController : MonoBehaviour
 
         // Initialize all DynamicObjects
         activeDynamicObjects = new List<DynamicObject>(initialDynamicObjects);
+        dynamicObjectsGrid = new Dictionary<Vector2Int, List<DynamicObject>>();
         foreach (DynamicObject dobj in activeDynamicObjects)
         {
             dobj.Initialize();
+            dobj.UpdateTilePosition(WorldToCell(dobj.transform.position));
         }
 
 
         dataFromTiles = new Dictionary<TileBase, TileData>();
-        dynamicObjectsGrid = new Dictionary<Vector2Int, List<DynamicObject>>();
         foreach (var tileData in tileDatas)
         {
             foreach (var tile in tileData.tiles)
@@ -200,6 +213,8 @@ public class LevelController : MonoBehaviour
                 bool canUseAbility = validAbilityClick(clickGrid);
                 if (canMove || canUseAbility)
                 {
+                    if (canMove && canUseAbility)
+                        print("BOTH??");
                     DoPreAction();
 
                     if (canUseAbility)
@@ -265,17 +280,7 @@ public class LevelController : MonoBehaviour
         if (Mathf.Abs(dX) + Mathf.Abs(dY) != 1)
             return false;
 
-        // Check base map tiles for movement validity
-        TileBase clickedTile = wallMap.GetTile(gridPosition);
-        if (clickedTile != null && !dataFromTiles[clickedTile].isPartyAccessible)
-            return false;
-
-        // Check dynamic objects for movement validity
-        foreach (DynamicObject dobj in GetDynamicObjectsOnTile((Vector2Int)gridPosition))
-            if (!dobj.IsTraversable(pm.party))
-                return false;
-
-        return true;
+        return pm.party.CanMove(gridPosition);
     }
 
     /// <summary>

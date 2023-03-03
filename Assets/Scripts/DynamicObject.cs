@@ -15,6 +15,22 @@ public abstract class DynamicObject : MonoBehaviour
     public abstract bool IsTraversable(DynamicObject mover);
 
     /// <summary>
+    /// Returns whether this DynamicObject can move to a particular tile
+    /// </summary>
+    /// <param name="tilePosition">Grid position to move to</param>
+    /// <returns>Whether this object can move to the tilePosition</returns>
+    public abstract bool CanMove(Vector3Int tilePosition);
+
+    /// <summary>
+    /// Returns whether this DynamicObject blocks the line of sight of guards.
+    /// </summary>
+    /// <returns>False by default</returns>
+    public virtual bool BlocksLOS()
+    {
+        return false;
+    }
+
+    /// <summary>
     /// Current position (x, y) on the tile grid of this DynamicObject
     /// </summary>
     public Vector3Int TilePosition => tilePosition;

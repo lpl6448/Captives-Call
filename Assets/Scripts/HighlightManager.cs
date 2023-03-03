@@ -89,11 +89,7 @@ public class HighlightManager : MonoBehaviour
                     LOSTile = new Vector3Int(gridPosition.x, gridPosition.y + 1, 0);
                     for (int i = 0; i < 2; i++)
                     {
-                        TileBase target = wallMap.GetTile(LOSTile);
-                        bool accessible = true;
-                        if (target != null)
-                            accessible = dataFromTiles[target].isAccessible;
-                        if (!accessible)
+                        if (BlocksLOS(LOSTile))
                             break;
                         HighlightGuardLOS(LOSTile);
                         LOSTile = new Vector3Int(LOSTile.x, LOSTile.y + 1, 0);
@@ -103,11 +99,7 @@ public class HighlightManager : MonoBehaviour
                     LOSTile = new Vector3Int(gridPosition.x, gridPosition.y - 1, 0);
                     for (int i = 0; i < 2; i++)
                     {
-                        TileBase target = wallMap.GetTile(LOSTile);
-                        bool accessible = true;
-                        if (target != null)
-                            accessible = dataFromTiles[target].isAccessible;
-                        if (!accessible)
+                        if (BlocksLOS(LOSTile))
                             break;
                         HighlightGuardLOS(LOSTile);
                         LOSTile = new Vector3Int(LOSTile.x, LOSTile.y - 1, 0);
@@ -117,11 +109,7 @@ public class HighlightManager : MonoBehaviour
                     LOSTile = new Vector3Int(gridPosition.x - 1, gridPosition.y, 0);
                     for (int i = 0; i < 2; i++)
                     {
-                        TileBase target = wallMap.GetTile(LOSTile);
-                        bool accessible = true;
-                        if (target != null)
-                            accessible = dataFromTiles[target].isAccessible;
-                        if (!accessible)
+                        if (BlocksLOS(LOSTile))
                             break;
                         HighlightGuardLOS(LOSTile);
                         LOSTile = new Vector3Int(LOSTile.x - 1, LOSTile.y, 0);
@@ -131,11 +119,7 @@ public class HighlightManager : MonoBehaviour
                     LOSTile = new Vector3Int(gridPosition.x + 1, gridPosition.y, 0);
                     for (int i = 0; i < 2; i++)
                     {
-                        TileBase target = wallMap.GetTile(LOSTile);
-                        bool accessible = true;
-                        if (target != null)
-                            accessible = dataFromTiles[target].isAccessible;
-                        if (!accessible)
+                        if (BlocksLOS(LOSTile))
                             break;
                         HighlightGuardLOS(LOSTile);
                         LOSTile = new Vector3Int(LOSTile.x + 1, LOSTile.y, 0);
@@ -156,7 +140,8 @@ public class HighlightManager : MonoBehaviour
                 if (distanceFromPlayer == 1)
                 {
                     Vector3Int travTile = new Vector3Int(gridPosition.x + x, gridPosition.y + y, 0);
-                    HighlightMoves(travTile);
+                    if (party.CanMove(travTile))
+                        HighlightMoves(travTile);
 
                     // For now, we can assume that all abilities act upon a particular tile, but if we add abilities
                     // in the future that are just general world actions (like stasis), we would need some kind of UI
@@ -182,6 +167,24 @@ public class HighlightManager : MonoBehaviour
             highlightMap.SetTileFlags(tile.Key, TileFlags.LockColor);
         }
         highlighted.Clear();
+    }
+
+    /// <summary>
+    /// Determines whether the given tile position contains any tiles/obstacles that block LOS.
+    /// </summary>
+    /// <param name="gridPosition">Grid position to check</param>
+    /// <returns>Whether the grid position blocks LOS of guards</returns>
+    private bool BlocksLOS(Vector3Int gridPosition)
+    {
+        TileBase target = wallMap.GetTile(gridPosition);
+        if (target != null && !LevelController.Instance.GetTileData(target).isAccessible)
+            return true;
+
+        foreach (DynamicObject dobj in LevelController.Instance.GetDynamicObjectsOnTile((Vector2Int)gridPosition))
+            if (dobj.BlocksLOS())
+                return true;
+
+        return false;
     }
 
     /// <summary>

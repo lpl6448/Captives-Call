@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Tilemaps;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -29,7 +30,24 @@ public class Guard : DynamicObject
 
     public override bool IsTraversable(DynamicObject mover)
     {
-        return true; // Currently, the Party can occupy the same tile as a Guard (but the game ends instantly)
+        if (mover is Party)
+            return true; // Currently, the Party can occupy the same tile as a Guard (but the game ends instantly)
+        return false;
+    }
+
+    public override bool CanMove(Vector3Int tilePosition)
+    {
+        // Guard cannot move to a tile with a wall on it, unless it is traversable
+        TileBase tile = LevelController.Instance.wallMap.GetTile(tilePosition);
+        if (tile != null && !LevelController.Instance.GetTileData(tile).isAccessible)
+            return false;
+
+        // Guard cannot move to a tile with another DynamicObject on it if the object is not traversable
+        foreach (DynamicObject collidingObj in LevelController.Instance.GetDynamicObjectsOnTile((Vector2Int)tilePosition))
+            if (!collidingObj.IsTraversable(this))
+                return false;
+
+        return true;
     }
 
     /// <summary>
