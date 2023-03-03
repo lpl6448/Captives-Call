@@ -481,6 +481,22 @@ PrefabInstance:
       propertyPath: nextLevel
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 7277537200466364002, guid: bd2978dfa49d4c746969e86243596e29, type: 3}
+      propertyPath: initialDynamicObjects.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7277537200466364002, guid: bd2978dfa49d4c746969e86243596e29, type: 3}
+      propertyPath: initialDynamicObjects.Array.data[0]
+      value: 
+      objectReference: {fileID: 538709539}
+    - target: {fileID: 7277537200466364002, guid: bd2978dfa49d4c746969e86243596e29, type: 3}
+      propertyPath: initialDynamicObjects.Array.data[1]
+      value: 
+      objectReference: {fileID: 863547948}
+    - target: {fileID: 7277537200466364002, guid: bd2978dfa49d4c746969e86243596e29, type: 3}
+      propertyPath: initialDynamicObjects.Array.data[2]
+      value: 
+      objectReference: {fileID: 1937658848}
     - target: {fileID: 7277537200466364003, guid: bd2978dfa49d4c746969e86243596e29, type: 3}
       propertyPath: m_Name
       value: LevelManager

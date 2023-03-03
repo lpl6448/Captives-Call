@@ -41,7 +41,7 @@ public class GuardManager : MonoBehaviour
                     accessible = dataFromTiles[target].isAccessible;
                 if (accessible)
                 {
-                    guard.transform.Translate(translate);
+                    guard.transform.Translate(translate); 
                 }
                 else
                 {

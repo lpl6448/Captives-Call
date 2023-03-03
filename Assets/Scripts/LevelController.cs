@@ -140,7 +140,10 @@ public class LevelController : MonoBehaviour
         // Initialize all DynamicObjects
         activeDynamicObjects = new List<DynamicObject>(initialDynamicObjects);
         foreach (DynamicObject dobj in activeDynamicObjects)
+        {
             dobj.Initialize();
+        }
+
 
         dataFromTiles = new Dictionary<TileBase, TileData>();
         dynamicObjectsGrid = new Dictionary<Vector2Int, List<DynamicObject>>();
