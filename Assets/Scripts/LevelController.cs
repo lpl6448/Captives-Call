@@ -58,6 +58,7 @@ public class LevelController : MonoBehaviour
     /// Field to control if the game runs player or CPU logic
     /// </summary>
     private bool playerTurn;
+    private Vector3Int lastPartyGrid;
     //TODO: REPLACE TO TRIGGER ON LEVEL LOAD ONCE WE IMPLEMENT THAT
     bool spawnHighlights;
 
@@ -170,6 +171,7 @@ public class LevelController : MonoBehaviour
     {
         spawnHighlights = false;
         playerTurn = true;
+        lastPartyGrid = pm.party.TilePosition;
 
         // Initialize all DynamicObjects
         activeDynamicObjects = new List<DynamicObject>(initialDynamicObjects);
@@ -213,8 +215,6 @@ public class LevelController : MonoBehaviour
                 bool canUseAbility = validAbilityClick(clickGrid);
                 if (canMove || canUseAbility)
                 {
-                    if (canMove && canUseAbility)
-                        print("BOTH??"); //I believe you will just use the ability -Nick
                     DoPreAction();
 
                     if (canUseAbility)
@@ -226,7 +226,9 @@ public class LevelController : MonoBehaviour
                         hm.ClearHighlights();
                         hm.HighlightTiles(pm.party, gm.guardList, dataFromTiles);
                         Debug.Log("Can find guys " + hm.HasLOS(WorldToCell(pm.party.transform.position)));
-                        guardAttack();
+                        //guardAttack();
+
+                        lastPartyGrid = pm.party.TilePosition;
                         pm.party.Move(clickGrid);
                     }
 
@@ -306,5 +308,16 @@ public class LevelController : MonoBehaviour
         if (hm.HasLOS(WorldToCell(pm.party.transform.position)) ||
             gm.TouchingParty(pm.party))
             rs.Reset();
+        else
+        {
+            // If any guards on the party's previous tile have just turned toward the player this turn,
+            // the player technically collided with them.
+            foreach (Guard guard in GetDynamicObjectsOnTile<Guard>((Vector2Int)lastPartyGrid))
+                if (gm.toTranslate(guard) == lastPartyGrid - pm.party.TilePosition)
+                {
+                    rs.Reset();
+                    return;
+                }
+        }
     }
 }

@@ -81,7 +81,7 @@ public class GuardManager : MonoBehaviour
         //return false;
     }
 
-    private Vector3Int toTranslate(Guard guard)
+    public Vector3Int toTranslate(Guard guard)
     {
         switch (guard.facing)
         {
