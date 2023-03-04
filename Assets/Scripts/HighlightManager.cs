@@ -51,6 +51,7 @@ public class HighlightManager : MonoBehaviour
         if (!highlighted.ContainsKey(gridPosition))
             highlighted.Add(gridPosition, highlight);
         else
+
             highlighted[gridPosition] |= highlight;
     }
 
@@ -61,6 +62,7 @@ public class HighlightManager : MonoBehaviour
     /// <returns>Whether the gridPosition is highlighted as an LOS tile</returns>
     public bool HasLOS(Vector3Int gridPosition)
     {
+        Debug.Log("Has LOS Grid = " + gridPosition);
         if (highlighted.TryGetValue(gridPosition, out Highlight highlight))
             return highlight.HasFlag(Highlight.LineOfSight);
         else
@@ -76,81 +78,11 @@ public class HighlightManager : MonoBehaviour
     {
         ClearHighlights();
 
-        Vector3Int gridPosition;
-
         //Calculate and draw guard lines of sight
-        foreach (Guard guard in guards)
-        {
-            gridPosition = highlightMap.WorldToCell(guard.transform.position);
-            Vector3Int LOSTile;
-            switch (guard.facing)
-            {
-                case Directions.Up:
-                    LOSTile = new Vector3Int(gridPosition.x, gridPosition.y + 1, 0);
-                    for (int i = 0; i < 2; i++)
-                    {
-                        if (BlocksLOS(LOSTile))
-                            break;
-                        HighlightGuardLOS(LOSTile);
-                        LOSTile = new Vector3Int(LOSTile.x, LOSTile.y + 1, 0);
-                    }
-                    break;
-                case Directions.Down:
-                    LOSTile = new Vector3Int(gridPosition.x, gridPosition.y - 1, 0);
-                    for (int i = 0; i < 2; i++)
-                    {
-                        if (BlocksLOS(LOSTile))
-                            break;
-                        HighlightGuardLOS(LOSTile);
-                        LOSTile = new Vector3Int(LOSTile.x, LOSTile.y - 1, 0);
-                    }
-                    break;
-                case Directions.Left:
-                    LOSTile = new Vector3Int(gridPosition.x - 1, gridPosition.y, 0);
-                    for (int i = 0; i < 2; i++)
-                    {
-                        if (BlocksLOS(LOSTile))
-                            break;
-                        HighlightGuardLOS(LOSTile);
-                        LOSTile = new Vector3Int(LOSTile.x - 1, LOSTile.y, 0);
-                    }
-                    break;
-                case Directions.Right:
-                    LOSTile = new Vector3Int(gridPosition.x + 1, gridPosition.y, 0);
-                    for (int i = 0; i < 2; i++)
-                    {
-                        if (BlocksLOS(LOSTile))
-                            break;
-                        HighlightGuardLOS(LOSTile);
-                        LOSTile = new Vector3Int(LOSTile.x + 1, LOSTile.y, 0);
-                    }
-                    break;
-            }
-        }
+        HighlightGuardLOS(guards);
 
         //Calculate how player highlights are drawn
-        gridPosition = highlightMap.WorldToCell(party.transform.position);
-
-        // Highlight all tiles that the party can move to and all tiles that an ability can be used on
-        for (int x = -1; x <= 1; x++)
-        {
-            for (int y = -1; y <= 1; y++)
-            {
-                float distanceFromPlayer = Mathf.Abs(x) + Mathf.Abs(y);
-                if (distanceFromPlayer == 1)
-                {
-                    Vector3Int travTile = new Vector3Int(gridPosition.x + x, gridPosition.y + y, 0);
-                    if (party.CanMove(travTile))
-                        HighlightMoves(travTile);
-
-                    // For now, we can assume that all abilities act upon a particular tile, but if we add abilities
-                    // in the future that are just general world actions (like stasis), we would need some kind of UI
-                    // call to action for these.
-                    if (party.CanUseAbility(travTile))
-                        HighlightAbility(travTile);
-                }
-            }
-        }
+        HighlightMoves(party);
 
         UpdateHighlightMap();
     }
@@ -191,14 +123,86 @@ public class HighlightManager : MonoBehaviour
     /// Highlight the tiles that the party can click to move to
     /// </summary>
     /// <param name="gridPosition"></param>
-    private void HighlightMoves(Vector3Int gridPosition)
+    public void HighlightMoves(Party party)
     {
-        AddHighlight(gridPosition, Highlight.Movement);
+        Vector3Int gridPosition = highlightMap.WorldToCell(party.transform.position);
+
+        // Highlight all tiles that the party can move to and all tiles that an ability can be used on
+        for (int x = -1; x <= 1; x++)
+        {
+            for (int y = -1; y <= 1; y++)
+            {
+                float distanceFromPlayer = Mathf.Abs(x) + Mathf.Abs(y);
+                if (distanceFromPlayer == 1)
+                {
+                    Vector3Int travTile = new Vector3Int(gridPosition.x + x, gridPosition.y + y, 0);
+                    if (party.CanMove(travTile))
+                        AddHighlight(travTile, Highlight.Movement);
+
+                    // For now, we can assume that all abilities act upon a particular tile, but if we add abilities
+                    // in the future that are just general world actions (like stasis), we would need some kind of UI
+                    // call to action for these.
+                    if (party.CanUseAbility(travTile))
+                        HighlightAbility(travTile);
+                }
+            }
+        }
     }
 
-    private void HighlightGuardLOS(Vector3Int gridPosition)
+    /// <summary>
+    /// Run through the list of guards in scene and calculate and store each's line of sight tiles
+    /// </summary>
+    public void HighlightGuardLOS(List<Guard> guards)
     {
-        AddHighlight(gridPosition, Highlight.LineOfSight);
+        Vector3Int gridPosition;
+        foreach (Guard guard in guards)
+        {
+            gridPosition = highlightMap.WorldToCell(guard.transform.position);
+            Vector3Int LOSTile;
+            switch (guard.facing)
+            {
+                case Directions.Up:
+                    LOSTile = new Vector3Int(gridPosition.x, gridPosition.y + 1, 0);
+                    for (int i = 0; i < 2; i++)
+                    {
+                        if (BlocksLOS(LOSTile))
+                            break;
+                        AddHighlight(LOSTile, Highlight.LineOfSight);
+                        LOSTile = new Vector3Int(LOSTile.x, LOSTile.y + 1, 0);
+                    }
+                    break;
+                case Directions.Down:
+                    LOSTile = new Vector3Int(gridPosition.x, gridPosition.y - 1, 0);
+                    for (int i = 0; i < 2; i++)
+                    {
+                        if (BlocksLOS(LOSTile))
+                            break;
+                        AddHighlight(LOSTile, Highlight.LineOfSight);
+                        LOSTile = new Vector3Int(LOSTile.x, LOSTile.y - 1, 0);
+                    }
+                    break;
+                case Directions.Left:
+                    LOSTile = new Vector3Int(gridPosition.x - 1, gridPosition.y, 0);
+                    for (int i = 0; i < 2; i++)
+                    {
+                        if (BlocksLOS(LOSTile))
+                            break;
+                        AddHighlight(LOSTile, Highlight.LineOfSight);
+                        LOSTile = new Vector3Int(LOSTile.x - 1, LOSTile.y, 0);
+                    }
+                    break;
+                case Directions.Right:
+                    LOSTile = new Vector3Int(gridPosition.x + 1, gridPosition.y, 0);
+                    for (int i = 0; i < 2; i++)
+                    {
+                        if (BlocksLOS(LOSTile))
+                            break;
+                        AddHighlight(LOSTile, Highlight.LineOfSight);
+                        LOSTile = new Vector3Int(LOSTile.x + 1, LOSTile.y, 0);
+                    }
+                    break;
+            }
+        }
     }
 
     private void HighlightAbility(Vector3Int gridPosition)

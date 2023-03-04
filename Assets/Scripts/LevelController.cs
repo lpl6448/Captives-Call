@@ -214,13 +214,21 @@ public class LevelController : MonoBehaviour
                 if (canMove || canUseAbility)
                 {
                     if (canMove && canUseAbility)
-                        print("BOTH??");
+                        print("BOTH??"); //I believe you will just use the ability -Nick
                     DoPreAction();
 
                     if (canUseAbility)
                         pm.party.UseAbility(clickGrid);
                     else
+                    {
+                        //Before the party moves, turn the guard and check if they would have been spotted
+                        //hm.HighlightGuardLOS(gm.guardList);
+                        hm.ClearHighlights();
+                        hm.HighlightTiles(pm.party, gm.guardList, dataFromTiles);
+                        Debug.Log("Can find guys " + hm.HasLOS(WorldToCell(pm.party.transform.position)));
+                        guardAttack();
                         pm.party.Move(clickGrid);
+                    }
 
                     //Check if the party has reached the exit
                     if (grid.WorldToCell(pm.party.transform.position) == grid.WorldToCell(exit.transform.position))
@@ -238,7 +246,7 @@ public class LevelController : MonoBehaviour
         {
             //Clear all of the highlights while the CPU takes its turn
             hm.ClearHighlights();
-            gm.MoveGuards(dataFromTiles);
+            gm.MoveGuards(dataFromTiles, hm);
             //Call at the end of cpu loop so highlight does not appear until the CPU turn is completed
             hm.HighlightTiles(pm.party, gm.guardList, dataFromTiles);
             //Check if player is in the guardLOS
@@ -294,7 +302,8 @@ public class LevelController : MonoBehaviour
 
     private void guardAttack()
     {
-        if (hm.HasLOS(hm.HighlightMap.WorldToCell(pm.party.transform.position)) ||
+        Debug.Log("Party at " + WorldToCell(pm.party.transform.position));
+        if (hm.HasLOS(WorldToCell(pm.party.transform.position)) ||
             gm.TouchingParty(pm.party))
             rs.Reset();
     }

@@ -27,7 +27,7 @@ public class GuardManager : MonoBehaviour
 
     }
 
-    public void MoveGuards(Dictionary<TileBase, TileData> dataFromTiles)
+    public void MoveGuards(Dictionary<TileBase, TileData> dataFromTiles, HighlightManager highlightManager)
     {
         foreach (Guard guard in guardList)
         {
@@ -55,6 +55,7 @@ public class GuardManager : MonoBehaviour
                             guard.ChangeDirections(Directions.Left);
                             break;
                     }
+                    highlightManager.HighlightGuardLOS(guardList);
                 }
                 guard.Move(gridPosition);
             }
