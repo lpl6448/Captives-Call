@@ -32,6 +32,8 @@ public class Guard : DynamicObject
     {
         if (mover is Party)
             return true; // Currently, the Party can occupy the same tile as a Guard (but the game ends instantly)
+        if (mover is Guard)
+            return true; // Guards can share a space
         return false;
     }
 
