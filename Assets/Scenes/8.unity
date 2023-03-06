@@ -707,7 +707,7 @@ PrefabInstance:
       objectReference: {fileID: 2146096142}
     - target: {fileID: 7277537200466364002, guid: bd2978dfa49d4c746969e86243596e29, type: 3}
       propertyPath: nextLevel
-      value: 1
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 7277537200466364002, guid: bd2978dfa49d4c746969e86243596e29, type: 3}
       propertyPath: initialDynamicObjects.Array.size

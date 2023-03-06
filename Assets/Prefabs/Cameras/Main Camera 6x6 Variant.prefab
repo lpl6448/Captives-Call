@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &601962248809967013
+--- !u!1001 &2136936931858498648
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -9,7 +9,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4400544333518821296, guid: 03f1a7ba79d00774697429ae0bc74468, type: 3}
       propertyPath: m_Name
-      value: Main Camera 5x5 Variant
+      value: Main Camera 6x6
       objectReference: {fileID: 0}
     - target: {fileID: 4400544333518821301, guid: 03f1a7ba79d00774697429ae0bc74468, type: 3}
       propertyPath: m_RootOrder
@@ -21,7 +21,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4400544333518821301, guid: 03f1a7ba79d00774697429ae0bc74468, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4400544333518821301, guid: 03f1a7ba79d00774697429ae0bc74468, type: 3}
       propertyPath: m_LocalPosition.z
@@ -33,15 +33,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4400544333518821301, guid: 03f1a7ba79d00774697429ae0bc74468, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4400544333518821301, guid: 03f1a7ba79d00774697429ae0bc74468, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4400544333518821301, guid: 03f1a7ba79d00774697429ae0bc74468, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4400544333518821301, guid: 03f1a7ba79d00774697429ae0bc74468, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -57,7 +57,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4400544333518821302, guid: 03f1a7ba79d00774697429ae0bc74468, type: 3}
       propertyPath: orthographic size
-      value: 3.5
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 03f1a7ba79d00774697429ae0bc74468, type: 3}
