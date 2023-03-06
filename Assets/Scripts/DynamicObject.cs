@@ -47,9 +47,7 @@ public abstract class DynamicObject : MonoBehaviour
     /// <param name="tilePosition">New grid position</param>
     public void UpdateTilePosition(Vector3Int tilePosition)
     {
-        LevelController.Instance.RemoveDynamicObject((Vector2Int)this.tilePosition, this);
         this.tilePosition = tilePosition;
-        LevelController.Instance.AddDynamicObject((Vector2Int)this.tilePosition, this);
     }
 
     /// <summary>
@@ -73,11 +71,21 @@ public abstract class DynamicObject : MonoBehaviour
     /// </summary>
     /// <param name="tilePosition">New grid position</param>
     /// <returns>IEnumerator used for coroutines (unused currently)</returns>
-    public virtual void Move(Vector3Int tilePosition)
+    /// <param name="context">Optional data passed in (about who moved this object, for example)</param>
+    public virtual void Move(Vector3Int tilePosition, object context)
     {
         UpdateTilePosition(tilePosition);
         transform.position = LevelController.Instance.CellToWorld(TilePosition);
         //TODO: REMOVE THIS LINE AFTER FIXING GAMEOBJECT ANCHOR POINT ISSUE
         transform.Translate(0.5f, 0.5f, 0.0f);
+    }
+
+    /// <summary>
+    /// Called when this DynamicObject has just been removed from the level's DynamicObject list
+    /// </summary>
+    /// <param name="context">Optional data passed in (about who destroyed this object, for example)</param>
+    public virtual void DestroyObject(object context)
+    {
+        Destroy(gameObject);
     }
 }

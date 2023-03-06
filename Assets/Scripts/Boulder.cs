@@ -31,7 +31,7 @@ public class Boulder : DynamicObject
             return false;
 
         // Boulder cannot move (yet) to a tile with another DynamicObject on it
-        foreach (DynamicObject collidingObj in LevelController.Instance.GetDynamicObjectsOnTile((Vector2Int)tilePosition))
+        foreach (DynamicObject collidingObj in LevelController.Instance.GetDynamicObjectsOnTile(tilePosition))
             if (!collidingObj.IsTraversable(this))
                 return false;
 
@@ -43,9 +43,9 @@ public class Boulder : DynamicObject
         return true;
     }
 
-    public override void Move(Vector3Int tilePosition)
+    public override void Move(Vector3Int tilePosition, object context)
     {
-        base.Move(tilePosition);
+        base.Move(tilePosition, context);
 
         // Destroy the tile that the boulder landed on if necessary
         TileBase tile = LevelController.Instance.wallMap.GetTile(tilePosition);
@@ -55,5 +55,10 @@ public class Boulder : DynamicObject
             if (data != null && tilesToDestroy.Contains(data))
                 LevelController.Instance.wallMap.SetTile(TilePosition, null);
         }
+
+        // If on a guard, crush the guard
+        List<Guard> guards = LevelController.Instance.GetDynamicObjectsOnTile<Guard>(tilePosition);
+        foreach (Guard guard in guards)
+            LevelController.Instance.DestroyDynamicObject(tilePosition, guard, this);
     }
 }

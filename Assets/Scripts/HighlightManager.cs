@@ -112,7 +112,7 @@ public class HighlightManager : MonoBehaviour
         if (target != null && !LevelController.Instance.GetTileData(target).isAccessible)
             return true;
 
-        foreach (DynamicObject dobj in LevelController.Instance.GetDynamicObjectsOnTile((Vector2Int)gridPosition))
+        foreach (DynamicObject dobj in LevelController.Instance.GetDynamicObjectsOnTile(gridPosition))
             if (dobj.BlocksLOS())
                 return true;
 

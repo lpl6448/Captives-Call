@@ -52,7 +52,7 @@ public class Party : DynamicObject
             return false;
 
         // Party cannot move to a tile with another DynamicObject on it if the object is not traversable
-        foreach (DynamicObject collidingObj in LevelController.Instance.GetDynamicObjectsOnTile((Vector2Int)tilePosition))
+        foreach (DynamicObject collidingObj in LevelController.Instance.GetDynamicObjectsOnTile(tilePosition))
             if (!collidingObj.IsTraversable(this))
                 return false;
 
@@ -84,9 +84,9 @@ public class Party : DynamicObject
             case PartyMember.Warlock:
                 // Telekinetic Push
                 // Since CanUseAbility returned true, there must be a boulder on the target tile that can move
-                Boulder boulder = LevelController.Instance.GetDynamicObjectsOnTile<Boulder>((Vector2Int)target)[0];
+                Boulder boulder = LevelController.Instance.GetDynamicObjectsOnTile<Boulder>(target)[0];
                 Vector3Int movementDir = target - TilePosition;
-                boulder.Move(target + movementDir);
+                LevelController.Instance.MoveDynamicObject(target + movementDir, boulder, this);
                 break;
         }
     }
@@ -106,7 +106,7 @@ public class Party : DynamicObject
                 if (Mathf.Abs(target.x - TilePosition.x) + Mathf.Abs(target.y - TilePosition.y) != 1)
                     return false;
 
-                List<Boulder> boulders = LevelController.Instance.GetDynamicObjectsOnTile<Boulder>((Vector2Int)target);
+                List<Boulder> boulders = LevelController.Instance.GetDynamicObjectsOnTile<Boulder>(target);
                 if (boulders.Count > 0)
                 {
                     Boulder boulder = boulders[0];

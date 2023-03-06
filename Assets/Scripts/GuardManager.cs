@@ -57,7 +57,7 @@ public class GuardManager : MonoBehaviour
                     }
                     highlightManager.HighlightGuardLOS(guardList);
                 }
-                guard.Move(gridPosition);
+                LevelController.Instance.MoveDynamicObject(gridPosition, guard);
             }
         }
     }
@@ -72,7 +72,7 @@ public class GuardManager : MonoBehaviour
     {
         // More concise code that uses the new DynamicObject grid functionality to check if any Guards are on the Party's tile.
         // I just used this to test the grid system, but you can revert to the commented code below if it's more readable.
-        return LevelController.Instance.GetDynamicObjectsOnTile<Guard>((Vector2Int)party.TilePosition).Count > 0;
+        return LevelController.Instance.GetDynamicObjectsOnTile<Guard>(party.TilePosition).Count > 0;
         //foreach (Guard guard in guardList)
         //{
         //    if (guard.transform.position == party.transform.position)

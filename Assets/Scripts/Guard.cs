@@ -34,6 +34,8 @@ public class Guard : DynamicObject
             return true; // Currently, the Party can occupy the same tile as a Guard (but the game ends instantly)
         if (mover is Guard)
             return true; // Guards can share a space
+        if (mover is Boulder)
+            return true; // Boulders can crush guards
         return false;
     }
 
@@ -45,7 +47,7 @@ public class Guard : DynamicObject
             return false;
 
         // Guard cannot move to a tile with another DynamicObject on it if the object is not traversable
-        foreach (DynamicObject collidingObj in LevelController.Instance.GetDynamicObjectsOnTile((Vector2Int)tilePosition))
+        foreach (DynamicObject collidingObj in LevelController.Instance.GetDynamicObjectsOnTile(tilePosition))
             if (!collidingObj.IsTraversable(this))
                 return false;
 
@@ -79,5 +81,12 @@ public class Guard : DynamicObject
             spriteRenderer.sprite = sprites[facing];
         else
             spriteRenderer.sprite = sprites[Directions.Static];
+    }
+
+    // Once we implement the new guard system, this won't be needed.
+    public override void DestroyObject(object context)
+    {
+        base.DestroyObject(context);
+        LevelController.Instance.gm.guardList.Remove(this);
     }
 }

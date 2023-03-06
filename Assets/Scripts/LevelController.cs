@@ -18,7 +18,7 @@ public class LevelController : MonoBehaviour
     [SerializeField]
     private PlayerManager pm;
     [SerializeField]
-    private GuardManager gm;
+    public GuardManager gm;
     [SerializeField]
     private ResetScene rs;
     //Get a reference to necessary grid items
@@ -67,9 +67,9 @@ public class LevelController : MonoBehaviour
     /// </summary>
     /// <param name="tile">2D integer vector of the tile to check</param>
     /// <returns>List of all DynamicObjects occupying the tile</returns>
-    public List<DynamicObject> GetDynamicObjectsOnTile(Vector2Int tile)
+    public List<DynamicObject> GetDynamicObjectsOnTile(Vector3Int tile)
     {
-        if (dynamicObjectsGrid.TryGetValue(tile, out List<DynamicObject> list))
+        if (dynamicObjectsGrid.TryGetValue((Vector2Int)tile, out List<DynamicObject> list))
             return list;
         else
             return new List<DynamicObject>();
@@ -80,9 +80,9 @@ public class LevelController : MonoBehaviour
     /// </summary>
     /// <param name="tile">2D integer vector of the tile to check</param>
     /// <returns>List of all DynamicObjects, of type T, occupying the tile</returns>
-    public List<T> GetDynamicObjectsOnTile<T>(Vector2Int tile) where T : DynamicObject
+    public List<T> GetDynamicObjectsOnTile<T>(Vector3Int tile) where T : DynamicObject
     {
-        if (dynamicObjectsGrid.TryGetValue(tile, out List<DynamicObject> allList))
+        if (dynamicObjectsGrid.TryGetValue((Vector2Int)tile, out List<DynamicObject> allList))
         {
             List<T> list = new List<T>();
             foreach (DynamicObject dobj in allList)
@@ -99,12 +99,26 @@ public class LevelController : MonoBehaviour
     /// </summary>
     /// <param name="tile">2D integer vector of the tile that the DynamicObject occupies</param>
     /// <param name="dobj">DynamicObject to add</param>
-    public void AddDynamicObject(Vector2Int tile, DynamicObject dobj)
+    public void AddDynamicObject(Vector3Int tile, DynamicObject dobj)
     {
-        if (dynamicObjectsGrid.TryGetValue(tile, out List<DynamicObject> list))
+        if (dynamicObjectsGrid.TryGetValue((Vector2Int)tile, out List<DynamicObject> list))
             list.Add(dobj);
         else
-            dynamicObjectsGrid.Add(tile, new List<DynamicObject>() { dobj });
+            dynamicObjectsGrid.Add((Vector2Int)tile, new List<DynamicObject>() { dobj });
+    }
+
+    /// <summary>
+    /// Moves the DynamicObject to the indicated tile, updating the dynamicObjectsGrid and
+    /// calling the Move() function on the DynamicObject
+    /// </summary>
+    /// <param name="tile">Grid position to move this object to</param>
+    /// <param name="dobj">DynamicObject to move</param>
+    /// <param name="context">Optional data passed in (about who moved this object, for example)</param>
+    public void MoveDynamicObject(Vector3Int tile, DynamicObject dobj, object context = null)
+    {
+        RemoveDynamicObject(dobj.TilePosition, dobj);
+        AddDynamicObject(tile, dobj);
+        dobj.Move(tile, context);
     }
 
     /// <summary>
@@ -112,17 +126,30 @@ public class LevelController : MonoBehaviour
     /// </summary>
     /// <param name="tile">2D integer vector of the tile that the DynamicObject occupied before</param>
     /// <param name="dobj">DynamicObject to remove</param>
-    public bool RemoveDynamicObject(Vector2Int tile, DynamicObject dobj)
+    private bool RemoveDynamicObject(Vector3Int tile, DynamicObject dobj)
     {
-        if (dynamicObjectsGrid.TryGetValue(tile, out List<DynamicObject> list))
+        if (dynamicObjectsGrid.TryGetValue((Vector2Int)tile, out List<DynamicObject> list))
         {
             bool removed = list.Remove(dobj);
             if (list.Count == 0)
-                dynamicObjectsGrid.Remove(tile);
+                dynamicObjectsGrid.Remove((Vector2Int)tile);
             return removed;
         }
         else
             return false;
+    }
+
+    /// <summary>
+    /// Removes the given DynamicObject from the DynamicObjects grid and calls Destroy() on the object
+    /// </summary>
+    /// <param name="tile">2D integer vector of the tile that the DynamicObject occupied before</param>
+    /// <param name="dobj">DynamicObject to remove</param>
+    /// <param name="context">Optional data passed in (about who destroyed this object, for example)</param>
+    public void DestroyDynamicObject(Vector3Int tile, DynamicObject dobj, object context = null)
+    {
+        RemoveDynamicObject(tile, dobj);
+        activeDynamicObjects.Remove(dobj);
+        dobj.DestroyObject(context);
     }
 
     /// <summary>
@@ -179,7 +206,9 @@ public class LevelController : MonoBehaviour
         foreach (DynamicObject dobj in activeDynamicObjects)
         {
             dobj.Initialize();
-            dobj.UpdateTilePosition(WorldToCell(dobj.transform.position));
+            Vector3Int tilePos = WorldToCell(dobj.transform.position);
+            AddDynamicObject(tilePos, dobj);
+            dobj.UpdateTilePosition(tilePos);
         }
 
 
@@ -229,7 +258,7 @@ public class LevelController : MonoBehaviour
                         //guardAttack();
 
                         lastPartyGrid = pm.party.TilePosition;
-                        pm.party.Move(clickGrid);
+                        MoveDynamicObject(clickGrid, pm.party);
                     }
 
                     //Check if the party has reached the exit
@@ -312,7 +341,7 @@ public class LevelController : MonoBehaviour
         {
             // If any guards on the party's previous tile have just turned toward the player this turn,
             // the player technically collided with them.
-            foreach (Guard guard in GetDynamicObjectsOnTile<Guard>((Vector2Int)lastPartyGrid))
+            foreach (Guard guard in GetDynamicObjectsOnTile<Guard>(lastPartyGrid))
                 if (gm.toTranslate(guard) == lastPartyGrid - pm.party.TilePosition)
                 {
                     rs.Reset();
