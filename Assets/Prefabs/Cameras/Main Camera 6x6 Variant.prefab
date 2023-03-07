@@ -9,7 +9,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4400544333518821296, guid: 03f1a7ba79d00774697429ae0bc74468, type: 3}
       propertyPath: m_Name
-      value: Main Camera 6x6
+      value: Main Camera 6x6 Variant
       objectReference: {fileID: 0}
     - target: {fileID: 4400544333518821301, guid: 03f1a7ba79d00774697429ae0bc74468, type: 3}
       propertyPath: m_RootOrder
@@ -58,6 +58,10 @@ PrefabInstance:
     - target: {fileID: 4400544333518821302, guid: 03f1a7ba79d00774697429ae0bc74468, type: 3}
       propertyPath: orthographic size
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4400544333518821302, guid: 03f1a7ba79d00774697429ae0bc74468, type: 3}
+      propertyPath: m_NormalizedViewPortRect.width
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 03f1a7ba79d00774697429ae0bc74468, type: 3}

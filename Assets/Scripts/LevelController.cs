@@ -289,7 +289,6 @@ public class LevelController : MonoBehaviour
                     //hm.HighlightGuardLOS(gm.guardList);
                     hm.ClearHighlights();
                     hm.HighlightTiles(pm.party, gm.guardList, dataFromTiles);
-                    Debug.Log("Can find guys " + hm.HasLOS(WorldToCell(pm.party.transform.position)));
                     //guardAttack();
 
                     lastPartyGrid = pm.party.TilePosition;
@@ -360,7 +359,6 @@ public class LevelController : MonoBehaviour
 
     private void guardAttack()
     {
-        Debug.Log("Party at " + WorldToCell(pm.party.transform.position));
         if (hm.HasLOS(WorldToCell(pm.party.transform.position)) ||
             gm.TouchingParty(pm.party))
             rs.Reset();

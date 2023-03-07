@@ -62,7 +62,6 @@ public class HighlightManager : MonoBehaviour
     /// <returns>Whether the gridPosition is highlighted as an LOS tile</returns>
     public bool HasLOS(Vector3Int gridPosition)
     {
-        Debug.Log("Has LOS Grid = " + gridPosition);
         if (highlighted.TryGetValue(gridPosition, out Highlight highlight))
             return highlight.HasFlag(Highlight.LineOfSight);
         else
