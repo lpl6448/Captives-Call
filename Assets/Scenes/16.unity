@@ -162,6 +162,10 @@ PrefabInstance:
       propertyPath: highlightMap
       value: 
       objectReference: {fileID: 1484695273}
+    - target: {fileID: 7277537200258545587, guid: bd2978dfa49d4c746969e86243596e29, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7277537200466364001, guid: bd2978dfa49d4c746969e86243596e29, type: 3}
       propertyPath: m_RootOrder
       value: 2
