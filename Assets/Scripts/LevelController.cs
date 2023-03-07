@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -51,9 +52,13 @@ public class LevelController : MonoBehaviour
     /// </summary>
     private List<DynamicObject> activeDynamicObjects;
     /// <summary>
-    /// Diciontary that holds all DynamicObjects currently on the grid
+    /// Dictionary that holds all DynamicObjects currently on the grid
     /// </summary>
     private Dictionary<Vector2Int, List<DynamicObject>> dynamicObjectsGrid;
+    /// <summary>
+    /// Dictionary that holds all active DynamicObjects by type
+    /// </summary>
+    private Dictionary<Type, List<DynamicObject>> dynamicObjectsByType;
     private Vector3Int lastPartyGrid;
     //TODO: REPLACE TO TRIGGER ON LEVEL LOAD ONCE WE IMPLEMENT THAT
     bool spawnHighlights;
@@ -85,6 +90,24 @@ public class LevelController : MonoBehaviour
                 if (dobj is T)
                     list.Add(dobj as T);
             return list;
+        }
+        else
+            return new List<T>();
+    }
+
+    /// <summary>
+    /// Gets a list of all DynamicObjects of type T that are on the map
+    /// </summary>
+    /// <typeparam name="T">Type of DynamicObject to find on the map</typeparam>
+    /// <returns>List of all DynamicObjects (type T) on the map</returns>
+    public List<T> GetDynamicObjectsByType<T>() where T : DynamicObject
+    {
+        if (dynamicObjectsByType.TryGetValue(typeof(T), out List<DynamicObject> list))
+        {
+            List<T> listType = new List<T>();
+            foreach (DynamicObject dobj in list)
+                listType.Add(dobj as T);
+            return listType;
         }
         else
             return new List<T>();
@@ -146,6 +169,13 @@ public class LevelController : MonoBehaviour
         RemoveDynamicObject(tile, dobj);
         activeDynamicObjects.Remove(dobj);
         dobj.DestroyObject(context);
+
+        if (dynamicObjectsByType.TryGetValue(dobj.GetType(), out List<DynamicObject> list))
+        {
+            list.Remove(dobj);
+            if (list.Count == 0)
+                dynamicObjectsByType.Remove(dobj.GetType());
+        }
     }
 
     /// <summary>
@@ -198,14 +228,19 @@ public class LevelController : MonoBehaviour
         // Initialize all DynamicObjects
         activeDynamicObjects = new List<DynamicObject>(initialDynamicObjects);
         dynamicObjectsGrid = new Dictionary<Vector2Int, List<DynamicObject>>();
+        dynamicObjectsByType = new Dictionary<Type, List<DynamicObject>>();
         foreach (DynamicObject dobj in activeDynamicObjects)
         {
             dobj.Initialize();
             Vector3Int tilePos = WorldToCell(dobj.transform.position);
             AddDynamicObject(tilePos, dobj);
             dobj.UpdateTilePosition(tilePos);
-        }
 
+            if (dynamicObjectsByType.TryGetValue(dobj.GetType(), out List<DynamicObject> list))
+                list.Add(dobj);
+            else
+                dynamicObjectsByType.Add(dobj.GetType(), new List<DynamicObject>() { dobj });
+        }
 
         dataFromTiles = new Dictionary<TileBase, TileData>();
         foreach (var tileData in tileDatas)
