@@ -156,6 +156,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1123c4d9f21207f44ae4206b4b795665, type: 2}
   - {fileID: 11400000, guid: 4fc7997a89f538143a6030c0e32cfc36, type: 2}
   - {fileID: 11400000, guid: acfb537d9cd0ec84d8057c25c6685f79, type: 2}
+  - {fileID: 11400000, guid: 18053eec50863d947aace631261291f1, type: 2}
   initialDynamicObjects: []
 --- !u!1 &7277537201348297681
 GameObject:

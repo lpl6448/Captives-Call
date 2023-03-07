@@ -229,6 +229,9 @@ public class LevelController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
             Application.Quit();
 
+        if (Input.GetKeyDown(KeyCode.R))
+            rs.Reset();
+
         if (!spawnHighlights)
         {
             hm.HighlightTiles(pm.party, gm.guardList, dataFromTiles);
