@@ -303,7 +303,7 @@ public class LevelController : MonoBehaviour
     /// </summary>
     private void DoPostAction()
     {
-        foreach (DynamicObject dobj in activeDynamicObjects)
+        foreach (DynamicObject dobj in new List<DynamicObject>(activeDynamicObjects))
             dobj.PostAction();
     }
 

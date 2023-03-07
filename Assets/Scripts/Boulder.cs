@@ -55,10 +55,13 @@ public class Boulder : DynamicObject
             if (data != null && tilesToDestroy.Contains(data))
                 LevelController.Instance.wallMap.SetTile(TilePosition, null);
         }
+    }
 
+    public override void PostAction()
+    {
         // If on a guard, crush the guard
-        List<Guard> guards = LevelController.Instance.GetDynamicObjectsOnTile<Guard>(tilePosition);
+        List<Guard> guards = LevelController.Instance.GetDynamicObjectsOnTile<Guard>(TilePosition);
         foreach (Guard guard in guards)
-            LevelController.Instance.DestroyDynamicObject(tilePosition, guard, this);
+            LevelController.Instance.DestroyDynamicObject(TilePosition, guard, this);
     }
 }
