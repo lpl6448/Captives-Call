@@ -277,6 +277,10 @@ public class LevelController : MonoBehaviour
             {
                 DoPreAction();
 
+                //Clear all of the highlights while the CPU takes its turn
+                hm.ClearHighlights();
+                gm.MoveGuards(dataFromTiles, hm);
+
                 if (canUseAbility)
                     pm.party.UseAbility(clickGrid);
                 else
@@ -299,14 +303,10 @@ public class LevelController : MonoBehaviour
                     return;
                 }
 
-                //Clear all of the highlights while the CPU takes its turn
-                hm.ClearHighlights();
-                gm.MoveGuards(dataFromTiles, hm);
-                //Call at the end of cpu loop so highlight does not appear until the CPU turn is completed
-                hm.HighlightTiles(pm.party, gm.guardList, dataFromTiles);
-
                 DoPostAction();
 
+                //Call at the end of cpu loop so highlight does not appear until the CPU turn is completed
+                hm.HighlightTiles(pm.party, gm.guardList, dataFromTiles);
                 //Check if player is in the guardLOS
                 guardAttack();
             }

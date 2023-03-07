@@ -46,19 +46,19 @@ public class Boulder : DynamicObject
     public override void Move(Vector3Int tilePosition, object context)
     {
         base.Move(tilePosition, context);
+    }
 
+    public override void PostAction()
+    {
         // Destroy the tile that the boulder landed on if necessary
-        TileBase tile = LevelController.Instance.wallMap.GetTile(tilePosition);
+        TileBase tile = LevelController.Instance.wallMap.GetTile(TilePosition);
         if (tile != null)
         {
             TileData data = LevelController.Instance.GetTileData(tile);
             if (data != null && tilesToDestroy.Contains(data))
                 LevelController.Instance.wallMap.SetTile(TilePosition, null);
         }
-    }
 
-    public override void PostAction()
-    {
         // If on a guard, crush the guard
         List<Guard> guards = LevelController.Instance.GetDynamicObjectsOnTile<Guard>(TilePosition);
         foreach (Guard guard in guards)
