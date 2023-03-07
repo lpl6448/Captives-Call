@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -51,13 +52,13 @@ public class LevelController : MonoBehaviour
     /// </summary>
     private List<DynamicObject> activeDynamicObjects;
     /// <summary>
-    /// Diciontary that holds all DynamicObjects currently on the grid
+    /// Dictionary that holds all DynamicObjects currently on the grid
     /// </summary>
     private Dictionary<Vector2Int, List<DynamicObject>> dynamicObjectsGrid;
     /// <summary>
-    /// Field to control if the game runs player or CPU logic
+    /// Dictionary that holds all active DynamicObjects by type
     /// </summary>
-    private bool playerTurn;
+    private Dictionary<Type, List<DynamicObject>> dynamicObjectsByType;
     private Vector3Int lastPartyGrid;
     //TODO: REPLACE TO TRIGGER ON LEVEL LOAD ONCE WE IMPLEMENT THAT
     bool spawnHighlights;
@@ -89,6 +90,24 @@ public class LevelController : MonoBehaviour
                 if (dobj is T)
                     list.Add(dobj as T);
             return list;
+        }
+        else
+            return new List<T>();
+    }
+
+    /// <summary>
+    /// Gets a list of all DynamicObjects of type T that are on the map
+    /// </summary>
+    /// <typeparam name="T">Type of DynamicObject to find on the map</typeparam>
+    /// <returns>List of all DynamicObjects (type T) on the map</returns>
+    public List<T> GetDynamicObjectsByType<T>() where T : DynamicObject
+    {
+        if (dynamicObjectsByType.TryGetValue(typeof(T), out List<DynamicObject> list))
+        {
+            List<T> listType = new List<T>();
+            foreach (DynamicObject dobj in list)
+                listType.Add(dobj as T);
+            return listType;
         }
         else
             return new List<T>();
@@ -150,6 +169,13 @@ public class LevelController : MonoBehaviour
         RemoveDynamicObject(tile, dobj);
         activeDynamicObjects.Remove(dobj);
         dobj.DestroyObject(context);
+
+        if (dynamicObjectsByType.TryGetValue(dobj.GetType(), out List<DynamicObject> list))
+        {
+            list.Remove(dobj);
+            if (list.Count == 0)
+                dynamicObjectsByType.Remove(dobj.GetType());
+        }
     }
 
     /// <summary>
@@ -197,20 +223,24 @@ public class LevelController : MonoBehaviour
     void Start()
     {
         spawnHighlights = false;
-        playerTurn = true;
         lastPartyGrid = pm.party.TilePosition;
 
         // Initialize all DynamicObjects
         activeDynamicObjects = new List<DynamicObject>(initialDynamicObjects);
         dynamicObjectsGrid = new Dictionary<Vector2Int, List<DynamicObject>>();
+        dynamicObjectsByType = new Dictionary<Type, List<DynamicObject>>();
         foreach (DynamicObject dobj in activeDynamicObjects)
         {
             dobj.Initialize();
             Vector3Int tilePos = WorldToCell(dobj.transform.position);
             AddDynamicObject(tilePos, dobj);
             dobj.UpdateTilePosition(tilePos);
-        }
 
+            if (dynamicObjectsByType.TryGetValue(dobj.GetType(), out List<DynamicObject> list))
+                list.Add(dobj);
+            else
+                dynamicObjectsByType.Add(dobj.GetType(), new List<DynamicObject>() { dobj });
+        }
 
         dataFromTiles = new Dictionary<TileBase, TileData>();
         foreach (var tileData in tileDatas)
@@ -238,54 +268,48 @@ public class LevelController : MonoBehaviour
             spawnHighlights = true;
         }
 
-        if (playerTurn)
+        if (Input.GetMouseButtonDown(0))
         {
-            if (Input.GetMouseButtonDown(0))
+            Vector3Int clickGrid = grid.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+            bool canMove = validMovementClick(clickGrid);
+            bool canUseAbility = validAbilityClick(clickGrid);
+            if (canMove || canUseAbility)
             {
-                Vector3Int clickGrid = grid.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                bool canMove = validMovementClick(clickGrid);
-                bool canUseAbility = validAbilityClick(clickGrid);
-                if (canMove || canUseAbility)
+                DoPreAction();
+
+                if (canUseAbility)
+                    pm.party.UseAbility(clickGrid);
+                else
                 {
-                    DoPreAction();
+                    //Before the party moves, turn the guard and check if they would have been spotted
+                    //hm.HighlightGuardLOS(gm.guardList);
+                    hm.ClearHighlights();
+                    hm.HighlightTiles(pm.party, gm.guardList, dataFromTiles);
+                    Debug.Log("Can find guys " + hm.HasLOS(WorldToCell(pm.party.transform.position)));
+                    //guardAttack();
 
-                    if (canUseAbility)
-                        pm.party.UseAbility(clickGrid);
-                    else
-                    {
-                        //Before the party moves, turn the guard and check if they would have been spotted
-                        //hm.HighlightGuardLOS(gm.guardList);
-                        hm.ClearHighlights();
-                        hm.HighlightTiles(pm.party, gm.guardList, dataFromTiles);
-                        Debug.Log("Can find guys " + hm.HasLOS(WorldToCell(pm.party.transform.position)));
-                        //guardAttack();
-
-                        lastPartyGrid = pm.party.TilePosition;
-                        MoveDynamicObject(clickGrid, pm.party);
-                    }
-
-                    //Check if the party has reached the exit
-                    if (grid.WorldToCell(pm.party.transform.position) == grid.WorldToCell(exit.transform.position))
-                    {
-                        SceneManager.LoadScene(nextLevel);
-                        return;
-                    }
-
-                    DoPostAction();
-                    playerTurn = false;
+                    lastPartyGrid = pm.party.TilePosition;
+                    MoveDynamicObject(clickGrid, pm.party);
                 }
+
+                //Check if the party has reached the exit
+                if (grid.WorldToCell(pm.party.transform.position) == grid.WorldToCell(exit.transform.position))
+                {
+                    SceneManager.LoadScene(nextLevel);
+                    return;
+                }
+
+                //Clear all of the highlights while the CPU takes its turn
+                hm.ClearHighlights();
+                gm.MoveGuards(dataFromTiles, hm);
+                //Call at the end of cpu loop so highlight does not appear until the CPU turn is completed
+                hm.HighlightTiles(pm.party, gm.guardList, dataFromTiles);
+
+                DoPostAction();
+
+                //Check if player is in the guardLOS
+                guardAttack();
             }
-        }
-        else
-        {
-            //Clear all of the highlights while the CPU takes its turn
-            hm.ClearHighlights();
-            gm.MoveGuards(dataFromTiles, hm);
-            //Call at the end of cpu loop so highlight does not appear until the CPU turn is completed
-            hm.HighlightTiles(pm.party, gm.guardList, dataFromTiles);
-            //Check if player is in the guardLOS
-            guardAttack();
-            playerTurn = true;
         }
     }
 
