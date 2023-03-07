@@ -54,10 +54,6 @@ public class LevelController : MonoBehaviour
     /// Diciontary that holds all DynamicObjects currently on the grid
     /// </summary>
     private Dictionary<Vector2Int, List<DynamicObject>> dynamicObjectsGrid;
-    /// <summary>
-    /// Field to control if the game runs player or CPU logic
-    /// </summary>
-    private bool playerTurn;
     private Vector3Int lastPartyGrid;
     //TODO: REPLACE TO TRIGGER ON LEVEL LOAD ONCE WE IMPLEMENT THAT
     bool spawnHighlights;
@@ -197,7 +193,6 @@ public class LevelController : MonoBehaviour
     void Start()
     {
         spawnHighlights = false;
-        playerTurn = true;
         lastPartyGrid = pm.party.TilePosition;
 
         // Initialize all DynamicObjects
@@ -238,54 +233,48 @@ public class LevelController : MonoBehaviour
             spawnHighlights = true;
         }
 
-        if (playerTurn)
+        if (Input.GetMouseButtonDown(0))
         {
-            if (Input.GetMouseButtonDown(0))
+            Vector3Int clickGrid = grid.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+            bool canMove = validMovementClick(clickGrid);
+            bool canUseAbility = validAbilityClick(clickGrid);
+            if (canMove || canUseAbility)
             {
-                Vector3Int clickGrid = grid.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                bool canMove = validMovementClick(clickGrid);
-                bool canUseAbility = validAbilityClick(clickGrid);
-                if (canMove || canUseAbility)
+                DoPreAction();
+
+                if (canUseAbility)
+                    pm.party.UseAbility(clickGrid);
+                else
                 {
-                    DoPreAction();
+                    //Before the party moves, turn the guard and check if they would have been spotted
+                    //hm.HighlightGuardLOS(gm.guardList);
+                    hm.ClearHighlights();
+                    hm.HighlightTiles(pm.party, gm.guardList, dataFromTiles);
+                    Debug.Log("Can find guys " + hm.HasLOS(WorldToCell(pm.party.transform.position)));
+                    //guardAttack();
 
-                    if (canUseAbility)
-                        pm.party.UseAbility(clickGrid);
-                    else
-                    {
-                        //Before the party moves, turn the guard and check if they would have been spotted
-                        //hm.HighlightGuardLOS(gm.guardList);
-                        hm.ClearHighlights();
-                        hm.HighlightTiles(pm.party, gm.guardList, dataFromTiles);
-                        Debug.Log("Can find guys " + hm.HasLOS(WorldToCell(pm.party.transform.position)));
-                        //guardAttack();
-
-                        lastPartyGrid = pm.party.TilePosition;
-                        MoveDynamicObject(clickGrid, pm.party);
-                    }
-
-                    //Check if the party has reached the exit
-                    if (grid.WorldToCell(pm.party.transform.position) == grid.WorldToCell(exit.transform.position))
-                    {
-                        SceneManager.LoadScene(nextLevel);
-                        return;
-                    }
-
-                    DoPostAction();
-                    playerTurn = false;
+                    lastPartyGrid = pm.party.TilePosition;
+                    MoveDynamicObject(clickGrid, pm.party);
                 }
+
+                //Check if the party has reached the exit
+                if (grid.WorldToCell(pm.party.transform.position) == grid.WorldToCell(exit.transform.position))
+                {
+                    SceneManager.LoadScene(nextLevel);
+                    return;
+                }
+
+                //Clear all of the highlights while the CPU takes its turn
+                hm.ClearHighlights();
+                gm.MoveGuards(dataFromTiles, hm);
+                //Call at the end of cpu loop so highlight does not appear until the CPU turn is completed
+                hm.HighlightTiles(pm.party, gm.guardList, dataFromTiles);
+
+                DoPostAction();
+
+                //Check if player is in the guardLOS
+                guardAttack();
             }
-        }
-        else
-        {
-            //Clear all of the highlights while the CPU takes its turn
-            hm.ClearHighlights();
-            gm.MoveGuards(dataFromTiles, hm);
-            //Call at the end of cpu loop so highlight does not appear until the CPU turn is completed
-            hm.HighlightTiles(pm.party, gm.guardList, dataFromTiles);
-            //Check if player is in the guardLOS
-            guardAttack();
-            playerTurn = true;
         }
     }
 
