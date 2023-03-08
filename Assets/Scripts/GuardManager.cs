@@ -41,7 +41,7 @@ public class GuardManager : MonoBehaviour
                     gridPosition -= translate * 2;
                     //Don't move if tile behind isn't accessible either
                     if (!guard.CanMove(gridPosition))
-                        return;
+                        continue;
                     //Reverse guard.facing
                     switch (guard.facing)
                     {
