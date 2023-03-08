@@ -124,7 +124,7 @@ public class HighlightManager : MonoBehaviour
     /// <param name="gridPosition"></param>
     public void HighlightMoves(Party party)
     {
-        Vector3Int gridPosition = highlightMap.WorldToCell(party.transform.position);
+        Vector3Int gridPosition = party.TilePosition;
 
         // Highlight all tiles that the party can move to and all tiles that an ability can be used on
         for (int x = -1; x <= 1; x++)
@@ -156,7 +156,7 @@ public class HighlightManager : MonoBehaviour
         Vector3Int gridPosition;
         foreach (Guard guard in guards)
         {
-            gridPosition = highlightMap.WorldToCell(guard.transform.position);
+            gridPosition = guard.TilePosition;
             Vector3Int LOSTile;
             switch (guard.facing)
             {
