@@ -11,10 +11,12 @@ public class MainMenuController : MonoBehaviour
     }
     public void StartGame()
     {
+        Destroy(GameObject.FindGameObjectsWithTag("TitleMusic")[0]);
         SceneManager.LoadScene("1");
     }
     public void ToMainMenu()
     {
+        Destroy(GameObject.FindGameObjectsWithTag("LevelMusic")[0]);
         SceneManager.LoadScene("Title");
     }
     public void QuitGame()

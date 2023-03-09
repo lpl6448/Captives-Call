@@ -22,6 +22,8 @@ public class LevelController : MonoBehaviour
     public GuardManager gm;
     [SerializeField]
     private ResetScene rs;
+    [SerializeField]
+    private FxController am;
     //Get a reference to necessary grid items
     [SerializeField]
     private Grid grid;
@@ -275,6 +277,7 @@ public class LevelController : MonoBehaviour
             bool canUseAbility = validAbilityClick(clickGrid);
             if (canMove || canUseAbility)
             {
+                am.GoodClick();
                 DoPreAction();
 
                 //Clear all of the highlights while the CPU takes its turn
@@ -282,7 +285,7 @@ public class LevelController : MonoBehaviour
                 gm.MoveGuards(dataFromTiles, hm);
 
                 if (canUseAbility)
-                    pm.party.UseAbility(clickGrid);
+                    pm.party.UseAbility(clickGrid, am);
                 else
                 {
                     //Before the party moves, turn the guard and check if they would have been spotted
@@ -298,7 +301,8 @@ public class LevelController : MonoBehaviour
                 //Check if the party has reached the exit
                 if (grid.WorldToCell(pm.party.transform.position) == grid.WorldToCell(exit.transform.position))
                 {
-                    SceneManager.LoadScene(nextLevel);
+                    am.Victory(nextLevel);
+                    //SceneManager.LoadScene(nextLevel);
                     return;
                 }
 
@@ -308,6 +312,10 @@ public class LevelController : MonoBehaviour
                 hm.HighlightTiles(pm.party, gm.guardList, dataFromTiles);
                 //Check if player is in the guardLOS
                 guardAttack();
+            }
+            else
+            {
+                am.BadClick();
             }
         }
     }
@@ -361,7 +369,9 @@ public class LevelController : MonoBehaviour
     {
         if (hm.HasLOS(WorldToCell(pm.party.transform.position)) ||
             gm.TouchingParty(pm.party))
-            rs.Reset();
+        {
+            am.Defeat(rs);
+        }
         else
         {
             // If any guards on the party's previous tile have just turned toward the player this turn,
@@ -369,7 +379,7 @@ public class LevelController : MonoBehaviour
             foreach (Guard guard in GetDynamicObjectsOnTile<Guard>(lastPartyGrid))
                 if (gm.toTranslate(guard) == lastPartyGrid - pm.party.TilePosition)
                 {
-                    rs.Reset();
+                    am.Defeat(rs);
                     return;
                 }
         }

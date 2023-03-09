@@ -77,7 +77,7 @@ public class Party : DynamicObject
     /// </summary>
     /// <param name="target">Optional grid position passed in for the action</param>
     /// <returns>IEnumerator used for coroutines (for animating--unused currently)</returns>
-    public void UseAbility(Vector3Int target)
+    public void UseAbility(Vector3Int target, FxController audio)
     {
         switch (currentMember)
         {
@@ -87,6 +87,7 @@ public class Party : DynamicObject
                 Boulder boulder = LevelController.Instance.GetDynamicObjectsOnTile<Boulder>(target)[0];
                 Vector3Int movementDir = target - TilePosition;
                 LevelController.Instance.MoveDynamicObject(target + movementDir, boulder, this);
+                audio.Boulder();
                 break;
         }
     }
