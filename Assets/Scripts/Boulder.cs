@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Tilemaps;
+using System.Collections;
 using System.Collections.Generic;
 
 public class Boulder : DynamicObject
@@ -43,25 +44,47 @@ public class Boulder : DynamicObject
         return true;
     }
 
-    public override void Move(Vector3Int tilePosition, object context)
-    {
-        base.Move(tilePosition, context);
-    }
-
     public override void PostAction()
     {
+        // The addition of animations made it so the logic had to be moved to the Move() function.
+        // This actually is probably okay because we will be phasing out PreAction() and PostAction() somewhat.
+    }
+
+    public override void Move(Vector3Int tilePosition, object context)
+    {
         // Destroy the tile that the boulder landed on if necessary
-        TileBase tile = LevelController.Instance.wallMap.GetTile(TilePosition);
+        bool destroyTile = false;
+        TileBase tile = LevelController.Instance.GetWallTile(TilePosition);
         if (tile != null)
         {
             TileData data = LevelController.Instance.GetTileData(tile);
             if (data != null && tilesToDestroy.Contains(data))
-                LevelController.Instance.wallMap.SetTile(TilePosition, null);
+            {
+                LevelController.Instance.DeactivateWallTile(TilePosition);
+                destroyTile = true;
+            }
         }
 
         // If on a guard, crush the guard
         List<Guard> guards = LevelController.Instance.GetDynamicObjectsOnTile<Guard>(TilePosition);
         foreach (Guard guard in guards)
             LevelController.Instance.DestroyDynamicObject(TilePosition, guard, this);
+
+        Vector3 start = transform.position;
+        Vector3 end = LevelController.Instance.CellToWorld(TilePosition) + new Vector3(0.5f, 0.5f, 0);
+        StartAnimation(MoveAnimation(start, end, destroyTile, guards));
+    }
+
+    private IEnumerator MoveAnimation(Vector3 start, Vector3 end, bool destroyTile, List<Guard> destroyGuards)
+    {
+        yield return AnimationUtility.StandardLerp(transform, start, end, 0.5f);
+
+        if (destroyTile)
+            LevelController.Instance.wallMap.SetTile(TilePosition, null);
+        if (destroyGuards != null)
+            foreach (Guard guard in destroyGuards)
+                guard.AnimationTrigger("crush");
+
+        StopAnimation();
     }
 }

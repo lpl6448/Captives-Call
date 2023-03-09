@@ -144,4 +144,33 @@ public class Party : DynamicObject
         SpriteRenderer spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = charSprites[currentMember];
     }
+
+    public override void Move(Vector3Int tilePosition, object context)
+    {
+        Vector3 start = transform.position;
+        Vector3 end = LevelController.Instance.CellToWorld(TilePosition) + new Vector3(0.5f, 0.5f, 0);
+        StartAnimation(MoveAnimation(start, end));
+    }
+
+    public override void DestroyObject(object context)
+    {
+        StartAnimation(DestroyAnimation(context is string && context as string == "collide-half"));
+    }
+
+    private IEnumerator MoveAnimation(Vector3 start, Vector3 end)
+    {
+        yield return AnimationUtility.StandardLerp(transform, start, end, 0.5f);
+        StopAnimation();
+    }
+
+    private IEnumerator DestroyAnimation(bool collideHalf)
+    {
+        if (collideHalf)
+            yield return new WaitForSeconds(0.25f);
+        else
+            yield return new WaitForSeconds(0.5f);
+
+        StopAnimation();
+        Destroy(gameObject);
+    }
 }

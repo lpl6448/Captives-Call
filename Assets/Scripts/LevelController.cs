@@ -61,9 +61,25 @@ public class LevelController : MonoBehaviour
     /// Dictionary that holds all active DynamicObjects by type
     /// </summary>
     private Dictionary<Type, List<DynamicObject>> dynamicObjectsByType;
+    /// <summary>
+    /// Grid position that the party occupied last turn, used to destroy the party if it collides head-on with a guard
+    /// </summary>
     private Vector3Int lastPartyGrid;
     //TODO: REPLACE TO TRIGGER ON LEVEL LOAD ONCE WE IMPLEMENT THAT
     bool spawnHighlights;
+
+    /// <summary>
+    /// List of DynamicObjects that are currently blocking player input
+    /// </summary>
+    private List<DynamicObject> currentlyAnimatedObjects;
+    /// <summary>
+    /// HashSet containing grid positions of tiles that can no longer affect game logic but will be destroyed imminently
+    /// </summary>
+    private HashSet<Vector3Int> deactivatedTiles;
+    /// <summary>
+    /// Whether the game is currently accepting player input (false if animations are currently blocking it)
+    /// </summary>
+    private bool waitingForPlayerInput;
 
     /// <summary>
     /// Gets a list of all DynamicObjects currently occupying the given tile
@@ -139,6 +155,7 @@ public class LevelController : MonoBehaviour
     {
         RemoveDynamicObject(dobj.TilePosition, dobj);
         AddDynamicObject(tile, dobj);
+        dobj.UpdateTilePosition(tile);
         dobj.Move(tile, context);
     }
 
@@ -195,6 +212,30 @@ public class LevelController : MonoBehaviour
     }
 
     /// <summary>
+    /// Finds the tile on the wallMap at a particular grid position, or null if
+    /// (a) no tile is found or (b) if that tile has been deactivated and is no longer affecting game logic
+    /// </summary>
+    /// <param name="tilePos">Tile position to check</param>
+    /// <returns>Tile at the tilePos, or null if there is no tile or if it has been deactivated</returns>
+    public TileBase GetWallTile(Vector3Int tilePos)
+    {
+        TileBase tile = wallMap.GetTile(tilePos);
+        if (tile != null && !deactivatedTiles.Contains(tilePos))
+            return tile;
+        else
+            return null;
+    }
+
+    /// <summary>
+    /// Deactivates the tile at the given grid position, preventing it from affecting game logic
+    /// </summary>
+    /// <param name="tilePos">Tile position to deactivate</param>
+    public void DeactivateWallTile(Vector3Int tilePos)
+    {
+        deactivatedTiles.Add(tilePos);
+    }
+
+    /// <summary>
     /// Converts a world position to a grid position within the tilemap.
     /// (This function is just a convenient wrapper for floorMap.WorldToCell().
     /// </summary>
@@ -216,6 +257,34 @@ public class LevelController : MonoBehaviour
         return floorMap.CellToWorld(gridPosition);
     }
 
+    /// <summary>
+    /// Adds the DynamicObject to a list of objects currently preventing player input
+    /// </summary>
+    /// <param name="dobj">DynamicObject that is beginning an animation</param>
+    public void RegisterAnimationBegin(DynamicObject dobj)
+    {
+        currentlyAnimatedObjects.Add(dobj);
+    }
+
+    /// <summary>
+    /// Removes the DynamicObject from a list of objects currently preventing player input
+    /// </summary>
+    /// <param name="dobj">DynamicObject that is ending an animation</param>
+    public void RegisterAnimationEnd(DynamicObject dobj)
+    {
+        currentlyAnimatedObjects.Remove(dobj);
+    }
+
+    /// <summary>
+    /// Removes every instance of the DynamicObject from a list of objects currently preventing player input
+    /// </summary>
+    /// <param name="dobj">DynamicObject that is ending all of its animations</param>
+    public void RegisterAnimationEndAll(DynamicObject dobj)
+    {
+        while (currentlyAnimatedObjects.Contains(dobj))
+            currentlyAnimatedObjects.Remove(dobj);
+    }
+
     private void Awake()
     {
         Instance = this;
@@ -225,12 +294,15 @@ public class LevelController : MonoBehaviour
     void Start()
     {
         spawnHighlights = false;
+        waitingForPlayerInput = false;
         lastPartyGrid = pm.party.TilePosition;
 
         // Initialize all DynamicObjects
         activeDynamicObjects = new List<DynamicObject>(initialDynamicObjects);
         dynamicObjectsGrid = new Dictionary<Vector2Int, List<DynamicObject>>();
         dynamicObjectsByType = new Dictionary<Type, List<DynamicObject>>();
+        currentlyAnimatedObjects = new List<DynamicObject>();
+        deactivatedTiles = new HashSet<Vector3Int>();
         foreach (DynamicObject dobj in activeDynamicObjects)
         {
             dobj.Initialize();
@@ -270,7 +342,28 @@ public class LevelController : MonoBehaviour
             spawnHighlights = true;
         }
 
-        if (Input.GetMouseButtonDown(0))
+        // Wait for all animations to finish before the player can act again
+        if (!waitingForPlayerInput && currentlyAnimatedObjects.Count == 0)
+        {
+            waitingForPlayerInput = true;
+            deactivatedTiles.Clear();
+
+            // Check if the party has died
+            if (pm.party == null)
+            {
+                rs.Reset();
+                return;
+            }
+
+            //Check if the party has reached the exit
+            if (pm.party.TilePosition == grid.WorldToCell(exit.transform.position))
+            {
+                SceneManager.LoadScene(nextLevel);
+                return;
+            }
+        }
+
+        if (waitingForPlayerInput && Input.GetMouseButtonDown(0))
         {
             Vector3Int clickGrid = grid.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
             bool canMove = validMovementClick(clickGrid);
@@ -278,6 +371,8 @@ public class LevelController : MonoBehaviour
             if (canMove || canUseAbility)
             {
                 am.GoodClick();
+                waitingForPlayerInput = false;
+
                 DoPreAction();
 
                 //Clear all of the highlights while the CPU takes its turn
@@ -367,8 +462,9 @@ public class LevelController : MonoBehaviour
 
     private void guardAttack()
     {
-        if (hm.HasLOS(WorldToCell(pm.party.transform.position)) ||
+        if (hm.HasLOS(pm.party.TilePosition) ||
             gm.TouchingParty(pm.party))
+            DestroyDynamicObject(pm.party.TilePosition, pm.party);
         {
             am.Defeat(rs);
         }
@@ -380,6 +476,7 @@ public class LevelController : MonoBehaviour
                 if (gm.toTranslate(guard) == lastPartyGrid - pm.party.TilePosition)
                 {
                     am.Defeat(rs);
+                    DestroyDynamicObject(pm.party.TilePosition, pm.party, "collide-half");
                     return;
                 }
         }

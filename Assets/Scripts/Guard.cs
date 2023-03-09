@@ -83,10 +83,29 @@ public class Guard : DynamicObject
             spriteRenderer.sprite = sprites[Directions.Static];
     }
 
-    // Once we implement the new guard system, this won't be needed.
+    public override void Move(Vector3Int tilePosition, object context)
+    {
+        Vector3 start = transform.position;
+        Vector3 end = LevelController.Instance.CellToWorld(TilePosition) + new Vector3(0.5f, 0.5f, 0);
+        StartAnimation(MoveAnimation(start, end));
+    }
+
     public override void DestroyObject(object context)
     {
-        base.DestroyObject(context);
         LevelController.Instance.gm.guardList.Remove(this);
+        StartAnimation(DestroyAnimation());
+    }
+
+    private IEnumerator MoveAnimation(Vector3 start, Vector3 end)
+    {
+        yield return AnimationUtility.StandardLerp(transform, start, end, 0.5f);
+        StopAnimation();
+    }
+
+    private IEnumerator DestroyAnimation()
+    {
+        yield return WaitForTrigger("crush");
+        StopAnimation();
+        Destroy(gameObject);
     }
 }

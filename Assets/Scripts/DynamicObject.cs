@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 /// <summary>
 /// Base class for any GameObjects on the tile grid that have independent state
@@ -41,6 +42,8 @@ public abstract class DynamicObject : MonoBehaviour
     /// </summary>
     private Vector3Int tilePosition;
 
+    private List<string> pendingTriggers = new List<string>();
+
     /// <summary>
     /// Updates this object's tile position variable (and other useful related values in the future)
     /// </summary>
@@ -74,7 +77,6 @@ public abstract class DynamicObject : MonoBehaviour
     /// <param name="context">Optional data passed in (about who moved this object, for example)</param>
     public virtual void Move(Vector3Int tilePosition, object context)
     {
-        UpdateTilePosition(tilePosition);
         transform.position = LevelController.Instance.CellToWorld(TilePosition);
         //TODO: REMOVE THIS LINE AFTER FIXING GAMEOBJECT ANCHOR POINT ISSUE
         transform.Translate(0.5f, 0.5f, 0.0f);
@@ -87,5 +89,55 @@ public abstract class DynamicObject : MonoBehaviour
     public virtual void DestroyObject(object context)
     {
         Destroy(gameObject);
+    }
+
+    /// <summary>
+    /// Starts the given coroutine and tells the LevelController to ignore player input
+    /// until StopAnimation() is called
+    /// </summary>
+    /// <param name="routine">IEnumerator coroutine to start on this object</param>
+    protected void StartAnimation(IEnumerator routine)
+    {
+        StartCoroutine(routine);
+        LevelController.Instance.RegisterAnimationBegin(this);
+    }
+
+    /// <summary>
+    /// Tells the LevelController that an animation on this object has stopped and that it can
+    /// safely take user input (if no other animations are playing)
+    /// </summary>
+    protected void StopAnimation()
+    {
+        LevelController.Instance.RegisterAnimationEnd(this);
+    }
+
+    /// <summary>
+    /// Waits until a trigger has been called on this object using the AnimationTrigger() function
+    /// </summary>
+    /// <param name="triggerName">Case-sensitive trigger name to check for</param>
+    /// <returns>IEnumerator coroutine</returns>
+    protected IEnumerator WaitForTrigger(string triggerName)
+    {
+        while (!pendingTriggers.Contains(triggerName))
+            yield return null;
+        pendingTriggers.Remove(triggerName);
+    }
+
+    /// <summary>
+    /// Triggers this object to continue any animations waiting for the specified trigger
+    /// </summary>
+    /// <param name="triggerName">Case-sensitive trigger name to call</param>
+    public void AnimationTrigger(string triggerName)
+    {
+        pendingTriggers.Add(triggerName);
+    }
+
+    /// <summary>
+    /// When this object is completely destroyed (wiped from the display), tell the
+    /// LevelController that all animations on this object have ended
+    /// </summary>
+    private void OnDestroy()
+    {
+        LevelController.Instance.RegisterAnimationEndAll(this);
     }
 }
