@@ -25,6 +25,11 @@ public class Party : DynamicObject
     public PartyMember currentMember;
 
     /// <summary>
+    /// Whether this Party has been caught or not
+    /// </summary>
+    public bool dead;
+
+    /// <summary>
     /// List containing the sprites for each character in the party
     /// </summary>
     [SerializeField]
@@ -34,6 +39,11 @@ public class Party : DynamicObject
     /// Dictionary allows sprites to be selected with PartyMember enum as a key
     /// </summary>
     private Dictionary<PartyMember, Sprite> charSprites;
+
+    /// <summary>
+    /// Reference to the current moveCoroutine (if there is one) so that it can be interrupted if the party is caught
+    /// </summary>
+    private Coroutine moveCoroutine;
 
     public override bool IsTraversable(DynamicObject mover)
     {
@@ -149,28 +159,35 @@ public class Party : DynamicObject
     {
         Vector3 start = transform.position;
         Vector3 end = LevelController.Instance.CellToWorld(TilePosition) + new Vector3(0.5f, 0.5f, 0);
-        StartAnimation(MoveAnimation(start, end));
+        moveCoroutine = StartAnimation(MoveAnimation(start, end));
     }
 
     public override void DestroyObject(object context)
     {
-        StartAnimation(DestroyAnimation(context is string && context as string == "collide-half"));
+        StartAnimation(DestroyAnimation(context as Guard));
     }
 
     private IEnumerator MoveAnimation(Vector3 start, Vector3 end)
     {
-        yield return AnimationUtility.StandardLerp(transform, start, end, 0.5f);
+        yield return AnimationUtility.StandardLerp(transform, start, end, AnimationUtility.StandardAnimationDuration);
         StopAnimation();
     }
 
-    private IEnumerator DestroyAnimation(bool collideHalf)
+    private IEnumerator DestroyAnimation(Guard collide)
     {
-        if (collideHalf)
-            yield return new WaitForSeconds(0.25f);
+        if (collide != null)
+        {
+            yield return new WaitForSeconds(AnimationUtility.StandardAnimationDuration / 2);
+            collide.StopAllAnimations();
+            StopCoroutine(moveCoroutine);
+        }
         else
-            yield return new WaitForSeconds(0.5f);
+        {
+            yield return new WaitForSeconds(AnimationUtility.StandardAnimationDuration);
+        }
 
-        StopAnimation();
-        Destroy(gameObject);
+        dead = true;
+        StopAllAnimations();
+        //Destroy(gameObject);
     }
 }

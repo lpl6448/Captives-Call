@@ -6,29 +6,39 @@ using UnityEngine.Tilemaps;
 public class HighlightManager : MonoBehaviour
 {
     [SerializeField]
+    private float blendLerp;
+    [SerializeField]
     private Tilemap highlightMap;
     [SerializeField]
     private Tilemap wallMap;
 
     [SerializeField]
-    private Color moveHColor, abilityHColor, guardLOSColor, clearColor;
+    private Color moveHColor, moveHoverColor, abilityHColor, abilityHoverColor, guardLOSColor, clearColor;
 
     private Dictionary<Vector3Int, Highlight> highlighted;
 
+    private Dictionary<Vector3Int, Color> goalHighlightColors;
+
+    private Vector3Int hoverGrid;
+
     public Tilemap HighlightMap { get { return highlightMap; } }
 
-    // Start is called before the first frame update
-    void Start()
+    // Awake is called before any GameObjects' start functions
+    void Awake()
     {
         highlighted = new Dictionary<Vector3Int, Highlight>();
+        goalHighlightColors = new Dictionary<Vector3Int, Color>();
         //Make all highlight tiles clear
         for (int x = -6; x < 4; x++)
         {
             for (int y = -5; y < 5; y++)
             {
-                highlightMap.SetTileFlags(new Vector3Int(x, y, 0), TileFlags.None);
-                highlightMap.SetColor(new Vector3Int(x, y, 0), clearColor);
-                highlightMap.SetTileFlags(new Vector3Int(x, y, 0), TileFlags.LockColor);
+                Vector3Int gridPos = new Vector3Int(x, y, 0);
+                goalHighlightColors.Add(gridPos, clearColor);
+
+                highlightMap.SetTileFlags(gridPos, TileFlags.None);
+                highlightMap.SetColor(gridPos, clearColor);
+                highlightMap.SetTileFlags(gridPos, TileFlags.LockColor);
             }
         }
     }
@@ -36,7 +46,42 @@ public class HighlightManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        bool highlightsDirty = false;
 
+        // Remove old hover highlight
+        if (highlighted.TryGetValue(hoverGrid, out Highlight oldHighlight) && oldHighlight.HasFlag(Highlight.Hover))
+        {
+            highlighted[hoverGrid] &= ~Highlight.Hover;
+            highlightsDirty = true;
+        }
+
+        // Add new hover highlight
+        Vector3Int newHoverGrid = highlightMap.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+        if (highlighted.TryGetValue(newHoverGrid, out Highlight highlight))
+            if (!highlight.HasFlag(Highlight.Hover))
+            {
+                AddHighlight(newHoverGrid, Highlight.Hover);
+                highlightsDirty = true;
+            }
+        hoverGrid = newHoverGrid;
+
+        // Update the highlight map if necessary
+        if (highlightsDirty)
+            UpdateHighlightMap();
+
+        // Every frame, update the actual colors to interpolate toward the goal colors
+        foreach (KeyValuePair<Vector3Int, Color> goalData in goalHighlightColors)
+        {
+            Color actualColor = highlightMap.GetColor(goalData.Key);
+            if (Mathf.Abs(goalData.Value.r - actualColor.r) + Mathf.Abs(goalData.Value.g - actualColor.g)
+                + Mathf.Abs(goalData.Value.b - actualColor.b) + Mathf.Abs(goalData.Value.a - actualColor.a) > 0.001f)
+            {
+                Color newColor = Color.Lerp(actualColor, goalData.Value, 1 - Mathf.Pow(blendLerp, Time.deltaTime));
+                highlightMap.SetTileFlags(goalData.Key, TileFlags.None);
+                highlightMap.SetColor(goalData.Key, newColor);
+                highlightMap.SetTileFlags(goalData.Key, TileFlags.LockColor);
+            }
+        }
     }
 
     /// <summary>
@@ -78,10 +123,12 @@ public class HighlightManager : MonoBehaviour
         ClearHighlights();
 
         //Calculate and draw guard lines of sight
-        HighlightGuardLOS(guards);
+        if (guards != null)
+            HighlightGuardLOS(guards);
 
         //Calculate how player highlights are drawn
-        HighlightMoves(party);
+        if (party != null)
+            HighlightMoves(party);
 
         UpdateHighlightMap();
     }
@@ -93,9 +140,10 @@ public class HighlightManager : MonoBehaviour
     {
         foreach (var tile in highlighted)
         {
-            highlightMap.SetTileFlags(tile.Key, TileFlags.None);
-            highlightMap.SetColor(tile.Key, clearColor);
-            highlightMap.SetTileFlags(tile.Key, TileFlags.LockColor);
+            if (goalHighlightColors.ContainsKey(tile.Key))
+                goalHighlightColors[tile.Key] = clearColor;
+            else
+                goalHighlightColors.Add(tile.Key, clearColor);
         }
         highlighted.Clear();
     }
@@ -220,30 +268,36 @@ public class HighlightManager : MonoBehaviour
             Highlight highlight = tile.Value;
 
             // Overlay/blend corresponding colors for each highlight
-            // This isn't technically accurate color blending, but it's what I could get to work for now.
             Color color = Color.clear;
-            int count = 0;
             if (highlight.HasFlag(Highlight.Movement))
             {
-                color += moveHColor;
-                count++;
+                color = BlendColors(moveHColor, color);
+                if (highlight.HasFlag(Highlight.Hover))
+                    color = BlendColors(moveHoverColor, color);
             }
             if (highlight.HasFlag(Highlight.Ability))
             {
-                color += abilityHColor;
-                count++;
+                color = BlendColors(abilityHColor, color);
+                if (highlight.HasFlag(Highlight.Hover))
+                    color = BlendColors(abilityHoverColor, color);
             }
             if (highlight.HasFlag(Highlight.LineOfSight))
             {
-                color += guardLOSColor;
-                count++;
+                color = BlendColors(guardLOSColor, color);
             }
-            color /= count;
 
             // Update the highlight map
-            highlightMap.SetTileFlags(gridPosition, TileFlags.None);
-            highlightMap.SetColor(gridPosition, color);
-            highlightMap.SetTileFlags(gridPosition, TileFlags.LockColor);
+            if (goalHighlightColors.ContainsKey(gridPosition))
+                goalHighlightColors[gridPosition] = color;
+            else
+                goalHighlightColors.Add(gridPosition, color);
         }
+    }
+
+    private Color BlendColors(Color top, Color bottom)
+    {
+        Color color = Color.Lerp(top, bottom, bottom.a);
+        color.a = 1 - (1 - top.a) * (1 - bottom.a);
+        return color;
     }
 }

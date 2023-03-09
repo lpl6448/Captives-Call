@@ -96,10 +96,12 @@ public abstract class DynamicObject : MonoBehaviour
     /// until StopAnimation() is called
     /// </summary>
     /// <param name="routine">IEnumerator coroutine to start on this object</param>
-    protected void StartAnimation(IEnumerator routine)
+    /// <returns>Reference to the Coroutine object that can be stopped if needed</returns>
+    protected Coroutine StartAnimation(IEnumerator routine)
     {
-        StartCoroutine(routine);
+        Coroutine crt = StartCoroutine(routine);
         LevelController.Instance.RegisterAnimationBegin(this);
+        return crt;
     }
 
     /// <summary>
@@ -109,6 +111,15 @@ public abstract class DynamicObject : MonoBehaviour
     protected void StopAnimation()
     {
         LevelController.Instance.RegisterAnimationEnd(this);
+    }
+
+    /// <summary>
+    /// Forcibly stops all animations running on this object (not recommended unless to freeze at the end of the level)
+    /// </summary>
+    public void StopAllAnimations()
+    {
+        LevelController.Instance.RegisterAnimationEndAll(this);
+        StopAllCoroutines();
     }
 
     /// <summary>

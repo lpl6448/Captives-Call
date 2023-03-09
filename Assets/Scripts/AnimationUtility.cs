@@ -7,6 +7,11 @@ using System.Collections;
 public static class AnimationUtility
 {
     /// <summary>
+    /// Default seconds that StandardLerp is recommended to use for most animations
+    /// </summary>
+    public const float StandardAnimationDuration = 0.4f;
+
+    /// <summary>
     /// Linearly interpolates a Transform's position between the
     /// start and end values, over the given duration
     /// </summary>
