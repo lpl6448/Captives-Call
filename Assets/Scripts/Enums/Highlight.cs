@@ -11,4 +11,5 @@ public enum Highlight
     Movement = 1,
     Ability = 2,
     LineOfSight = 4,
+    Hover = 8,
 }

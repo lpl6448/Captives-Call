@@ -77,7 +77,7 @@ public class Boulder : DynamicObject
 
     private IEnumerator MoveAnimation(Vector3 start, Vector3 end, bool destroyTile, List<Guard> destroyGuards)
     {
-        yield return AnimationUtility.StandardLerp(transform, start, end, 0.5f);
+        yield return AnimationUtility.StandardLerp(transform, start, end, AnimationUtility.StandardAnimationDuration);
 
         if (destroyTile)
             LevelController.Instance.wallMap.SetTile(TilePosition, null);

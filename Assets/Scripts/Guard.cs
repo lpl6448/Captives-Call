@@ -98,7 +98,7 @@ public class Guard : DynamicObject
 
     private IEnumerator MoveAnimation(Vector3 start, Vector3 end)
     {
-        yield return AnimationUtility.StandardLerp(transform, start, end, 0.5f);
+        yield return AnimationUtility.StandardLerp(transform, start, end, AnimationUtility.StandardAnimationDuration);
         StopAnimation();
     }
 

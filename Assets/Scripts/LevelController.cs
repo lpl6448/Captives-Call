@@ -63,8 +63,6 @@ public class LevelController : MonoBehaviour
     /// Grid position that the party occupied last turn, used to destroy the party if it collides head-on with a guard
     /// </summary>
     private Vector3Int lastPartyGrid;
-    //TODO: REPLACE TO TRIGGER ON LEVEL LOAD ONCE WE IMPLEMENT THAT
-    bool spawnHighlights;
 
     /// <summary>
     /// List of DynamicObjects that are currently blocking player input
@@ -74,10 +72,6 @@ public class LevelController : MonoBehaviour
     /// HashSet containing grid positions of tiles that can no longer affect game logic but will be destroyed imminently
     /// </summary>
     private HashSet<Vector3Int> deactivatedTiles;
-    /// <summary>
-    /// Whether the game is currently accepting player input (false if animations are currently blocking it)
-    /// </summary>
-    private bool waitingForPlayerInput;
 
     /// <summary>
     /// Gets a list of all DynamicObjects currently occupying the given tile
@@ -291,8 +285,6 @@ public class LevelController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        spawnHighlights = false;
-        waitingForPlayerInput = false;
         lastPartyGrid = pm.party.TilePosition;
 
         // Initialize all DynamicObjects
@@ -322,6 +314,9 @@ public class LevelController : MonoBehaviour
                 dataFromTiles.Add(tile, tileData);
             }
         }
+
+        // Begin the level turn logic
+        StartCoroutine(DoLevel());
     }
 
     // Update is called once per frame
@@ -333,70 +328,91 @@ public class LevelController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R))
             rs.Reset();
+    }
 
-        if (!spawnHighlights)
+    /// <summary>
+    /// Runs turns until a new level is loaded
+    /// </summary>
+    /// <returns>IEnumerator coroutine</returns>
+    private IEnumerator DoLevel()
+    {
+        while (true)
+            yield return DoTurn();
+    }
+
+    /// <summary>
+    /// Runs the game logic for one turn using coroutines (for more flexibility)
+    /// yield return null just means "wait until the next frame"
+    /// yield break ends the coroutine
+    /// </summary>
+    /// <returns>IEnumerator coroutine</returns>
+    private IEnumerator DoTurn()
+    {
+        // Update highlights with party actions included
+        hm.ClearHighlights();
+        hm.HighlightTiles(pm.party, gm.guardList, dataFromTiles);
+
+        // Perform an action once the player clicks on a tile
+        while (true)
         {
-            hm.HighlightTiles(pm.party, gm.guardList, dataFromTiles);
-            spawnHighlights = true;
-        }
-
-        // Wait for all animations to finish before the player can act again
-        if (!waitingForPlayerInput && currentlyAnimatedObjects.Count == 0)
-        {
-            waitingForPlayerInput = true;
-            deactivatedTiles.Clear();
-
-            // Check if the party has died
-            if (pm.party == null)
+            if (Input.GetMouseButtonDown(0))
             {
-                rs.Reset();
-                return;
-            }
-
-            //Check if the party has reached the exit
-            if (pm.party.TilePosition == grid.WorldToCell(exit.transform.position))
-            {
-                SceneManager.LoadScene(nextLevel);
-                return;
-            }
-        }
-
-        if (waitingForPlayerInput && Input.GetMouseButtonDown(0))
-        {
-            Vector3Int clickGrid = grid.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-            bool canMove = validMovementClick(clickGrid);
-            bool canUseAbility = validAbilityClick(clickGrid);
-            if (canMove || canUseAbility)
-            {
-                waitingForPlayerInput = false;
-
-                DoPreAction();
-
-                //Clear all of the highlights while the CPU takes its turn
-                hm.ClearHighlights();
-                gm.MoveGuards(dataFromTiles, hm);
-
-                if (canUseAbility)
-                    pm.party.UseAbility(clickGrid);
-                else
+                Vector3Int clickGrid = grid.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                bool canMove = validMovementClick(clickGrid);
+                bool canUseAbility = validAbilityClick(clickGrid);
+                if (canMove || canUseAbility)
                 {
-                    //Before the party moves, turn the guard and check if they would have been spotted
-                    //hm.HighlightGuardLOS(gm.guardList);
+                    DoPreAction();
+
+                    //Clear all of the highlights while the CPU takes its turn
                     hm.ClearHighlights();
-                    hm.HighlightTiles(pm.party, gm.guardList, dataFromTiles);
-                    //guardAttack();
+                    gm.MoveGuards(dataFromTiles, hm);
 
-                    lastPartyGrid = pm.party.TilePosition;
-                    MoveDynamicObject(clickGrid, pm.party);
+                    if (canUseAbility)
+                        pm.party.UseAbility(clickGrid);
+                    else
+                    {
+                        // Only highlight guard LOS until the player can act again
+                        hm.ClearHighlights();
+                        hm.HighlightTiles(null, gm.guardList, dataFromTiles);
+
+                        lastPartyGrid = pm.party.TilePosition;
+                        MoveDynamicObject(clickGrid, pm.party);
+                    }
+
+                    DoPostAction();
+
+                    //Call at the end of cpu loop so highlight does not appear until the CPU turn is completed
+                    hm.HighlightTiles(null, gm.guardList, dataFromTiles);
+                    //Check if player is in the guardLOS
+                    guardAttack();
+
+                    break;
                 }
-
-                DoPostAction();
-
-                //Call at the end of cpu loop so highlight does not appear until the CPU turn is completed
-                hm.HighlightTiles(pm.party, gm.guardList, dataFromTiles);
-                //Check if player is in the guardLOS
-                guardAttack();
             }
+            yield return null;
+        }
+
+        // Wait for all animations to finish before continuing
+        while (currentlyAnimatedObjects.Count > 0)
+            yield return null;
+
+        // Officially end the turn
+        deactivatedTiles.Clear();
+
+        // Check if the party has died
+        if (pm.party == null)
+        {
+            rs.Reset();
+            yield break;
+        }
+
+        //Check if the party has reached the exit
+        if (pm.party.TilePosition == grid.WorldToCell(exit.transform.position))
+        {
+            yield return new WaitForSeconds(1); // Give the player a second to revel in their victory
+            SceneManager.LoadScene(nextLevel);
+            yield break;
         }
     }
 
@@ -457,7 +473,7 @@ public class LevelController : MonoBehaviour
             foreach (Guard guard in GetDynamicObjectsOnTile<Guard>(lastPartyGrid))
                 if (gm.toTranslate(guard) == lastPartyGrid - pm.party.TilePosition)
                 {
-                    DestroyDynamicObject(pm.party.TilePosition, pm.party, "collide-half");
+                    DestroyDynamicObject(pm.party.TilePosition, pm.party, guard);
                     return;
                 }
         }
