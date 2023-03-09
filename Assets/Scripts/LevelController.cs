@@ -65,6 +65,10 @@ public class LevelController : MonoBehaviour
     /// Grid position that the party occupied last turn, used to destroy the party if it collides head-on with a guard
     /// </summary>
     private Vector3Int lastPartyGrid;
+    /// <summary>
+    /// Whether the game is accepting user input currently (false at the end of the level or when the party dies)
+    /// </summary>
+    private bool acceptingUserInput;
 
     /// <summary>
     /// List of DynamicObjects that are currently blocking player input
@@ -338,7 +342,8 @@ public class LevelController : MonoBehaviour
     /// <returns>IEnumerator coroutine</returns>
     private IEnumerator DoLevel()
     {
-        while (true)
+        acceptingUserInput = true;
+        while (acceptingUserInput)
             yield return DoTurn();
     }
 
@@ -373,7 +378,7 @@ public class LevelController : MonoBehaviour
                     gm.MoveGuards(dataFromTiles, hm);
 
                     if (canUseAbility)
-                        pm.party.UseAbility(clickGrid);
+                        pm.party.UseAbility(clickGrid, am);
                     else
                     {
                         // Only highlight guard LOS until the player can act again
@@ -411,15 +416,17 @@ public class LevelController : MonoBehaviour
         // Check if the party has died
         if (pm.party == null)
         {
-            rs.Reset();
+            //rs.Reset();
+            am.Defeat(rs);
+            acceptingUserInput = false;
             yield break;
         }
 
         //Check if the party has reached the exit
         if (pm.party.TilePosition == grid.WorldToCell(exit.transform.position))
         {
-            yield return new WaitForSeconds(1); // Give the player a second to revel in their victory
             am.Victory(nextLevel);
+            acceptingUserInput = false;
             yield break;
         }
     }
@@ -449,7 +456,10 @@ public class LevelController : MonoBehaviour
     /// <returns></returns>
     private bool validMovementClick(Vector3Int gridPosition)
     {
-        Vector3Int partyPos = grid.WorldToCell(pm.party.transform.position);
+        if (pm.party == null)
+            return false;
+
+        Vector3Int partyPos = pm.party.TilePosition;
         int dX = gridPosition.x - partyPos.x;
         int dY = gridPosition.y - partyPos.y;
 
@@ -474,8 +484,8 @@ public class LevelController : MonoBehaviour
         if (hm.HasLOS(pm.party.TilePosition) ||
             gm.TouchingParty(pm.party))
         {
-            am.Defeat(rs);
-            //DestroyDynamicObject(pm.party.TilePosition, pm.party);
+            //am.Defeat(rs);
+            DestroyDynamicObject(pm.party.TilePosition, pm.party);
         }
         else
         {
@@ -484,8 +494,8 @@ public class LevelController : MonoBehaviour
             foreach (Guard guard in GetDynamicObjectsOnTile<Guard>(lastPartyGrid))
                 if (gm.toTranslate(guard) == lastPartyGrid - pm.party.TilePosition)
                 {
-                    am.Defeat(rs);
-                    //DestroyDynamicObject(pm.party.TilePosition, pm.party, guard);
+                    //am.Defeat(rs);
+                    DestroyDynamicObject(pm.party.TilePosition, pm.party, guard);
                     return;
                 }
         }

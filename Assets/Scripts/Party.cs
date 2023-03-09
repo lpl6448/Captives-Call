@@ -175,12 +175,10 @@ public class Party : DynamicObject
             yield return new WaitForSeconds(AnimationUtility.StandardAnimationDuration / 2);
             collide.StopAllAnimations();
             StopCoroutine(moveCoroutine);
-            yield return new WaitForSeconds(1);
         }
         else
         {
             yield return new WaitForSeconds(AnimationUtility.StandardAnimationDuration);
-            yield return new WaitForSeconds(2);
         }
 
         StopAnimation();
