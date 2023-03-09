@@ -358,7 +358,8 @@ public class LevelController : MonoBehaviour
             //Check if the party has reached the exit
             if (pm.party.TilePosition == grid.WorldToCell(exit.transform.position))
             {
-                SceneManager.LoadScene(nextLevel);
+                am.Victory(nextLevel);
+                //SceneManager.LoadScene(nextLevel);
                 return;
             }
         }
@@ -391,14 +392,6 @@ public class LevelController : MonoBehaviour
 
                     lastPartyGrid = pm.party.TilePosition;
                     MoveDynamicObject(clickGrid, pm.party);
-                }
-
-                //Check if the party has reached the exit
-                if (grid.WorldToCell(pm.party.transform.position) == grid.WorldToCell(exit.transform.position))
-                {
-                    am.Victory(nextLevel);
-                    //SceneManager.LoadScene(nextLevel);
-                    return;
                 }
 
                 DoPostAction();
@@ -464,9 +457,9 @@ public class LevelController : MonoBehaviour
     {
         if (hm.HasLOS(pm.party.TilePosition) ||
             gm.TouchingParty(pm.party))
-            DestroyDynamicObject(pm.party.TilePosition, pm.party);
         {
             am.Defeat(rs);
+            //DestroyDynamicObject(pm.party.TilePosition, pm.party);
         }
         else
         {
@@ -476,7 +469,7 @@ public class LevelController : MonoBehaviour
                 if (gm.toTranslate(guard) == lastPartyGrid - pm.party.TilePosition)
                 {
                     am.Defeat(rs);
-                    DestroyDynamicObject(pm.party.TilePosition, pm.party, "collide-half");
+                    //DestroyDynamicObject(pm.party.TilePosition, pm.party, "collide-half");
                     return;
                 }
         }
