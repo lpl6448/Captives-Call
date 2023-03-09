@@ -6,6 +6,8 @@ using UnityEngine.Tilemaps;
 public class HighlightManager : MonoBehaviour
 {
     [SerializeField]
+    private float blendLerp;
+    [SerializeField]
     private Tilemap highlightMap;
     [SerializeField]
     private Tilemap wallMap;
@@ -15,6 +17,8 @@ public class HighlightManager : MonoBehaviour
 
     private Dictionary<Vector3Int, Highlight> highlighted;
 
+    private Dictionary<Vector3Int, Color> goalHighlightColors;
+
     private Vector3Int hoverGrid;
 
     public Tilemap HighlightMap { get { return highlightMap; } }
@@ -23,14 +27,13 @@ public class HighlightManager : MonoBehaviour
     void Awake()
     {
         highlighted = new Dictionary<Vector3Int, Highlight>();
+        goalHighlightColors = new Dictionary<Vector3Int, Color>();
         //Make all highlight tiles clear
         for (int x = -6; x < 4; x++)
         {
             for (int y = -5; y < 5; y++)
             {
-                highlightMap.SetTileFlags(new Vector3Int(x, y, 0), TileFlags.None);
-                highlightMap.SetColor(new Vector3Int(x, y, 0), clearColor);
-                highlightMap.SetTileFlags(new Vector3Int(x, y, 0), TileFlags.LockColor);
+                goalHighlightColors.Add(new Vector3Int(x, y, 0), clearColor);
             }
         }
     }
@@ -60,6 +63,20 @@ public class HighlightManager : MonoBehaviour
         // Update the highlight map if necessary
         if (highlightsDirty)
             UpdateHighlightMap();
+
+        // Every frame, update the actual colors to interpolate toward the goal colors
+        foreach (KeyValuePair<Vector3Int, Color> goalData in goalHighlightColors)
+        {
+            Color actualColor = highlightMap.GetColor(goalData.Key);
+            if (Mathf.Abs(goalData.Value.r - actualColor.r) + Mathf.Abs(goalData.Value.g - actualColor.g)
+                + Mathf.Abs(goalData.Value.b - actualColor.b) + Mathf.Abs(goalData.Value.a - actualColor.a) > 0.001f)
+            {
+                Color newColor = Color.Lerp(actualColor, goalData.Value, 1 - Mathf.Pow(blendLerp, Time.deltaTime));
+                highlightMap.SetTileFlags(goalData.Key, TileFlags.None);
+                highlightMap.SetColor(goalData.Key, newColor);
+                highlightMap.SetTileFlags(goalData.Key, TileFlags.LockColor);
+            }
+        }
     }
 
     /// <summary>
@@ -118,9 +135,10 @@ public class HighlightManager : MonoBehaviour
     {
         foreach (var tile in highlighted)
         {
-            highlightMap.SetTileFlags(tile.Key, TileFlags.None);
-            highlightMap.SetColor(tile.Key, clearColor);
-            highlightMap.SetTileFlags(tile.Key, TileFlags.LockColor);
+            if (goalHighlightColors.ContainsKey(tile.Key))
+                goalHighlightColors[tile.Key] = clearColor;
+            else
+                goalHighlightColors.Add(tile.Key, clearColor);
         }
         highlighted.Clear();
     }
@@ -264,9 +282,10 @@ public class HighlightManager : MonoBehaviour
             }
 
             // Update the highlight map
-            highlightMap.SetTileFlags(gridPosition, TileFlags.None);
-            highlightMap.SetColor(gridPosition, color);
-            highlightMap.SetTileFlags(gridPosition, TileFlags.LockColor);
+            if (goalHighlightColors.ContainsKey(gridPosition))
+                goalHighlightColors[gridPosition] = color;
+            else
+                goalHighlightColors.Add(gridPosition, color);
         }
     }
 

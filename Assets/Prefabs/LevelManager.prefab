@@ -88,12 +88,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e9c8fc575cda1a44a3771119c5eef6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blendLerp: 0.00005
   highlightMap: {fileID: 0}
   wallMap: {fileID: 0}
   moveHColor: {r: 0.9056604, g: 0.8018581, b: 0.10594514, a: 0.18431373}
-  moveHoverColor: {r: 0.90588236, g: 0.8, b: 0.105882354, a: 0.23921569}
+  moveHoverColor: {r: 0.90588236, g: 0.8, b: 0.105882354, a: 0.23137255}
   abilityHColor: {r: 0.9339623, g: 0.09163401, b: 0.92043257, a: 0.16862746}
-  abilityHoverColor: {r: 0.93333334, g: 0.09019608, b: 0.92156863, a: 0.23921569}
+  abilityHoverColor: {r: 0.93333334, g: 0.09019608, b: 0.92156863, a: 0.23137255}
   guardLOSColor: {r: 0.9622642, g: 0.24873616, b: 0.24873616, a: 0.13725491}
   clearColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &7277537200466364003
