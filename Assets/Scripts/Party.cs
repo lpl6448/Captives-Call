@@ -25,6 +25,11 @@ public class Party : DynamicObject
     public PartyMember currentMember;
 
     /// <summary>
+    /// Whether this Party has been caught or not
+    /// </summary>
+    public bool dead;
+
+    /// <summary>
     /// List containing the sprites for each character in the party
     /// </summary>
     [SerializeField]
@@ -181,7 +186,8 @@ public class Party : DynamicObject
             yield return new WaitForSeconds(AnimationUtility.StandardAnimationDuration);
         }
 
-        StopAnimation();
-        Destroy(gameObject);
+        dead = true;
+        StopAllAnimations();
+        //Destroy(gameObject);
     }
 }

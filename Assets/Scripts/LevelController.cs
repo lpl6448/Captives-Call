@@ -414,7 +414,7 @@ public class LevelController : MonoBehaviour
         deactivatedTiles.Clear();
 
         // Check if the party has died
-        if (pm.party == null)
+        if (pm.party.dead)
         {
             //rs.Reset();
             am.Defeat(rs);
