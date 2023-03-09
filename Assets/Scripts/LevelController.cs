@@ -22,6 +22,8 @@ public class LevelController : MonoBehaviour
     public GuardManager gm;
     [SerializeField]
     private ResetScene rs;
+    [SerializeField]
+    private FxController am;
     //Get a reference to necessary grid items
     [SerializeField]
     private Grid grid;
@@ -362,6 +364,8 @@ public class LevelController : MonoBehaviour
                 bool canUseAbility = validAbilityClick(clickGrid);
                 if (canMove || canUseAbility)
                 {
+                    am.GoodClick();
+
                     DoPreAction();
 
                     //Clear all of the highlights while the CPU takes its turn
@@ -389,6 +393,10 @@ public class LevelController : MonoBehaviour
 
                     break;
                 }
+                else
+                {
+                    am.BadClick();
+                }
             }
             yield return null;
         }
@@ -411,7 +419,7 @@ public class LevelController : MonoBehaviour
         if (pm.party.TilePosition == grid.WorldToCell(exit.transform.position))
         {
             yield return new WaitForSeconds(1); // Give the player a second to revel in their victory
-            SceneManager.LoadScene(nextLevel);
+            am.Victory(nextLevel);
             yield break;
         }
     }
@@ -465,7 +473,10 @@ public class LevelController : MonoBehaviour
     {
         if (hm.HasLOS(pm.party.TilePosition) ||
             gm.TouchingParty(pm.party))
-            DestroyDynamicObject(pm.party.TilePosition, pm.party);
+        {
+            am.Defeat(rs);
+            //DestroyDynamicObject(pm.party.TilePosition, pm.party);
+        }
         else
         {
             // If any guards on the party's previous tile have just turned toward the player this turn,
@@ -473,7 +484,8 @@ public class LevelController : MonoBehaviour
             foreach (Guard guard in GetDynamicObjectsOnTile<Guard>(lastPartyGrid))
                 if (gm.toTranslate(guard) == lastPartyGrid - pm.party.TilePosition)
                 {
-                    DestroyDynamicObject(pm.party.TilePosition, pm.party, guard);
+                    am.Defeat(rs);
+                    //DestroyDynamicObject(pm.party.TilePosition, pm.party, guard);
                     return;
                 }
         }
