@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 603595042537034494}
   m_Layer: 0
   m_Name: Party
-  m_TagString: Untagged
+  m_TagString: Party
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -46,8 +46,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   partyMembers: 
-  currentMemberIndex: 0
   currentMember: 0
+  dead: 0
   sprites:
   - {fileID: 21300000, guid: 727804370016c044799c4c6987387d5b, type: 3}
   - {fileID: 21300000, guid: bde40591998d8de4fb485797818fb6c6, type: 3}

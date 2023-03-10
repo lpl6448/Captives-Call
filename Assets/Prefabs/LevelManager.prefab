@@ -268,13 +268,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blendLerp: 0.00005
-  highlightMap: {fileID: 0}
-  wallMap: {fileID: 0}
   moveHColor: {r: 0.9056604, g: 0.8018581, b: 0.10594514, a: 0.18431373}
   moveHoverColor: {r: 0.90588236, g: 0.8, b: 0.105882354, a: 0.23137255}
   abilityHColor: {r: 0.9339623, g: 0.09163401, b: 0.92043257, a: 0.16862746}
   abilityHoverColor: {r: 0.93333334, g: 0.09019608, b: 0.92156863, a: 0.23137255}
-  guardLOSColor: {r: 0.9622642, g: 0.24873616, b: 0.24873616, a: 0.13725491}
+  guardLOSColor: {r: 0.9622642, g: 0.24873616, b: 0.24873616, a: 0.23529412}
   clearColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &7277537200466364003
 GameObject:
@@ -331,19 +329,15 @@ MonoBehaviour:
   gm: {fileID: 1115582497044602977}
   rs: {fileID: 495644164064488517}
   am: {fileID: 1524337131}
-  grid: {fileID: 0}
   floorMap: {fileID: 0}
   wallMap: {fileID: 0}
   nextLevel: 
-  exit: {fileID: 0}
   tileDatas:
   - {fileID: 11400000, guid: 608ff28d6367ed94d8b375954fb97549, type: 2}
   - {fileID: 11400000, guid: 1123c4d9f21207f44ae4206b4b795665, type: 2}
   - {fileID: 11400000, guid: 4fc7997a89f538143a6030c0e32cfc36, type: 2}
   - {fileID: 11400000, guid: acfb537d9cd0ec84d8057c25c6685f79, type: 2}
   - {fileID: 11400000, guid: 18053eec50863d947aace631261291f1, type: 2}
-  initialDynamicObjects:
-  - {fileID: 0}
 --- !u!1 &7277537201348297681
 GameObject:
   m_ObjectHideFlags: 0
@@ -388,7 +382,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e78d1d11d14d244ba1d3a336b9f5c00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  floorMap: {fileID: 0}
   party: {fileID: 0}
 --- !u!1 &7598415183404839788
 GameObject:
@@ -435,4 +428,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   guardList: []
-  wallMap: {fileID: 0}

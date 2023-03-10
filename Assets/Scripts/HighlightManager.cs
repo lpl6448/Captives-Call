@@ -7,13 +7,10 @@ public class HighlightManager : MonoBehaviour
 {
     [SerializeField]
     private float blendLerp;
-    [SerializeField]
-    private Tilemap highlightMap;
-    [SerializeField]
-    private Tilemap wallMap;
 
     [SerializeField]
     private Color moveHColor, moveHoverColor, abilityHColor, abilityHoverColor, guardLOSColor, clearColor;
+
 
     private Dictionary<Vector3Int, Highlight> highlighted;
 
@@ -21,11 +18,19 @@ public class HighlightManager : MonoBehaviour
 
     private Vector3Int hoverGrid;
 
+    private Tilemap highlightMap;
+    
+    private Tilemap wallMap;
+
     public Tilemap HighlightMap { get { return highlightMap; } }
 
     // Awake is called before any GameObjects' start functions
     void Awake()
     {
+        //Find tilemaps and assign them to their respective variables
+        highlightMap = GameObject.FindGameObjectsWithTag("Highlight")[0].GetComponent<Tilemap>();
+        wallMap = GameObject.FindGameObjectsWithTag("Walls")[0].GetComponent<Tilemap>();
+
         highlighted = new Dictionary<Vector3Int, Highlight>();
         goalHighlightColors = new Dictionary<Vector3Int, Color>();
         //Make all highlight tiles clear

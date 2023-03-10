@@ -25,26 +25,27 @@ public class LevelController : MonoBehaviour
     [SerializeField]
     private FxController am;
     //Get a reference to necessary grid items
-    [SerializeField]
     private Grid grid;
     public Tilemap floorMap;
     public Tilemap wallMap;
     //Get references to objects needed to advance to next level
     [SerializeField]
     private string nextLevel;
-    [SerializeField]
-    private GameObject exit;
     /// <summary>
     /// Field to hold TileData scriptable objects
     /// </summary>
     [SerializeField]
     private List<TileData> tileDatas;
+
     /// <summary>
     /// List of all DynamicObjects present at the beginning of the level
     /// </summary>
-    [SerializeField]
     private List<DynamicObject> initialDynamicObjects;
 
+    /// <summary>
+    /// Holds game object that is responsible to triggering level progression
+    /// </summary>
+    private GameObject exit;
     /// <summary>
     /// Dictionary that holds all tileData objects
     /// </summary>
@@ -78,6 +79,32 @@ public class LevelController : MonoBehaviour
     /// HashSet containing grid positions of tiles that can no longer affect game logic but will be destroyed imminently
     /// </summary>
     private HashSet<Vector3Int> deactivatedTiles;
+
+    private void FindAllGameObjects()
+    {
+        initialDynamicObjects = new List<DynamicObject>();
+        //Find and add all dynamic objects in the scene to the initialdynamicobject list
+        GameObject[] foundObjects;
+        string[] tags = { "Party", "Guard", "Boulder" };
+        for(int i=0; i<tags.Length; i++)
+        {
+            foundObjects = GameObject.FindGameObjectsWithTag(tags[i]);
+            if (foundObjects.Length > 0)
+            {
+                foreach (GameObject g in foundObjects)
+                {
+                    initialDynamicObjects.Add(g.GetComponent<DynamicObject>());
+                }
+            }
+        }
+        //Find the exit and assign it to the exit variable
+        exit = GameObject.FindGameObjectsWithTag("Exit")[0];
+        //Find grid and assign it to grid variable
+        grid = GameObject.FindGameObjectsWithTag("Grid")[0].GetComponent<Grid>();
+        //Find tilemaps and assign them to their respective variables
+        floorMap = GameObject.FindGameObjectsWithTag("Floor")[0].GetComponent<Tilemap>();
+        wallMap = GameObject.FindGameObjectsWithTag("Walls")[0].GetComponent<Tilemap>();
+    }
 
     /// <summary>
     /// Gets a list of all DynamicObjects currently occupying the given tile
@@ -291,9 +318,10 @@ public class LevelController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        lastPartyGrid = pm.party.TilePosition;
-
+        //Use level 1 literals since party manager is not fully defined when this function runs
+        lastPartyGrid = Vector3Int.FloorToInt(new Vector3(-2.5f, 1.5f, 0.0f));
         // Initialize all DynamicObjects
+        FindAllGameObjects();
         activeDynamicObjects = new List<DynamicObject>(initialDynamicObjects);
         dynamicObjectsGrid = new Dictionary<Vector2Int, List<DynamicObject>>();
         dynamicObjectsByType = new Dictionary<Type, List<DynamicObject>>();

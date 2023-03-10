@@ -6,6 +6,14 @@ TagManager:
   tags:
   - TitleMusic
   - LevelMusic
+  - Guard
+  - Party
+  - Boulder
+  - Exit
+  - Floor
+  - Walls
+  - Highlight
+  - Grid
   layers:
   - Default
   - TransparentFX

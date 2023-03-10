@@ -5,10 +5,8 @@ using UnityEngine.Tilemaps;
 
 public class PlayerManager : MonoBehaviour
 {
-    [SerializeField]
     private Tilemap floorMap;
 
-    [SerializeField]
     /// <summary>
     /// Player Field for internal reference to the party object in the scene
     /// </summary>
@@ -19,7 +17,12 @@ public class PlayerManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        //Define the party object
+        GameObject[] foundObjects = GameObject.FindGameObjectsWithTag("Party");
+        if(foundObjects.Length>0)
+            party = foundObjects[0].GetComponent<DynamicObject>().GetComponent<Party>();
+        //Find tilemaps and assign them to their respective variables
+        floorMap = GameObject.FindGameObjectsWithTag("Floor")[0].GetComponent<Tilemap>();
     }
 
     // Update is called once per frame

@@ -8,9 +8,8 @@ public class GuardManager : MonoBehaviour
     /// <summary>
     /// List to hold all guards that are in the scene
     /// </summary>
-    [SerializeField]
     public List<Guard> guardList;
-    [SerializeField]
+
     private Tilemap wallMap;
 
 
@@ -18,7 +17,14 @@ public class GuardManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        //Find guards and add them to list
+        GameObject[] foundObjects = GameObject.FindGameObjectsWithTag("Guard");
+        foreach (GameObject g in foundObjects)
+        {
+            guardList.Add(g.GetComponent<DynamicObject>().GetComponent<Guard>());
+        }
+        //Find wall tilemap and assign to wallMap
+        wallMap = GameObject.FindGameObjectsWithTag("Walls")[0].GetComponent<Tilemap>();
     }
 
     // Update is called once per frame

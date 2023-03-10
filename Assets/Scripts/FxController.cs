@@ -31,19 +31,19 @@ public class FxController : MonoBehaviour
     public void GoodClick()
     {
         source.clip = fxClips[FX.Good];
-        source.PlayOneShot(fxClips[FX.Good], 0.6f);
+        source.PlayOneShot(fxClips[FX.Good], 0.9f);
         return;
     }
     public void BadClick()
     {
         source.clip = fxClips[FX.Bad];
-        source.PlayOneShot(fxClips[FX.Bad], 0.6f);
+        source.PlayOneShot(fxClips[FX.Bad], 0.9f);
         return;
     }
     public void Boulder()
     {
         source.clip = fxClips[FX.Boulder];
-        source.PlayOneShot(fxClips[FX.Boulder], 0.8f);
+        source.PlayOneShot(fxClips[FX.Boulder]);
         return;
     }
     public void Victory(string nextLevel)

@@ -79,8 +79,6 @@ public class Guard : DynamicObject
         SpriteRenderer spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         if (canMove)
             spriteRenderer.sprite = sprites[facing];
-        else
-            spriteRenderer.sprite = sprites[Directions.Static];
     }
 
     public override void Move(Vector3Int tilePosition, object context)
