@@ -39,11 +39,14 @@ public class HighlightManager : MonoBehaviour
             for (int y = -5; y < 5; y++)
             {
                 Vector3Int gridPos = new Vector3Int(x, y, 0);
-                goalHighlightColors.Add(gridPos, clearColor);
+                if (highlightMap.GetTile(gridPos) != null)
+                {
+                    goalHighlightColors.Add(gridPos, clearColor);
 
-                highlightMap.SetTileFlags(gridPos, TileFlags.None);
-                highlightMap.SetColor(gridPos, clearColor);
-                highlightMap.SetTileFlags(gridPos, TileFlags.LockColor);
+                    highlightMap.SetTileFlags(gridPos, TileFlags.None);
+                    highlightMap.SetColor(gridPos, clearColor);
+                    highlightMap.SetTileFlags(gridPos, TileFlags.LockColor);
+                }
             }
         }
     }
