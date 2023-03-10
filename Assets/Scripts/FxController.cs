@@ -50,7 +50,7 @@ public class FxController : MonoBehaviour
     {
         source.clip = fxClips[FX.Victory];
         GameObject[] level = GameObject.FindGameObjectsWithTag("LevelMusic");
-        if (level.Length>0) { level[0].GetComponent<AudioSource>().Pause(); }
+        if (level.Length>0) { level[0].GetComponent<AudioSource>().volume = 0.3f; }
         source.Play();
         StartCoroutine(WaitForVictory(nextLevel));
         return;
@@ -59,7 +59,7 @@ public class FxController : MonoBehaviour
     {
         source.clip = fxClips[FX.Defeat];
         GameObject[] level = GameObject.FindGameObjectsWithTag("LevelMusic");
-        if (level.Length > 0) { level[0].GetComponent<AudioSource>().Pause(); }
+        if (level.Length > 0) { level[0].GetComponent<AudioSource>().volume = 0.3f; }
         source.Play();
         StartCoroutine(WaitForDefeat(reset));
         return;
@@ -72,7 +72,7 @@ public class FxController : MonoBehaviour
             yield return null;
         }
         GameObject[] level = GameObject.FindGameObjectsWithTag("LevelMusic");
-        if (level.Length > 0) { level[0].GetComponent<AudioSource>().UnPause(); }
+        if (level.Length > 0) { level[0].GetComponent<AudioSource>().volume = 1.0f; }
         SceneManager.LoadScene(nextLevel);
     }
 
@@ -83,7 +83,7 @@ public class FxController : MonoBehaviour
             yield return null;
         }
         GameObject[] level = GameObject.FindGameObjectsWithTag("LevelMusic");
-        if (level.Length > 0) { level[0].GetComponent<AudioSource>().UnPause(); }
+        if (level.Length > 0) { level[0].GetComponent<AudioSource>().volume = 1.0f; }
         reset.Reset();
     }
 }
