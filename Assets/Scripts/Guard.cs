@@ -64,7 +64,6 @@ public class Guard : DynamicObject
         sprites.Add(Directions.Down, loadSprites[1]);
         sprites.Add(Directions.Left, loadSprites[2]);
         sprites.Add(Directions.Right, loadSprites[3]);
-        sprites.Add(Directions.Static, loadSprites[4]);
         ChangeDirections(facing);
     }
 

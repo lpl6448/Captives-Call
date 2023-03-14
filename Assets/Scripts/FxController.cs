@@ -20,6 +20,8 @@ public class FxController : MonoBehaviour
         fxClips.Add(FX.Boulder, clips[2]);
         fxClips.Add(FX.Good, clips[3]);
         fxClips.Add(FX.Bad, clips[4]);
+        GameObject[] level = GameObject.FindGameObjectsWithTag("LevelMusic");
+        if (level.Length > 0) { StartCoroutine(FadeIn(level[0].GetComponent<AudioSource>(), 1f)); }
     }
 
     // Update is called once per frame
@@ -50,7 +52,7 @@ public class FxController : MonoBehaviour
     {
         source.clip = fxClips[FX.Victory];
         GameObject[] level = GameObject.FindGameObjectsWithTag("LevelMusic");
-        if (level.Length>0) { level[0].GetComponent<AudioSource>().volume = 0.3f; }
+        if (level.Length > 0) {StartCoroutine(FadeOut(level[0].GetComponent<AudioSource>(), 0.1f)); }
         source.Play();
         StartCoroutine(WaitForVictory(nextLevel));
         return;
@@ -59,7 +61,7 @@ public class FxController : MonoBehaviour
     {
         source.clip = fxClips[FX.Defeat];
         GameObject[] level = GameObject.FindGameObjectsWithTag("LevelMusic");
-        if (level.Length > 0) { level[0].GetComponent<AudioSource>().volume = 0.3f; }
+        if (level.Length > 0) { StartCoroutine(FadeOut(level[0].GetComponent<AudioSource>(), 0.1f)); }
         source.Play();
         StartCoroutine(WaitForDefeat(reset));
         return;
@@ -71,8 +73,6 @@ public class FxController : MonoBehaviour
         {
             yield return null;
         }
-        GameObject[] level = GameObject.FindGameObjectsWithTag("LevelMusic");
-        if (level.Length > 0) { level[0].GetComponent<AudioSource>().volume = 1.0f; }
         SceneManager.LoadScene(nextLevel);
     }
 
@@ -82,8 +82,29 @@ public class FxController : MonoBehaviour
         {
             yield return null;
         }
-        GameObject[] level = GameObject.FindGameObjectsWithTag("LevelMusic");
-        if (level.Length > 0) { level[0].GetComponent<AudioSource>().volume = 1.0f; }
         reset.Reset();
+    }
+
+    public static IEnumerator FadeOut(AudioSource source, float fadeTime)
+    {
+        float startVolume = source.volume;
+        while (source.volume>0)
+        {
+            source.volume -= startVolume * Time.deltaTime / fadeTime;
+            yield return null;
+        }
+        //source.Pause();
+    }
+
+    public static IEnumerator FadeIn(AudioSource source, float fadeTime)
+    {
+        //source.UnPause();
+        Debug.Log(source);
+        source.volume = 0f;
+        while (source.volume < 1)
+        {
+            source.volume += Time.deltaTime / fadeTime;
+            yield return null;
+        }
     }
 }

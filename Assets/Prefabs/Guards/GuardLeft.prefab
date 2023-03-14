@@ -50,7 +50,6 @@ MonoBehaviour:
   - {fileID: 21300000, guid: d7f7e85d8fc3cae429c7cff0ef8c34ff, type: 3}
   - {fileID: 21300000, guid: 761acd35e7dc9d747b0276e51967c751, type: 3}
   - {fileID: 21300000, guid: 02f0c32533415814ab9bca5545d83bcb, type: 3}
-  - {fileID: 21300000, guid: 6c110a9483a2a0c4d8c29741b7356b59, type: 3}
   canMove: 1
   facing: 2
 --- !u!212 &3930638541042900037
