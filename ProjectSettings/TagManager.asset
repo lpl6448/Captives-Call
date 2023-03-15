@@ -16,6 +16,7 @@ TagManager:
   - Grid
   - Pressure
   - Gate
+  - Key
   layers:
   - Default
   - TransparentFX

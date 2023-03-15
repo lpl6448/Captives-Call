@@ -30,6 +30,11 @@ public class Party : DynamicObject
     public bool dead;
 
     /// <summary>
+    /// Tracks whether the party is holding a key or not
+    /// </summary>
+    public int keyCount;
+
+    /// <summary>
     /// List containing the sprites for each character in the party
     /// </summary>
     [SerializeField]
@@ -74,6 +79,17 @@ public class Party : DynamicObject
     /// </summary>
     public override void PostAction()
     {
+        //Check for key collision
+        GameObject[] keys = GameObject.FindGameObjectsWithTag("Key");
+        if(keys.Length>0)
+        {
+            if (TilePosition == keys[0].GetComponent<DynamicObject>().TilePosition)
+            {
+                keyCount++;
+                Destroy(keys[0]);
+            }
+        }
+
         currentMemberIndex++;
         if (currentMemberIndex >= partyMembers.Count)
             currentMemberIndex = 0;
