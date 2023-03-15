@@ -15,7 +15,7 @@ TagManager:
   - Highlight
   - Grid
   - Pressure
-  - LockedDoor
+  - Gate
   layers:
   - Default
   - TransparentFX
