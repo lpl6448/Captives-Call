@@ -151,4 +151,9 @@ public abstract class DynamicObject : MonoBehaviour
     {
         LevelController.Instance.RegisterAnimationEndAll(this);
     }
+
+    /// <summary>
+    /// Classes that need to wait for a pressure plate signal will use Run() to check their activation status
+    /// </summary>
+    public virtual void Run(bool canRun) { }
 }

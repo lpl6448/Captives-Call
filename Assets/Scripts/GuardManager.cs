@@ -39,7 +39,7 @@ public class GuardManager : MonoBehaviour
         {
             if (guard.canMove)
             {
-                Vector3Int translate = toTranslate(guard);
+                Vector3Int translate = ToTranslate(guard);
                 Vector3Int gridPosition = wallMap.WorldToCell(guard.transform.position + translate);
                 bool accessible = guard.CanMove(gridPosition);
                 if (!accessible)
@@ -90,7 +90,7 @@ public class GuardManager : MonoBehaviour
         //return false;
     }
 
-    public Vector3Int toTranslate(Guard guard)
+    public Vector3Int ToTranslate(Guard guard)
     {
         switch (guard.facing)
         {

@@ -85,7 +85,7 @@ public class LevelController : MonoBehaviour
         initialDynamicObjects = new List<DynamicObject>();
         //Find and add all dynamic objects in the scene to the initialdynamicobject list
         GameObject[] foundObjects;
-        string[] tags = { "Party", "Guard", "Boulder" };
+        string[] tags = { "Party", "Guard", "Boulder", "Pressure", "Gate" };
         for(int i=0; i<tags.Length; i++)
         {
             foundObjects = GameObject.FindGameObjectsWithTag(tags[i]);
@@ -423,6 +423,7 @@ public class LevelController : MonoBehaviour
                     hm.HighlightTiles(null, gm.guardList, dataFromTiles);
                     //Check if player is in the guardLOS
                     guardAttack();
+                    guardWillPress();
 
                     break;
                 }
@@ -520,12 +521,35 @@ public class LevelController : MonoBehaviour
             // If any guards on the party's previous tile have just turned toward the player this turn,
             // the player technically collided with them.
             foreach (Guard guard in GetDynamicObjectsOnTile<Guard>(lastPartyGrid))
-                if (gm.toTranslate(guard) == lastPartyGrid - pm.party.TilePosition)
+                if (gm.ToTranslate(guard) == lastPartyGrid - pm.party.TilePosition)
                 {
                     //am.Defeat(rs);
                     DestroyDynamicObject(pm.party.TilePosition, pm.party, guard);
                     return;
                 }
+        }
+    }
+
+    private void guardWillPress()
+    {
+        GameObject[] plates = GameObject.FindGameObjectsWithTag("Pressure");
+        foreach(GameObject gPlate in plates)
+        {
+            foreach(Guard guard in gm.guardList)
+            {
+                PressurePlate plate = gPlate.GetComponent<PressurePlate>();
+                if (gm.ToTranslate(guard)+guard.TilePosition==plate.TilePosition ||
+                    guard.TilePosition==plate.TilePosition)
+                {
+                    plate.linkedObject.GetComponent<Door>().willOpen = true;
+                    break;
+                }
+                else
+                {
+                    plate.linkedObject.GetComponent<Door>().willOpen = false;
+                }
+                
+            }
         }
     }
 }
