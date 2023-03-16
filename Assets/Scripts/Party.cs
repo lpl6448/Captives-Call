@@ -25,6 +25,11 @@ public class Party : DynamicObject
     public PartyMember currentMember;
 
     /// <summary>
+    /// Whether the party has a powerUp or not
+    /// </summary>
+    public bool poweredUp;
+
+    /// <summary>
     /// Whether this Party has been caught or not
     /// </summary>
     public bool dead;
@@ -83,11 +88,20 @@ public class Party : DynamicObject
         GameObject[] keys = GameObject.FindGameObjectsWithTag("Key");
         if(keys.Length>0)
         {
-            if (TilePosition == keys[0].GetComponent<DynamicObject>().TilePosition)
+            foreach (GameObject key in keys)
             {
-                keyCount++;
-                Destroy(keys[0]);
+                if (TilePosition == key.GetComponent<DynamicObject>().TilePosition)
+                {
+                    keyCount++;
+                    Destroy(key);
+                }
             }
+        }
+        //Check for locked door collision
+        List<LockedDoor> locks = LevelController.Instance.GetDynamicObjectsOnTile<LockedDoor>(TilePosition);
+        if(locks.Count>0)
+        {
+            keyCount = locks[0].Unlock(keyCount);
         }
 
         currentMemberIndex++;
@@ -108,12 +122,23 @@ public class Party : DynamicObject
         switch (currentMember)
         {
             case PartyMember.Warlock:
-                // Telekinetic Push
-                // Since CanUseAbility returned true, there must be a boulder on the target tile that can move
-                Boulder boulder = LevelController.Instance.GetDynamicObjectsOnTile<Boulder>(target)[0];
-                Vector3Int movementDir = target - TilePosition;
-                LevelController.Instance.MoveDynamicObject(target + movementDir, boulder, this);
-                audio.Boulder();
+                //Check target tile for which ability is being used
+                List<Boulder> boulder = LevelController.Instance.GetDynamicObjectsOnTile<Boulder>(target);
+                List<BreakableWall> bWall = LevelController.Instance.GetDynamicObjectsOnTile<BreakableWall>(target);
+                if (boulder.Count>0)
+                {
+                    // Telekinetic Push
+                    Vector3Int movementDir = target - TilePosition;
+                    LevelController.Instance.MoveDynamicObject(target + movementDir, boulder[0], this);
+                    audio.Boulder();
+                    break;
+                }
+                if(bWall.Count>0) 
+                {
+                    bWall[0].Run(true);
+                    bWall[0].ChangeSprite(bWall[0].GetComponent<SpriteRenderer>());
+                    break;
+                }
                 break;
         }
     }
@@ -129,10 +154,10 @@ public class Party : DynamicObject
         switch (currentMember)
         {
             case PartyMember.Warlock:
-                // Telekinetic Push
                 if (Mathf.Abs(target.x - TilePosition.x) + Mathf.Abs(target.y - TilePosition.y) != 1)
                     return false;
 
+                // Telekinetic Push
                 List<Boulder> boulders = LevelController.Instance.GetDynamicObjectsOnTile<Boulder>(target);
                 if (boulders.Count > 0)
                 {
@@ -142,6 +167,21 @@ public class Party : DynamicObject
                     if (boulder.CanMove(target + movementDir))
                         return true;
                     return false;
+                }
+
+                //Warlock Crush
+                if (poweredUp)
+                {
+                    List<BreakableWall> breakables = LevelController.Instance.GetDynamicObjectsOnTile<BreakableWall>(target);
+                    if (breakables.Count > 0)
+                    {
+                        BreakableWall bWall = breakables[0];
+                        if(!bWall.IsOpen)
+                        {
+                            return true;
+                        }
+                        return false;
+                    }
                 }
                 return false;
         }

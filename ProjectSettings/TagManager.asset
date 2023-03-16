@@ -17,6 +17,8 @@ TagManager:
   - Pressure
   - Gate
   - Key
+  - Locked
+  - Breakable
   layers:
   - Default
   - TransparentFX

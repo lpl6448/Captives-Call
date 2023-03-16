@@ -4,25 +4,9 @@ using UnityEngine;
 
 public class Gate : Door
 {
-    /// <summary>
-    /// Allows loading of sprites via unity editor
-    /// </summary>
-    [SerializeField]
-    private List<Sprite> loadSprites;
-
-    /// <summary>
-    /// Holds all guard sprites, keyed by directions
-    /// </summary>
-    private Dictionary<int, Sprite> sprites;
-
     // Start is called before the first frame update
     void Start()
     {
-        sprites = new Dictionary<int, Sprite>();
-        for (int i = 0; i < loadSprites.Count; i++)
-        {
-            sprites.Add(i, loadSprites[i]);
-        }
         isOpen = false;
     }
 
@@ -54,15 +38,6 @@ public class Gate : Door
             }
         }
 
-        changeSprite();
-    }
-
-    private void changeSprite()
-    {
-        SpriteRenderer spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
-        if (isOpen)
-            spriteRenderer.sprite = sprites[1];
-        else
-            spriteRenderer.sprite = sprites[0];
+        ChangeSprite(gameObject.GetComponent<SpriteRenderer>());
     }
 }

@@ -4,10 +4,30 @@ using UnityEngine;
 
 public class Door : DynamicObject
 {
-    //tracks if the "door" is accessible to move on
+    /// <summary>
+    /// Allows loading of sprites via unity editor
+    /// </summary>
+    [SerializeField]
+    protected List<Sprite> loadSprites;
+
+    /// <summary>
+    /// Holds all guard sprites, keyed by directions
+    /// </summary>
+    protected Dictionary<int, Sprite> sprites;
+
+    /// <summary>
+    /// Tracks if the "door" is accessible to move on
+    /// </summary>
     protected bool isOpen;
 
+    public bool IsOpen => isOpen;
+
     public bool willOpen;
+
+    /// <summary>
+    /// Holds if the gate has been triggered this turn already
+    /// </summary>
+    protected bool triggered;
 
     public override bool IsTraversable(DynamicObject mover)
     {
@@ -30,12 +50,42 @@ public class Door : DynamicObject
 
     public override void Run(bool canRun)
     {
-        isOpen = canRun;
+        if (!triggered) { isOpen = canRun; }
+        if(isOpen) { triggered = true; }
+    }
+
+    public override void PreAction()
+    {
+        triggered = false;
+    }
+
+
+    protected void Awake()
+    {
+        sprites = new Dictionary<int, Sprite>();
+        for (int i = 0; i < loadSprites.Count; i++)
+        {
+            sprites.Add(i, loadSprites[i]);
+        }
+        isOpen = false;
+        willOpen = false;
+        triggered = false;
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        
+
+    }
+
+    /// <summary>
+    /// Switch between the door's open and closed sprites
+    /// </summary>
+    public void ChangeSprite(SpriteRenderer spriteRenderer)
+    {
+        if (isOpen)
+            spriteRenderer.sprite = sprites[1];
+        else
+            spriteRenderer.sprite = sprites[0];
     }
 }

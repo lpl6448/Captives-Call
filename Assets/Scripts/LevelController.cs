@@ -85,7 +85,7 @@ public class LevelController : MonoBehaviour
         initialDynamicObjects = new List<DynamicObject>();
         //Find and add all dynamic objects in the scene to the initialdynamicobject list
         GameObject[] foundObjects;
-        string[] tags = { "Party", "Guard", "Boulder", "Pressure", "Gate", "Key" };
+        string[] tags = { "Party", "Guard", "Boulder", "Pressure", "Gate", "Key", "Locked", "Breakable" };
         for(int i=0; i<tags.Length; i++)
         {
             foundObjects = GameObject.FindGameObjectsWithTag(tags[i]);
