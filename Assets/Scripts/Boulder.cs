@@ -8,6 +8,12 @@ public class Boulder : DynamicObject
     [SerializeField]
     private List<TileData> tilesToDestroy;
 
+    [SerializeField]
+    private List<TileBase> tilesToPlace;
+
+    private bool willDestroy;
+    public bool WillDestroy => willDestroy;
+
     /// <summary>
     /// Returns false. No DynamicObjects can occupy the same space as a boulder (currently).
     /// </summary>
@@ -48,12 +54,14 @@ public class Boulder : DynamicObject
     {
         // The addition of animations made it so the logic had to be moved to the Move() function.
         // This actually is probably okay because we will be phasing out PreAction() and PostAction() somewhat.
+        
     }
 
     public override void Move(Vector3Int tilePosition, object context)
     {
         // Destroy the tile that the boulder landed on if necessary
         bool destroyTile = false;
+        //Brush
         TileBase tile = LevelController.Instance.GetWallTile(TilePosition);
         if (tile != null)
         {
@@ -62,6 +70,19 @@ public class Boulder : DynamicObject
             {
                 LevelController.Instance.DeactivateWallTile(TilePosition);
                 destroyTile = true;
+            }
+        }
+        //Gap
+        tile = LevelController.Instance.GetFloorTile(TilePosition);
+        if (tile != null)
+        {
+            TileData data = LevelController.Instance.GetTileData(tile);
+            if (data != null && tilesToDestroy.Contains(data))
+            {
+                LevelController.Instance.DeactivateFloorTile(TilePosition);
+                destroyTile = true;
+                LevelController.Instance.floorMap.SetTile(TilePosition, tilesToPlace[0]);
+                willDestroy = true;
             }
         }
 

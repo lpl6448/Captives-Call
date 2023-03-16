@@ -97,6 +97,19 @@ public class Party : DynamicObject
                 }
             }
         }
+        //Check for powerup collision
+        GameObject[] powerUps = GameObject.FindGameObjectsWithTag("Power");
+        if (powerUps.Length > 0)
+        {
+            foreach (GameObject pUp in powerUps)
+            {
+                if (TilePosition == pUp.GetComponent<DynamicObject>().TilePosition)
+                {
+                    poweredUp = true;
+                    Destroy(pUp);
+                }
+            }
+        }
         //Check for locked door collision
         List<LockedDoor> locks = LevelController.Instance.GetDynamicObjectsOnTile<LockedDoor>(TilePosition);
         if(locks.Count>0)

@@ -10,11 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 66eb3659a09a64941afe0f2bc3db121a, type: 3}
-  m_Name: FloorTileData
+  m_Name: GapTileData
   m_EditorClassIdentifier: 
   tiles:
-  - {fileID: 11400000, guid: 505db2dbb115b7143aa5ad0ce8710e99, type: 2}
-  - {fileID: 11400000, guid: d5ec6fb5009bde14e9020617948f0f46, type: 2}
-  isAccessible: 1
-  isPartyAccessible: 1
-  isBoulderAccessible: 0
+  - {fileID: 11400000, guid: 25f7b90ab0029014ab1dc53c3b84d024, type: 2}
+  isAccessible: 0
+  isPartyAccessible: 0
+  isBoulderAccessible: 1

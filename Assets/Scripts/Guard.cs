@@ -46,6 +46,11 @@ public class Guard : DynamicObject
         if (tile != null && !LevelController.Instance.GetTileData(tile).isAccessible)
             return false;
 
+        // Guard cannot move to a tile with a gap on it
+        tile = LevelController.Instance.floorMap.GetTile(tilePosition);
+        if (tile != null && !LevelController.Instance.GetTileData(tile).isAccessible)
+            return false;
+
         // Guard cannot move to a tile with another DynamicObject on it if the object is not traversable
         foreach (DynamicObject collidingObj in LevelController.Instance.GetDynamicObjectsOnTile(tilePosition))
             if (!collidingObj.IsTraversable(this))

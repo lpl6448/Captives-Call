@@ -85,7 +85,7 @@ public class LevelController : MonoBehaviour
         initialDynamicObjects = new List<DynamicObject>();
         //Find and add all dynamic objects in the scene to the initialdynamicobject list
         GameObject[] foundObjects;
-        string[] tags = { "Party", "Guard", "Boulder", "Pressure", "Gate", "Key", "Locked", "Breakable" };
+        string[] tags = { "Party", "Guard", "Boulder", "Pressure", "Gate", "Key", "Locked", "Breakable", "Power" };
         for(int i=0; i<tags.Length; i++)
         {
             foundObjects = GameObject.FindGameObjectsWithTag(tags[i]);
@@ -256,6 +256,30 @@ public class LevelController : MonoBehaviour
     /// </summary>
     /// <param name="tilePos">Tile position to deactivate</param>
     public void DeactivateWallTile(Vector3Int tilePos)
+    {
+        deactivatedTiles.Add(tilePos);
+    }
+
+    /// <summary>
+    /// Finds the tile on the wallMap at a particular grid position, or null if
+    /// (a) no tile is found or (b) if that tile has been deactivated and is no longer affecting game logic
+    /// </summary>
+    /// <param name="tilePos">Tile position to check</param>
+    /// <returns>Tile at the tilePos, or null if there is no tile or if it has been deactivated</returns>
+    public TileBase GetFloorTile(Vector3Int tilePos)
+    {
+        TileBase tile = floorMap.GetTile(tilePos);
+        if (tile != null && !deactivatedTiles.Contains(tilePos))
+            return tile;
+        else
+            return null;
+    }
+
+    /// <summary>
+    /// Deactivates the tile at the given grid position, preventing it from affecting game logic
+    /// </summary>
+    /// <param name="tilePos">Tile position to deactivate</param>
+    public void DeactivateFloorTile(Vector3Int tilePos)
     {
         deactivatedTiles.Add(tilePos);
     }
@@ -449,6 +473,17 @@ public class LevelController : MonoBehaviour
             am.Defeat(rs);
             acceptingUserInput = false;
             yield break;
+        }
+
+        //Check if any boulders need to be destroyed
+        GameObject[] boulders = GameObject.FindGameObjectsWithTag("Boulder");
+        foreach(GameObject boulder in boulders) 
+        {
+            if (boulder.GetComponent<Boulder>().WillDestroy)
+            {
+                DynamicObject b = boulder.GetComponent<DynamicObject>();
+                DestroyDynamicObject(b.TilePosition,b);
+            }
         }
 
         //Check if the party has reached the exit
