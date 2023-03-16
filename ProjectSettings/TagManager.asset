@@ -19,6 +19,7 @@ TagManager:
   - Key
   - Locked
   - Breakable
+  - Power
   layers:
   - Default
   - TransparentFX
