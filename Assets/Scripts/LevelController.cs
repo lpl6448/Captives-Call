@@ -576,12 +576,12 @@ public class LevelController : MonoBehaviour
                 if (gm.ToTranslate(guard)+guard.TilePosition==plate.TilePosition ||
                     guard.TilePosition==plate.TilePosition)
                 {
-                    plate.linkedObject.GetComponent<Door>().willOpen = true;
+                    plate.linkedObject.GetComponent<Door>().WillOpen = true;
                     break;
                 }
                 else
                 {
-                    plate.linkedObject.GetComponent<Door>().willOpen = false;
+                    plate.linkedObject.GetComponent<Door>().WillOpen = false;
                 }
                 
             }

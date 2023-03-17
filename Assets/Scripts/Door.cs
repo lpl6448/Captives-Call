@@ -22,7 +22,19 @@ public class Door : DynamicObject
 
     public bool IsOpen => isOpen;
 
-    public bool willOpen;
+    protected bool willOpen;
+    public bool WillOpen
+    {
+        get  { return willOpen;} 
+        set 
+        {
+            if (!triggered)
+            {
+                willOpen = value;
+                triggered = value;
+            }
+        } 
+    }
 
     /// <summary>
     /// Holds if the gate has been triggered this turn already

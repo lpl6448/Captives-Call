@@ -150,6 +150,7 @@ public class Party : DynamicObject
                 {
                     bWall[0].Run(true);
                     bWall[0].ChangeSprite(bWall[0].GetComponent<SpriteRenderer>());
+                    poweredUp = false;
                     break;
                 }
                 break;

@@ -251,7 +251,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6608317839234138981, guid: 377410b370256774a99893b002eade03, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.500515
+      value: -1.500515
       objectReference: {fileID: 0}
     - target: {fileID: 6608317839234138986, guid: 377410b370256774a99893b002eade03, type: 3}
       propertyPath: facing
@@ -407,11 +407,11 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: 9be37d1b81e4d5049a832d08a6ba6bed, type: 3}
     - target: {fileID: 8802580511564366203, guid: 377410b370256774a99893b002eade03, type: 3}
       propertyPath: m_TileAssetArray.Array.data[0].m_RefCount
-      value: 98
+      value: 99
       objectReference: {fileID: 0}
     - target: {fileID: 8802580511564366203, guid: 377410b370256774a99893b002eade03, type: 3}
       propertyPath: m_TileAssetArray.Array.data[1].m_RefCount
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8802580511564366203, guid: 377410b370256774a99893b002eade03, type: 3}
       propertyPath: m_Tiles.Array.data[17].second.m_TileIndex
@@ -419,15 +419,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8802580511564366203, guid: 377410b370256774a99893b002eade03, type: 3}
       propertyPath: m_Tiles.Array.data[85].second.m_TileIndex
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8802580511564366203, guid: 377410b370256774a99893b002eade03, type: 3}
       propertyPath: m_TileSpriteArray.Array.data[0].m_RefCount
-      value: 98
+      value: 99
       objectReference: {fileID: 0}
     - target: {fileID: 8802580511564366203, guid: 377410b370256774a99893b002eade03, type: 3}
       propertyPath: m_TileSpriteArray.Array.data[1].m_RefCount
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8802580511564366203, guid: 377410b370256774a99893b002eade03, type: 3}
       propertyPath: m_Tiles.Array.data[17].second.m_TileSpriteIndex
@@ -435,7 +435,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8802580511564366203, guid: 377410b370256774a99893b002eade03, type: 3}
       propertyPath: m_Tiles.Array.data[85].second.m_TileSpriteIndex
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 377410b370256774a99893b002eade03, type: 3}
@@ -581,7 +581,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6529530697670489313, guid: 1224df424f3bc9f4ab2d529a0e1fe7ad, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.5
+      value: -1.5
       objectReference: {fileID: 0}
     - target: {fileID: 6529530697670489313, guid: 1224df424f3bc9f4ab2d529a0e1fe7ad, type: 3}
       propertyPath: m_LocalPosition.y
