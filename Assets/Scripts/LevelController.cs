@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 
 public class LevelController : MonoBehaviour
 {
@@ -427,7 +428,8 @@ public class LevelController : MonoBehaviour
         // Perform an action once the player clicks on a tile
         while (true)
         {
-            if (Input.GetMouseButtonDown(0)||characterSwitch)
+            // Check if the player has just clicked (not over the UI) or if the character has been switched
+            if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject() || characterSwitch)
             {
                 Vector3Int clickGrid = grid.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
                 if (characterSwitch)
