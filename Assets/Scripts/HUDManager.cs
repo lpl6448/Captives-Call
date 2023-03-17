@@ -63,19 +63,6 @@ public class HUDManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //TODO: THESE ARE TEMPORARY KEYBOARD CONTROLS FOR SWITCHING CHARACTERS
-        //TODO: WE NEED TO PATCH HOW CLICKING IS HANDLED!!!!!!!!!!!!!!
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
-            MoveSelectionLeft();
-
-        if (Input.GetKeyDown(KeyCode.RightArrow))
-            MoveSelectionRight();
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            SwitchCharacter();
-        }
-
         //if the current party member has changed, reset the indexers
         if (currentPartyMember != party.currentMember)
             ResetIndexers();
