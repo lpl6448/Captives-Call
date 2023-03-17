@@ -2003,7 +2003,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 12, y: -3}
+  m_AnchoredPosition: {x: 12, y: 47}
   m_SizeDelta: {x: 276.5203, y: 156.8072}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1841475052
@@ -2026,7 +2026,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Additional Controls:\n\nR:\n  Restart Level\n\nEsc: \n  Quit Game"
+  m_text: "Additional Controls:\n\nR:\n  Restart Level\n\nEsc: \n  Quit Game\n\nL+R
+    Arrows:\n  Choose Char\n\nSpace:\n Switch Char"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: bd11605275d33264ca643122b04a96d6, type: 2}
   m_sharedMaterial: {fileID: 7560613546084316169, guid: bd11605275d33264ca643122b04a96d6, type: 2}
@@ -2223,8 +2224,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 242.05717, y: 73.418}
-  m_SizeDelta: {x: 260.2356, y: 153.82}
+  m_AnchoredPosition: {x: 242.05717, y: 37}
+  m_SizeDelta: {x: 260.2356, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1998488783
 MonoBehaviour:
