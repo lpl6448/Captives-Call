@@ -227,6 +227,11 @@ MonoBehaviour:
   specialAbilitySprite: {fileID: 5617206080925336173}
   keySprite: {fileID: 5617206079892817041}
   powerUpSprite: {fileID: 5617206080539989434}
+  characterPortsList:
+  - {fileID: 21300000, guid: e96c92a063e260e48a08ea1f7b1514b4, type: 3}
+  - {fileID: 21300000, guid: 21e253842323aae418746dda66ff4199, type: 3}
+  - {fileID: 21300000, guid: 8d6fd57742eee8e489396c66eb16d1be, type: 3}
+  - {fileID: 21300000, guid: 72cd79f274418254bba32c2eb7ef08ea, type: 3}
 --- !u!1 &5617206079754539677
 GameObject:
   m_ObjectHideFlags: 0

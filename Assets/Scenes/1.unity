@@ -524,6 +524,26 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5944326442342106769, guid: 114b4988fae8f2f49947c7bab9841b3d, type: 3}
+      propertyPath: characterPortsList.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5944326442342106769, guid: 114b4988fae8f2f49947c7bab9841b3d, type: 3}
+      propertyPath: characterPortsList.Array.data[0]
+      value: 
+      objectReference: {fileID: 21300000, guid: e96c92a063e260e48a08ea1f7b1514b4, type: 3}
+    - target: {fileID: 5944326442342106769, guid: 114b4988fae8f2f49947c7bab9841b3d, type: 3}
+      propertyPath: characterPortsList.Array.data[1]
+      value: 
+      objectReference: {fileID: 21300000, guid: 21e253842323aae418746dda66ff4199, type: 3}
+    - target: {fileID: 5944326442342106769, guid: 114b4988fae8f2f49947c7bab9841b3d, type: 3}
+      propertyPath: characterPortsList.Array.data[2]
+      value: 
+      objectReference: {fileID: 21300000, guid: 8d6fd57742eee8e489396c66eb16d1be, type: 3}
+    - target: {fileID: 5944326442342106769, guid: 114b4988fae8f2f49947c7bab9841b3d, type: 3}
+      propertyPath: characterPortsList.Array.data[3]
+      value: 
+      objectReference: {fileID: 21300000, guid: 72cd79f274418254bba32c2eb7ef08ea, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 114b4988fae8f2f49947c7bab9841b3d, type: 3}
 --- !u!156049354 &1024002575 stripped

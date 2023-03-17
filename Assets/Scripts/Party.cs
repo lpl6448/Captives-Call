@@ -24,6 +24,7 @@ public class Party : DynamicObject
     /// Index of the PartyMember whose turn it is (from partyMembers)
     /// </summary>
     private int currentMemberIndex = 0;
+    public int CurrentMemberIndex => currentMemberIndex;
 
     /// <summary>
     /// The PartyMember whose turn it is

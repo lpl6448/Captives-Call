@@ -26,7 +26,9 @@ public class HUDManager : MonoBehaviour
     private Party party;
 
     private PartyMember currentPartyMember;
-    private List<Sprite> characterSprites;
+    [SerializeField]
+    public List<Sprite> characterPortsList;
+    private Dictionary<PartyMember, Sprite> characterPorts;
 
     int level = 0;
     int moves = 0;
@@ -41,7 +43,11 @@ public class HUDManager : MonoBehaviour
 
         //level = levelController.
 
-        characterSprites = party.sprites;
+        characterPorts = new Dictionary<PartyMember, Sprite>();
+        characterPorts.Add(PartyMember.Warlock, characterPortsList[0]);
+        characterPorts.Add(PartyMember.Wizard, characterPortsList[1]);
+        characterPorts.Add(PartyMember.Pickpocket, characterPortsList[2]);
+        characterPorts.Add(PartyMember.Sailor, characterPortsList[3]);
         
         currentPartyMember = party.currentMember;
 
@@ -51,37 +57,21 @@ public class HUDManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (currentPartyMember == PartyMember.Warlock) //sprite index 0
+        //Update the currentPartyMember to this frame's state
+        currentPartyMember=party.currentMember;
+        //Update HUD with most recent info
+        currentSprite.sprite = characterPorts[currentPartyMember];
+        currentCharacterText.text = currentPartyMember.ToString();
+        PartyMember nextMem;
+        if(party.CurrentMemberIndex!=party.partyMembers.Count-1)
         {
-            currentSprite.sprite = characterSprites[0];
-            currentCharacterText.text = "Warlock";
-            nextSprite.sprite = characterSprites[1];
-            nextCharacterText.text = "Next up: Wizard";
+            nextMem = party.partyMembers[party.CurrentMemberIndex + 1];
         }
-        if (currentPartyMember == PartyMember.Wizard) //sprite index 1
+        else
         {
-            currentSprite.sprite = characterSprites[1];
-            currentCharacterText.text = "Wizard";
-            nextSprite.sprite = characterSprites[2];
-            nextCharacterText.text = "Next up: PickPocket";
+            nextMem = party.partyMembers[0];
         }
-        if (currentPartyMember == PartyMember.Pickpocket) //sprite index 2
-        {
-            currentSprite.sprite = characterSprites[2];
-            currentCharacterText.text = "Pickpocket";
-            nextSprite.sprite = characterSprites[3];
-            nextCharacterText.text = "Next up: Sailor";
-        }
-        if (currentPartyMember == PartyMember.Sailor) //sprite index 3
-        {
-            currentSprite.sprite = characterSprites[3];
-            currentCharacterText.text = "Sailor";
-            nextSprite.sprite = characterSprites[0];
-            nextCharacterText.text = "Next up: Warlock";
-        }
-
-
-
-
+        nextSprite.sprite = characterPorts[nextMem];
+        nextCharacterText.text = "Next up: " + nextMem.ToString();
     }
 }
