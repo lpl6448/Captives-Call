@@ -28,9 +28,13 @@ public class LevelController : MonoBehaviour
     private Grid grid;
     public Tilemap floorMap;
     public Tilemap wallMap;
+    [SerializeField]
+    private string currentLevel;
+    public string CurrentLevel => currentLevel;
     //Get references to objects needed to advance to next level
     [SerializeField]
     private string nextLevel;
+    public string NextLevel => nextLevel;
     /// <summary>
     /// Field to hold TileData scriptable objects
     /// </summary>
@@ -79,6 +83,13 @@ public class LevelController : MonoBehaviour
     /// HashSet containing grid positions of tiles that can no longer affect game logic but will be destroyed imminently
     /// </summary>
     private HashSet<Vector3Int> deactivatedTiles;
+    /// <summary>
+    /// Holds how many moves the player has made this level
+    /// </summary>
+    private int movesTaken;
+    public int MovesTaken => movesTaken;
+    //Triggers the turn when the player switches characters
+    private bool characterSwitch;
 
     private void FindAllGameObjects()
     {
@@ -372,6 +383,8 @@ public class LevelController : MonoBehaviour
                 dataFromTiles.Add(tile, tileData);
             }
         }
+        movesTaken = 0;
+        characterSwitch = false;
 
         // Begin the level turn logic
         StartCoroutine(DoLevel());
@@ -414,12 +427,14 @@ public class LevelController : MonoBehaviour
         // Perform an action once the player clicks on a tile
         while (true)
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0)||characterSwitch)
             {
                 Vector3Int clickGrid = grid.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                if (characterSwitch)
+                    clickGrid = pm.party.TilePosition;
                 bool canMove = validMovementClick(clickGrid);
                 bool canUseAbility = validAbilityClick(clickGrid);
-                if (canMove || canUseAbility)
+                if (canMove || canUseAbility || characterSwitch)
                 {
                     am.GoodClick();
 
@@ -448,7 +463,7 @@ public class LevelController : MonoBehaviour
                     //Check if player is in the guardLOS
                     guardAttack();
                     guardWillPress();
-
+                    movesTaken++;
                     break;
                 }
                 else
@@ -458,6 +473,8 @@ public class LevelController : MonoBehaviour
             }
             yield return null;
         }
+
+        characterSwitch = false;
 
         // Wait for all animations to finish before continuing
         while (currentlyAnimatedObjects.Count > 0)
@@ -586,5 +603,11 @@ public class LevelController : MonoBehaviour
                 
             }
         }
+    }
+
+    public void TriggerCharacterSwitch(int characterIndex)
+    {
+        characterSwitch = true;
+        pm.party.ChangeCharacter(characterIndex);
     }
 }

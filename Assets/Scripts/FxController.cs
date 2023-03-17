@@ -24,12 +24,6 @@ public class FxController : MonoBehaviour
         if (level.Length > 0) { StartCoroutine(FadeIn(level[0].GetComponent<AudioSource>(), 1f)); }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public void GoodClick()
     {
         source.clip = fxClips[FX.Good];
@@ -93,13 +87,10 @@ public class FxController : MonoBehaviour
             source.volume -= startVolume * Time.deltaTime / fadeTime;
             yield return null;
         }
-        //source.Pause();
     }
 
     public static IEnumerator FadeIn(AudioSource source, float fadeTime)
     {
-        //source.UnPause();
-        Debug.Log(source);
         source.volume = 0f;
         while (source.volume < 1)
         {

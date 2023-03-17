@@ -31,6 +31,8 @@ public class Party : DynamicObject
     /// </summary>
     public PartyMember currentMember;
 
+    public int nextMember;
+
     /// <summary>
     /// Whether the party has a powerUp or not
     /// </summary>
@@ -124,9 +126,9 @@ public class Party : DynamicObject
             keyCount = locks[0].Unlock(keyCount);
         }
 
-        currentMemberIndex++;
-        if (currentMemberIndex >= partyMembers.Count)
-            currentMemberIndex = 0;
+        //currentMemberIndex++;
+        //if (currentMemberIndex >= partyMembers.Count)
+        //    currentMemberIndex = 0;
         currentMember = partyMembers[currentMemberIndex];
 
         UpdateSprite();
@@ -227,6 +229,11 @@ public class Party : DynamicObject
     private void Awake()
     {
         Instance = this;
+    }
+
+    public void ChangeCharacter(int index)
+    {
+        currentMemberIndex = index;
     }
 
     public void UpdateSprite()
