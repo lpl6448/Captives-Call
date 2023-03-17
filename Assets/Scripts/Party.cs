@@ -10,6 +10,12 @@ using System.Collections.Generic;
 public class Party : DynamicObject
 {
     /// <summary>
+    /// Singleton variable (if we want to use this convention) to allow easy access
+    /// to the Party from any script in the scene
+    /// </summary>
+    public static Party Instance;
+
+    /// <summary>
     /// List containing all PartyMembers that are in this party, in the turn order specified
     /// </summary>
     public List<PartyMember> partyMembers;
@@ -43,12 +49,12 @@ public class Party : DynamicObject
     /// List containing the sprites for each character in the party
     /// </summary>
     [SerializeField]
-    private List<Sprite> sprites;
+    public List<Sprite> sprites;
 
     /// <summary>
     /// Dictionary allows sprites to be selected with PartyMember enum as a key
     /// </summary>
-    private Dictionary<PartyMember, Sprite> charSprites;
+    public Dictionary<PartyMember, Sprite> charSprites;
 
     /// <summary>
     /// Reference to the current moveCoroutine (if there is one) so that it can be interrupted if the party is caught
@@ -216,6 +222,10 @@ public class Party : DynamicObject
         charSprites.Add(PartyMember.Pickpocket, sprites[2]);
         charSprites.Add(PartyMember.Sailor, sprites[3]);
         UpdateSprite();
+    }
+    private void Awake()
+    {
+        Instance = this;
     }
 
     public void UpdateSprite()
