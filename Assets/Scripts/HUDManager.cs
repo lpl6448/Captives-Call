@@ -6,13 +6,25 @@ using UnityEngine.UI;
 
 public class HUDManager : MonoBehaviour
 {
+    public static HUDManager Instance;
+
+    //Variable to hold canvas transform space
+    [SerializeField]
+    private RectTransform canvasRect;
+    [SerializeField]
+    private Canvas canvas;
+
     //Variables for the UI text objects
     public TextMeshProUGUI currentCharacterText;
     public TextMeshProUGUI nextCharacterText;
     public TextMeshProUGUI levelText;
     public TextMeshProUGUI movesText;
     public TextMeshProUGUI stasisText;
-    public TextMeshProUGUI distortionText;
+    public TextMeshProUGUI hiddenText;
+
+    //Variables for move prompt buttons
+    public Button moveButton;
+    public Button abilityButton;
     
     
     //Variables for the UI sprite objects
@@ -38,6 +50,13 @@ public class HUDManager : MonoBehaviour
     private int leftIndexer;
     private int partySize;
 
+    private bool moving;
+    private bool usingAbility;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     void Start()
     {
@@ -84,20 +103,22 @@ public class HUDManager : MonoBehaviour
         movesText.text = $"Moves: \n{levelController.MovesTaken}";
 
         //Update stasis remaining text if relevant
-        if (levelController.stasisCount > 0)
+        if (levelController.StasisCount > 0 || levelController.DistortionCount>0)
             stasisText.alpha = 255;
         else
             stasisText.alpha = 0;
-        if (stasisText.alpha==255)
-            stasisText.text = $"Stasis Turns Left:\n{levelController.stasisCount}";
+        if (levelController.StasisCount > 0)
+            stasisText.text = $"Stasis Turns Left:\n{levelController.StasisCount}";
+        if (levelController.DistortionCount > 0)
+            stasisText.text = $"Distortion Turns Left:\n{levelController.DistortionCount}";
 
         //Update distortion remaining text if relevant
-        if (levelController.distortionCount > 0)
-            distortionText.alpha = 255;
+        if (levelController.HiddenCount > 0)
+            hiddenText.alpha = 255;
         else
-            distortionText.alpha=0;
-        if (distortionText.alpha==255)
-            distortionText.text = $"Distortion Turns Left:\n{levelController.distortionCount}";
+            hiddenText.alpha=0;
+        if (levelController.HiddenCount > 0)
+            hiddenText.text = $"Hidden Turns Left:\n{levelController.HiddenCount}";
 
     }
 
@@ -165,5 +186,51 @@ public class HUDManager : MonoBehaviour
     private bool NextNotCurrent()
     {
         return !((nextIndexer + party.CurrentMemberIndex) % partySize == party.CurrentMemberIndex);
+    }
+
+    /// <summary>
+    /// Method activates the move or ability UI and triggers the level controller ability or move turn based on player decision
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator ChooseAction(Vector3Int clickGrid, Vector3 clickPos)
+    {
+        //Moves the buttons to the tile that was clicked/mouse position
+        RectTransform movePos = moveButton.GetComponent<RectTransform>();
+        RectTransform abilityPos = abilityButton.GetComponent<RectTransform>();
+        Vector2 anchoredPos;
+        Camera mainCamera = GameObject.FindGameObjectsWithTag("MainCamera")[0].GetComponent<Camera>();
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, clickPos, canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : mainCamera, out anchoredPos);
+        movePos.anchoredPosition = new Vector2(anchoredPos.x - 100, anchoredPos.y);
+        abilityPos.anchoredPosition = new Vector2(anchoredPos.x+100, anchoredPos.y);
+
+        while (!moving&&!usingAbility)
+        {
+            yield return null;
+        }
+        if (moving)
+        {
+            levelController.CallMoveGuards();
+            levelController.MoveTurn(clickGrid);
+            moving = false;
+        }
+        else if (usingAbility)
+        {
+            levelController.AbilityTurn(clickGrid);
+            levelController.CallMoveGuards();
+            usingAbility = false;
+        }
+        moveButton.transform.position = new Vector3(2000,0,0);
+        abilityButton.transform.position = new Vector3(2000, 0, 0);
+        levelController.AcceptingActionInput = false;
+        yield break;
+    }
+
+    public void MoveSelected()
+    {
+        moving = true;
+    }
+    public void AbilitySelected()
+    {
+        usingAbility = true;
     }
 }

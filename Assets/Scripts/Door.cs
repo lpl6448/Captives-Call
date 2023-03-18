@@ -57,7 +57,7 @@ public class Door : DynamicObject
 
     public override void Run(bool canRun)
     {
-        if (LevelController.Instance.stasisCount < 1)
+        if (LevelController.Instance.StasisCount < 1)
         {
             if (!triggered) { isOpen = canRun; }
             if (isOpen) { triggered = true; }

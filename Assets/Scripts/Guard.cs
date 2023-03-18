@@ -95,7 +95,7 @@ public class Guard : DynamicObject
     public override void DestroyObject(object context)
     {
         LevelController.Instance.gm.guardList.Remove(this);
-        StartAnimation(DestroyAnimation());
+        StartAnimation(DestroyAnimation(context));
     }
 
     private IEnumerator MoveAnimation(Vector3 start, Vector3 end)
@@ -104,9 +104,10 @@ public class Guard : DynamicObject
         StopAnimation();
     }
 
-    private IEnumerator DestroyAnimation()
+    private IEnumerator DestroyAnimation(object context)
     {
-        yield return WaitForTrigger("crush");
+        if(context is Boulder)
+            yield return WaitForTrigger("crush");
         StopAnimation();
         Destroy(gameObject);
     }

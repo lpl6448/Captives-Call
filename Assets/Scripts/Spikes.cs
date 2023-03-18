@@ -41,7 +41,7 @@ public class Spikes : DynamicObject
 
     public override void PostAction()
     {
-        Run(LevelController.Instance.stasisCount<1);
+        Run(LevelController.Instance.StasisCount<1);
         if (raised)
         {
             //Check if anything is on spikes that will be impaled

@@ -38,6 +38,9 @@ public class Party : DynamicObject
     /// </summary>
     public bool poweredUp;
 
+    public int hidden;
+    public int Hidden => hidden;
+
     /// <summary>
     /// Whether this Party has been caught or not
     /// </summary>
@@ -86,6 +89,13 @@ public class Party : DynamicObject
                 return false;
 
         return true;
+    }
+
+    //Before every turn, drop cloaking by 1
+    public override void PreAction()
+    {
+        if (hidden > 0)
+            hidden--;
     }
 
     /// <summary>
@@ -164,10 +174,25 @@ public class Party : DynamicObject
                 }
                 break;
             case PartyMember.Wizard:
-                LevelController.Instance.stasisCount = 3;
+                LevelController.Instance.StasisCount = 3;
                 if (poweredUp)
                 {
-                    LevelController.Instance.distortionCount = 3;
+                    LevelController.Instance.DistortionCount = 3;
+                    poweredUp = false;
+                }
+                break;
+            case PartyMember.Pickpocket:
+                List<Guard> guards = LevelController.Instance.GetDynamicObjectsOnTile<Guard>(target);
+                if (guards.Count > 0)
+                {
+                    foreach (Guard guard in guards)
+                        LevelController.Instance.DestroyDynamicObject(target, guard, this);
+                    return;
+                }
+                if (poweredUp)
+                {
+                    hidden = 2;
+                    LevelController.Instance.MoveDynamicObject(target, this);
                     poweredUp = false;
                 }
                 break;
@@ -217,6 +242,17 @@ public class Party : DynamicObject
                 return false;
             case PartyMember.Wizard:
                 if (target == TilePosition)
+                    return true;
+                return false;
+            case PartyMember.Pickpocket:
+                if (Mathf.Abs(target.x - TilePosition.x) + Mathf.Abs(target.y - TilePosition.y) != 1)
+                    return false;
+                //Sneak Attack
+                List<Guard> guards = LevelController.Instance.GetDynamicObjectsOnTile<Guard>(target);
+                if (guards.Count > 0)
+                    return true;
+                //Sneak
+                if(poweredUp)
                     return true;
                 return false;
         }

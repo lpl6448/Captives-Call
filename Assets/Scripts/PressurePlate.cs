@@ -59,7 +59,7 @@ public class PressurePlate : DynamicObject
 
     public override void PostAction() 
     {
-        CheckIfPressed(LevelController.Instance.stasisCount<1);
+        CheckIfPressed(LevelController.Instance.StasisCount<1);
         SendSignal();
     }
 

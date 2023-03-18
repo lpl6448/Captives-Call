@@ -77,6 +77,12 @@ public class LevelController : MonoBehaviour
     private bool acceptingUserInput;
 
     /// <summary>
+    /// Whether user has selected if they are moving or attacking
+    /// </summary>
+    private bool acceptingActionInput;
+    public bool AcceptingActionInput { set { acceptingActionInput = value; } }
+
+    /// <summary>
     /// List of DynamicObjects that are currently blocking player input
     /// </summary>
     private List<DynamicObject> currentlyAnimatedObjects;
@@ -94,11 +100,26 @@ public class LevelController : MonoBehaviour
     /// <summary>
     /// How many tunrs remain of wizard stasis
     /// </summary>
-    public int stasisCount;
+    private int stasisCount;
+    public int StasisCount
+    {
+        get { return stasisCount; }
+        set { stasisCount = value; }
+    }
     /// <summary>
     /// How many turns remain of temporal distortion
     /// </summary>
-    public int distortionCount;
+    private int distortionCount;
+    public int DistortionCount
+    {
+        get { return distortionCount; }
+        set { distortionCount = value; }
+    }
+    /// <summary>
+    /// Reflected the hidden count of party
+    /// </summary>
+    private int hiddenCount;
+    public int HiddenCount => hiddenCount;
 
     private void FindAllGameObjects()
     {
@@ -451,23 +472,25 @@ public class LevelController : MonoBehaviour
                     DoPreAction();
 
                     //Clear all of the highlights while the CPU takes its turn
-                    hm.ClearHighlights();
+                    //Wait to clear if the selection overlay is going to pop up
+                    if(!(canMove&&canUseAbility))
+                        hm.ClearHighlights();
                     //Don't move guards if there is a temporal distortion cast
-                    if(distortionCount<1)
+                    if(distortionCount<1&&!(canUseAbility && canMove))
                         gm.MoveGuards(dataFromTiles, hm);
 
-                    if (canUseAbility)
-                        pm.party.UseAbility(clickGrid, am);
+                    if (canUseAbility && canMove)
+                    {
+                        acceptingActionInput = true;
+                        while (acceptingActionInput)
+                            yield return HUDManager.Instance.ChooseAction(clickGrid, Input.mousePosition);
+                    }
+                    else if (canUseAbility)
+                        AbilityTurn(clickGrid);
                     else
                     {
-                        // Only highlight guard LOS until the player can act again
-                        hm.ClearHighlights();
-                        hm.HighlightTiles(null, gm.guardList, dataFromTiles);
-
-                        lastPartyGrid = pm.party.TilePosition;
-                        MoveDynamicObject(clickGrid, pm.party);
+                        MoveTurn(clickGrid);
                     }
-
                     DoPostAction();
 
                     //Call at the end of cpu loop so highlight does not appear until the CPU turn is completed
@@ -479,6 +502,7 @@ public class LevelController : MonoBehaviour
                         stasisCount--;
                     if(distortionCount>0)
                         distortionCount--;
+                    hiddenCount = pm.party.Hidden;
                     movesTaken++;
                     break;
                 }
@@ -495,7 +519,6 @@ public class LevelController : MonoBehaviour
         // Wait for all animations to finish before continuing
         while (currentlyAnimatedObjects.Count > 0)
             yield return null;
-
         // Officially end the turn
         deactivatedTiles.Clear();
 
@@ -526,6 +549,26 @@ public class LevelController : MonoBehaviour
             acceptingUserInput = false;
             yield break;
         }
+    }
+
+    //Helper methods
+    public void AbilityTurn(Vector3Int clickGrid)
+    {
+        pm.party.UseAbility(clickGrid, am);
+    }
+    public void MoveTurn(Vector3Int clickGrid)
+    {
+        // Only highlight guard LOS until the player can act again
+        hm.ClearHighlights();
+        hm.HighlightTiles(null, gm.guardList, dataFromTiles);
+
+        lastPartyGrid = pm.party.TilePosition;
+        MoveDynamicObject(clickGrid, pm.party);
+    }
+    public void CallMoveGuards()
+    {
+        hm.ClearHighlights();
+        gm.MoveGuards(dataFromTiles, hm);
     }
 
     /// <summary>
@@ -578,7 +621,7 @@ public class LevelController : MonoBehaviour
 
     private void guardAttack()
     {
-        if (hm.HasLOS(pm.party.TilePosition) ||
+        if ((hm.HasLOS(pm.party.TilePosition) && pm.party.Hidden < 1) ||
             gm.TouchingParty(pm.party))
         {
             //am.Defeat(rs);
@@ -589,12 +632,14 @@ public class LevelController : MonoBehaviour
             // If any guards on the party's previous tile have just turned toward the player this turn,
             // the player technically collided with them.
             foreach (Guard guard in GetDynamicObjectsOnTile<Guard>(lastPartyGrid))
+            {
                 if (gm.ToTranslate(guard) == lastPartyGrid - pm.party.TilePosition)
                 {
                     //am.Defeat(rs);
                     DestroyDynamicObject(pm.party.TilePosition, pm.party, guard);
                     return;
                 }
+            }
         }
     }
 
