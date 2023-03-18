@@ -163,6 +163,14 @@ public class Party : DynamicObject
                     break;
                 }
                 break;
+            case PartyMember.Wizard:
+                LevelController.Instance.stasisCount = 3;
+                if (poweredUp)
+                {
+                    LevelController.Instance.distortionCount = 3;
+                    poweredUp = false;
+                }
+                break;
         }
     }
 
@@ -206,6 +214,10 @@ public class Party : DynamicObject
                         return false;
                     }
                 }
+                return false;
+            case PartyMember.Wizard:
+                if (target == TilePosition)
+                    return true;
                 return false;
         }
 

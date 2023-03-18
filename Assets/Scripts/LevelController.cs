@@ -91,13 +91,21 @@ public class LevelController : MonoBehaviour
     public int MovesTaken => movesTaken;
     //Triggers the turn when the player switches characters
     private bool characterSwitch;
+    /// <summary>
+    /// How many tunrs remain of wizard stasis
+    /// </summary>
+    public int stasisCount;
+    /// <summary>
+    /// How many turns remain of temporal distortion
+    /// </summary>
+    public int distortionCount;
 
     private void FindAllGameObjects()
     {
         initialDynamicObjects = new List<DynamicObject>();
         //Find and add all dynamic objects in the scene to the initialdynamicobject list
         GameObject[] foundObjects;
-        string[] tags = { "Party", "Guard", "Boulder", "Pressure", "Gate", "Key", "Locked", "Breakable", "Power" };
+        string[] tags = { "Party", "Guard", "Boulder", "Pressure", "Gate", "Key", "Locked", "Breakable", "Power", "Spikes" };
         for(int i=0; i<tags.Length; i++)
         {
             foundObjects = GameObject.FindGameObjectsWithTag(tags[i]);
@@ -444,7 +452,9 @@ public class LevelController : MonoBehaviour
 
                     //Clear all of the highlights while the CPU takes its turn
                     hm.ClearHighlights();
-                    gm.MoveGuards(dataFromTiles, hm);
+                    //Don't move guards if there is a temporal distortion cast
+                    if(distortionCount<1)
+                        gm.MoveGuards(dataFromTiles, hm);
 
                     if (canUseAbility)
                         pm.party.UseAbility(clickGrid, am);
@@ -465,6 +475,10 @@ public class LevelController : MonoBehaviour
                     //Check if player is in the guardLOS
                     guardAttack();
                     guardWillPress();
+                    if (stasisCount > 0)
+                        stasisCount--;
+                    if(distortionCount>0)
+                        distortionCount--;
                     movesTaken++;
                     break;
                 }

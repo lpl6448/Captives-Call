@@ -59,7 +59,7 @@ public class PressurePlate : DynamicObject
 
     public override void PostAction() 
     {
-        CheckIfPressed();
+        CheckIfPressed(LevelController.Instance.stasisCount<1);
         SendSignal();
     }
 
@@ -74,8 +74,10 @@ public class PressurePlate : DynamicObject
     /// <summary>
     /// Checks if the pressure plate is being pressed by a viable object 
     /// </summary>
-    private void CheckIfPressed()
+    private void CheckIfPressed(bool notFrozen)
     {
+        if (!notFrozen)
+            return;
         foreach(DynamicObject presser in potentialTriggers)
         {
             if(presser.TilePosition==grid.WorldToCell(this.transform.position))

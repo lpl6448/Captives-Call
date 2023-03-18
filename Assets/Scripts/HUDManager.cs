@@ -11,7 +11,8 @@ public class HUDManager : MonoBehaviour
     public TextMeshProUGUI nextCharacterText;
     public TextMeshProUGUI levelText;
     public TextMeshProUGUI movesText;
-
+    public TextMeshProUGUI stasisText;
+    public TextMeshProUGUI distortionText;
     
     
     //Variables for the UI sprite objects
@@ -78,9 +79,26 @@ public class HUDManager : MonoBehaviour
         nextCharacterText.text = "Party Members: " + party.partyMembers[(party.CurrentMemberIndex + nextIndexer) % partySize].ToString();
 
         //Update the current level using the nextLevel value from the levelcontroller
-        levelText.text = $"Level: {int.Parse(levelController.CurrentLevel)}";
+        levelText.text = $"Level: \n{levelController.CurrentLevel}";
         //Update moves taken with the property from the levelcontroller
-        movesText.text = $"Moves: {levelController.MovesTaken}";
+        movesText.text = $"Moves: \n{levelController.MovesTaken}";
+
+        //Update stasis remaining text if relevant
+        if (levelController.stasisCount > 0)
+            stasisText.alpha = 255;
+        else
+            stasisText.alpha = 0;
+        if (stasisText.alpha==255)
+            stasisText.text = $"Stasis Turns Left:\n{levelController.stasisCount}";
+
+        //Update distortion remaining text if relevant
+        if (levelController.distortionCount > 0)
+            distortionText.alpha = 255;
+        else
+            distortionText.alpha=0;
+        if (distortionText.alpha==255)
+            distortionText.text = $"Distortion Turns Left:\n{levelController.distortionCount}";
+
     }
 
     /// <summary>

@@ -8,12 +8,7 @@ public class Door : DynamicObject
     /// Allows loading of sprites via unity editor
     /// </summary>
     [SerializeField]
-    protected List<Sprite> loadSprites;
-
-    /// <summary>
-    /// Holds all guard sprites, keyed by directions
-    /// </summary>
-    protected Dictionary<int, Sprite> sprites;
+    protected List<Sprite> sprites;
 
     /// <summary>
     /// Tracks if the "door" is accessible to move on
@@ -62,8 +57,11 @@ public class Door : DynamicObject
 
     public override void Run(bool canRun)
     {
-        if (!triggered) { isOpen = canRun; }
-        if(isOpen) { triggered = true; }
+        if (LevelController.Instance.stasisCount < 1)
+        {
+            if (!triggered) { isOpen = canRun; }
+            if (isOpen) { triggered = true; }
+        }
     }
 
     public override void PreAction()
@@ -74,11 +72,6 @@ public class Door : DynamicObject
 
     protected void Awake()
     {
-        sprites = new Dictionary<int, Sprite>();
-        for (int i = 0; i < loadSprites.Count; i++)
-        {
-            sprites.Add(i, loadSprites[i]);
-        }
         isOpen = false;
         willOpen = false;
         triggered = false;

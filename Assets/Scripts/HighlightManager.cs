@@ -202,6 +202,8 @@ public class HighlightManager : MonoBehaviour
                 }
             }
         }
+        if (party.CanUseAbility(party.TilePosition))
+            HighlightAbility(party.TilePosition);
     }
 
     /// <summary>

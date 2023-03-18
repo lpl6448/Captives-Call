@@ -20,6 +20,7 @@ TagManager:
   - Locked
   - Breakable
   - Power
+  - Spikes
   layers:
   - Default
   - TransparentFX
