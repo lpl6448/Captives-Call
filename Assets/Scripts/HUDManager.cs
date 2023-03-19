@@ -21,6 +21,11 @@ public class HUDManager : MonoBehaviour
     public TextMeshProUGUI movesText;
     public TextMeshProUGUI stasisText;
     public TextMeshProUGUI hiddenText;
+    public TextMeshProUGUI keyText;
+    public TextMeshProUGUI bAbLabelText;
+    public TextMeshProUGUI pAbLabelText;
+    public TextMeshProUGUI bAbText;
+    public TextMeshProUGUI pAbText;
 
     //Variables for move prompt buttons
     public Button moveButton;
@@ -120,6 +125,61 @@ public class HUDManager : MonoBehaviour
         if (levelController.HiddenCount > 0)
             hiddenText.text = $"Hidden Turns Left:\n{levelController.HiddenCount}";
 
+        //Update key HUD element, darken if player has none, display number of how many the player has
+        if(party.keyCount<1)
+        {
+            keySprite.color = new Color(keySprite.color.r, keySprite.color.g, keySprite.color.b, 0.2f);
+            keyText.alpha = 0;
+        }
+        else
+        {
+            keySprite.color = new Color(keySprite.color.r, keySprite.color.g, keySprite.color.b, 1.0f);
+            keyText.alpha = 255;
+            keyText.text = $"{party.keyCount}";
+        }
+
+        //Update powerup ui element, darken if player is not powered up
+        if (!party.poweredUp)
+        {
+            powerUpSprite.color = new Color(powerUpSprite.color.r, powerUpSprite.color.g, powerUpSprite.color.b, 0.2f);
+        }
+        else
+        {
+            powerUpSprite.color = new Color(powerUpSprite.color.r, powerUpSprite.color.g, powerUpSprite.color.b, 1.0f);
+        }
+
+        //Update abiltiy text boxes
+        switch(party.currentMember)
+        {
+            case PartyMember.Warlock:
+                bAbText.text = "Telekinetic Push";
+                pAbText.text = "Warlock Crush";
+                Color wlColor = new Color(0.93f, 0.29f, 0.19f, 1);
+                bAbText.color = wlColor;
+                pAbText.color = wlColor;
+                break;
+            case PartyMember.Wizard:
+                bAbText.text = "Stasis";
+                pAbText.text = "Temporal Distortion";
+                Color wzColor = new Color(0.20f, 0.18f, 0.93f, 1);
+                bAbText.color = wzColor;
+                pAbText.color = wzColor;
+                break;
+            case PartyMember.Pickpocket:
+                bAbText.text = "Sneak Attack";
+                pAbText.text = "Out of Sight";
+                Color pColor = new Color(0.26f,0.03f,0.43f,1);
+                bAbText.color = pColor;
+                pAbText.color = pColor;
+                break;
+            case PartyMember.Sailor:
+                bAbText.text = "Shantyman";
+                pAbText.text = "Grapple Dash";
+                Color sColor = new Color(0.03f, 0.43f, 0.06f, 1);
+                bAbText.color = sColor;
+                pAbText.color = sColor;
+                break;
+        }
     }
 
     /// <summary>

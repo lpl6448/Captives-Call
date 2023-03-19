@@ -133,6 +133,7 @@ public class Party : DynamicObject
         List<LockedDoor> locks = LevelController.Instance.GetDynamicObjectsOnTile<LockedDoor>(TilePosition);
         if(locks.Count>0)
         {
+            if (!locks[0].IsOpen)
             keyCount = locks[0].Unlock(keyCount);
         }
 
