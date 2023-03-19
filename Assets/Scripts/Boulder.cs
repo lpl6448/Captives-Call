@@ -11,6 +11,9 @@ public class Boulder : DynamicObject
     [SerializeField]
     private List<TileBase> tilesToPlace;
 
+    [SerializeField]
+    private TileData water;
+
     private bool willDestroy;
     public bool WillDestroy => willDestroy;
 
@@ -82,6 +85,16 @@ public class Boulder : DynamicObject
                 LevelController.Instance.DeactivateFloorTile(TilePosition);
                 destroyTile = true;
                 LevelController.Instance.floorMap.SetTile(TilePosition, tilesToPlace[0]);
+                willDestroy = true;
+            }
+        }
+        //Water
+        tile = LevelController.Instance.GetFloorTile(TilePosition);
+        if (tile != null)
+        {
+            TileData data = LevelController.Instance.GetTileData(tile);
+            if (data != null && data==water)
+            {
                 willDestroy = true;
             }
         }

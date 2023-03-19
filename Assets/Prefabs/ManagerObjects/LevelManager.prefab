@@ -331,6 +331,7 @@ MonoBehaviour:
   am: {fileID: 1524337131}
   floorMap: {fileID: 0}
   wallMap: {fileID: 0}
+  currentLevel: 
   nextLevel: 
   tileDatas:
   - {fileID: 11400000, guid: 608ff28d6367ed94d8b375954fb97549, type: 2}
@@ -339,6 +340,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: acfb537d9cd0ec84d8057c25c6685f79, type: 2}
   - {fileID: 11400000, guid: 18053eec50863d947aace631261291f1, type: 2}
   - {fileID: 11400000, guid: 091686179f97e15428cd5c6497234078, type: 2}
+  - {fileID: 11400000, guid: 0d629ef15716a0e4ead08fad125cc253, type: 2}
 --- !u!1 &7277537201348297681
 GameObject:
   m_ObjectHideFlags: 0

@@ -83,6 +83,10 @@ public class Party : DynamicObject
         if (tile != null && !LevelController.Instance.GetTileData(tile).isPartyAccessible)
             return false;
 
+        tile = LevelController.Instance.floorMap.GetTile(tilePosition);
+        if (tile != null && !LevelController.Instance.GetTileData(tile).isPartyAccessible)
+            return false;
+
         // Party cannot move to a tile with another DynamicObject on it if the object is not traversable
         foreach (DynamicObject collidingObj in LevelController.Instance.GetDynamicObjectsOnTile(tilePosition))
             if (!collidingObj.IsTraversable(this))
@@ -272,7 +276,7 @@ public class Party : DynamicObject
             case PartyMember.Sailor:
                 //Grapple dash
                 if (((Mathf.Abs(target.x - TilePosition.x) == 2 && target.y == TilePosition.y) ||
-                    (Mathf.Abs(target.y - TilePosition.y) == 2 && target.x == TilePosition.x)) && poweredUp)
+                    (Mathf.Abs(target.y - TilePosition.y) == 2 && target.x == TilePosition.x)) && poweredUp && CanMove(target))
                     return true;
                 //Shanty
                 if (target == TilePosition)

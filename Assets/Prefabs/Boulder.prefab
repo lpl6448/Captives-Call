@@ -50,6 +50,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 091686179f97e15428cd5c6497234078, type: 2}
   tilesToPlace:
   - {fileID: 11400000, guid: d5ec6fb5009bde14e9020617948f0f46, type: 2}
+  water: {fileID: 11400000, guid: 0d629ef15716a0e4ead08fad125cc253, type: 2}
 --- !u!212 &4847523568915695646
 SpriteRenderer:
   m_ObjectHideFlags: 0

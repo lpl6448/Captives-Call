@@ -203,7 +203,7 @@ public class HighlightManager : MonoBehaviour
                 if ((Mathf.Abs(x) == 2 && y==0) || (Mathf.Abs(y) == 2 && x == 0))
                 {
                     Vector3Int travTile = new Vector3Int(gridPosition.x+x, gridPosition.y+y,0);
-                    if(party.CanUseAbility(travTile))
+                    if(party.CanUseAbility(travTile) && party.CanMove(travTile))
                         HighlightAbility((travTile));
                 }
             }
