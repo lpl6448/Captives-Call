@@ -183,9 +183,9 @@ public class HighlightManager : MonoBehaviour
         Vector3Int gridPosition = party.TilePosition;
 
         // Highlight all tiles that the party can move to and all tiles that an ability can be used on
-        for (int x = -1; x <= 1; x++)
+        for (int x = -2; x <= 2; x++)
         {
-            for (int y = -1; y <= 1; y++)
+            for (int y = -2; y <= 2; y++)
             {
                 float distanceFromPlayer = Mathf.Abs(x) + Mathf.Abs(y);
                 if (distanceFromPlayer == 1)
@@ -200,10 +200,17 @@ public class HighlightManager : MonoBehaviour
                     if (party.CanUseAbility(travTile))
                         HighlightAbility(travTile);
                 }
+                if ((Mathf.Abs(x) == 2 && y==0) || (Mathf.Abs(y) == 2 && x == 0))
+                {
+                    Vector3Int travTile = new Vector3Int(gridPosition.x+x, gridPosition.y+y,0);
+                    if(party.CanUseAbility(travTile))
+                        HighlightAbility((travTile));
+                }
             }
         }
         if (party.CanUseAbility(party.TilePosition))
             HighlightAbility(party.TilePosition);
+            
     }
 
     /// <summary>

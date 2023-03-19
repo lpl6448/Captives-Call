@@ -196,6 +196,19 @@ public class Party : DynamicObject
                     poweredUp = false;
                 }
                 break;
+            case PartyMember.Sailor:
+                if(poweredUp && target!=TilePosition)
+                {
+                    LevelController.Instance.MoveDynamicObject(target, this);
+                    poweredUp = false;
+                    return;
+                }
+                GameObject[] listeners = GameObject.FindGameObjectsWithTag("Guard");
+                foreach(GameObject guard in listeners)
+                {
+                    guard.GetComponent<Guard>().HearShanty();
+                }
+                break;
         }
     }
 
@@ -253,6 +266,15 @@ public class Party : DynamicObject
                     return true;
                 //Sneak
                 if(poweredUp)
+                    return true;
+                return false;
+            case PartyMember.Sailor:
+                //Grapple dash
+                if (((Mathf.Abs(target.x - TilePosition.x) == 2 && target.y == TilePosition.y) ||
+                    (Mathf.Abs(target.y - TilePosition.y) == 2 && target.x == TilePosition.x)) && poweredUp)
+                    return true;
+                //Shanty
+                if (target == TilePosition)
                     return true;
                 return false;
         }

@@ -120,6 +120,10 @@ public class LevelController : MonoBehaviour
     /// </summary>
     private int hiddenCount;
     public int HiddenCount => hiddenCount;
+    /// <summary>
+    /// Used to stop a double shanty turn because Nick is too dumb to find the root of the bug
+    /// </summary>
+    private bool justSang;
 
     private void FindAllGameObjects()
     {
@@ -458,13 +462,13 @@ public class LevelController : MonoBehaviour
         while (true)
         {
             // Check if the player has just clicked (not over the UI) or if the character has been switched
-            if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject() || characterSwitch)
+            if ((Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject() || characterSwitch)&&!justSang)
             {
                 Vector3Int clickGrid = grid.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                if (characterSwitch)
-                    clickGrid = pm.party.TilePosition;
                 bool canMove = validMovementClick(clickGrid);
                 bool canUseAbility = validAbilityClick(clickGrid);
+                if (characterSwitch)
+                    clickGrid = pm.party.TilePosition;
                 if (canMove || canUseAbility || characterSwitch)
                 {
                     am.GoodClick();
@@ -475,9 +479,11 @@ public class LevelController : MonoBehaviour
                     //Wait to clear if the selection overlay is going to pop up
                     if(!(canMove&&canUseAbility))
                         hm.ClearHighlights();
-                    //Don't move guards if there is a temporal distortion cast
-                    if(distortionCount<1&&!(canUseAbility && canMove))
+                    //Don't move guards if there is a temporal distortion cast or sea shanty is being sung
+                    if(distortionCount<1&&!(canUseAbility && canMove)&&
+                        !(pm.party.currentMember == PartyMember.Sailor && canUseAbility && clickGrid==pm.party.TilePosition))
                         gm.MoveGuards(dataFromTiles, hm);
+
 
                     if (canUseAbility && canMove)
                     {
@@ -486,7 +492,12 @@ public class LevelController : MonoBehaviour
                             yield return HUDManager.Instance.ChooseAction(clickGrid, Input.mousePosition);
                     }
                     else if (canUseAbility)
+                    {
                         AbilityTurn(clickGrid);
+                        //Check if sea shanty was just used
+                        if((pm.party.currentMember == PartyMember.Sailor && canUseAbility && clickGrid == pm.party.TilePosition))
+                            justSang = true;
+                    }
                     else
                     {
                         MoveTurn(clickGrid);
@@ -511,6 +522,11 @@ public class LevelController : MonoBehaviour
                     am.BadClick();
                 }
             }
+            //TODO: FIND A BETTER SOLUTION BECAUSE THIS IS DUMB
+            else if(justSang)
+            {
+                justSang=false;
+            }
             yield return null;
         }
 
@@ -525,7 +541,6 @@ public class LevelController : MonoBehaviour
         // Check if the party has died
         if (pm.party.dead)
         {
-            //rs.Reset();
             am.Defeat(rs);
             acceptingUserInput = false;
             yield break;

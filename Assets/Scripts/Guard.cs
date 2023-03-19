@@ -111,4 +111,29 @@ public class Guard : DynamicObject
         StopAnimation();
         Destroy(gameObject);
     }
+
+    /// <summary>
+    /// Turns the guard 90 degrees clockwise if they are moving and hear the sailor
+    /// </summary>
+    public void HearShanty()
+    {
+        if (canMove)
+        {
+            switch (facing)
+            {
+                case Directions.Up:
+                    ChangeDirections(Directions.Right);
+                    break;
+                case Directions.Right:
+                    ChangeDirections(Directions.Down);
+                    break;
+                case Directions.Down:
+                    ChangeDirections(Directions.Left);
+                    break;
+                case Directions.Left:
+                    ChangeDirections(Directions.Up);
+                    break;
+            }
+        }
+    }
 }
