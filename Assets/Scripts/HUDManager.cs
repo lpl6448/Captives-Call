@@ -26,6 +26,7 @@ public class HUDManager : MonoBehaviour
     public TextMeshProUGUI pAbLabelText;
     public TextMeshProUGUI bAbText;
     public TextMeshProUGUI pAbText;
+    public TextMeshProUGUI coinsText;
 
     //Variables for move prompt buttons
     public Button moveButton;
@@ -180,6 +181,9 @@ public class HUDManager : MonoBehaviour
                 pAbText.color = sColor;
                 break;
         }
+
+        //Update coins text
+        coinsText.text = $"Coins Collected: {GameData.CoinCount}";
     }
 
     /// <summary>

@@ -130,7 +130,7 @@ public class LevelController : MonoBehaviour
         initialDynamicObjects = new List<DynamicObject>();
         //Find and add all dynamic objects in the scene to the initialdynamicobject list
         GameObject[] foundObjects;
-        string[] tags = { "Party", "Guard", "Boulder", "Pressure", "Gate", "Key", "Locked", "Breakable", "Power", "Spikes" };
+        string[] tags = { "Party", "Guard", "Boulder", "Pressure", "Gate", "Key", "Locked", "Breakable", "Power", "Spikes", "Coin" };
         for (int i = 0; i < tags.Length; i++)
         {
             foundObjects = GameObject.FindGameObjectsWithTag(tags[i]);
@@ -420,6 +420,19 @@ public class LevelController : MonoBehaviour
         movesTaken = 0;
         characterSwitch = false;
 
+        //Remove coin from level if already collected 
+        if (GameData.CoinsCollected[int.Parse(currentLevel)])
+        {
+            GameObject[] coins = GameObject.FindGameObjectsWithTag("Coin");
+            if (coins.Length > 0)
+            {
+                foreach(GameObject coin in coins)
+                {
+                    DynamicObject dCoin = coin.GetComponent<DynamicObject>();
+                    DestroyDynamicObject(dCoin.TilePosition, dCoin);
+                }
+            }
+        }
         // Begin the level turn logic
         StartCoroutine(DoLevel());
     }

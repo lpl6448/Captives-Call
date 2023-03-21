@@ -21,6 +21,7 @@ TagManager:
   - Breakable
   - Power
   - Spikes
+  - Coin
   layers:
   - Default
   - TransparentFX

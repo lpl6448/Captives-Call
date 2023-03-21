@@ -33,6 +33,8 @@ public class HighlightManager : MonoBehaviour
 
         highlighted = new Dictionary<Vector3Int, Highlight>();
         goalHighlightColors = new Dictionary<Vector3Int, Color>();
+        //Change highlight sorting layer
+        highlightMap.GetComponent<TilemapRenderer>().sortingOrder = 2;
         //Make all highlight tiles clear
         for (int x = -6; x < 4; x++)
         {

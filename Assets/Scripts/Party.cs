@@ -129,6 +129,20 @@ public class Party : DynamicObject
                 }
             }
         }
+        //Check for coin collision
+        GameObject[] coins = GameObject.FindGameObjectsWithTag("Coin");
+        if(coins.Length>0)
+        {
+            foreach(GameObject coin in coins)
+            {
+                DynamicObject dCoin = coin.GetComponent<DynamicObject>();
+                if (TilePosition == dCoin.TilePosition)
+                {
+                    GameData.CollectCoin(int.Parse(LevelController.Instance.CurrentLevel));
+                    LevelController.Instance.DestroyDynamicObject(dCoin.TilePosition, dCoin);
+                }
+            }
+        }
         //Check for powerup collision
         GameObject[] powerUps = GameObject.FindGameObjectsWithTag("Power");
         if (powerUps.Length > 0)
