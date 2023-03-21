@@ -131,7 +131,7 @@ public class LevelController : MonoBehaviour
         //Find and add all dynamic objects in the scene to the initialdynamicobject list
         GameObject[] foundObjects;
         string[] tags = { "Party", "Guard", "Boulder", "Pressure", "Gate", "Key", "Locked", "Breakable", "Power", "Spikes" };
-        for(int i=0; i<tags.Length; i++)
+        for (int i = 0; i < tags.Length; i++)
         {
             foundObjects = GameObject.FindGameObjectsWithTag(tags[i]);
             if (foundObjects.Length > 0)
@@ -462,7 +462,7 @@ public class LevelController : MonoBehaviour
         while (true)
         {
             // Check if the player has just clicked (not over the UI) or if the character has been switched
-            if ((Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject() || characterSwitch)&&!justSang)
+            if ((Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject() || characterSwitch) && !justSang)
             {
                 Vector3Int clickGrid = grid.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
                 bool canMove = validMovementClick(clickGrid);
@@ -477,11 +477,11 @@ public class LevelController : MonoBehaviour
 
                     //Clear all of the highlights while the CPU takes its turn
                     //Wait to clear if the selection overlay is going to pop up
-                    if(!(canMove&&canUseAbility))
+                    if (!(canMove && canUseAbility))
                         hm.ClearHighlights();
                     //Don't move guards if there is a temporal distortion cast or sea shanty is being sung
-                    if(distortionCount<1&&!(canUseAbility && canMove)&&
-                        !(pm.party.currentMember == PartyMember.Sailor && canUseAbility && clickGrid==pm.party.TilePosition))
+                    if (distortionCount < 1 && !(canUseAbility && canMove) &&
+                        !(pm.party.currentMember == PartyMember.Sailor && canUseAbility && clickGrid == pm.party.TilePosition))
                         gm.MoveGuards(dataFromTiles, hm);
 
 
@@ -495,7 +495,7 @@ public class LevelController : MonoBehaviour
                     {
                         AbilityTurn(clickGrid);
                         //Check if sea shanty was just used
-                        if((pm.party.currentMember == PartyMember.Sailor && canUseAbility && clickGrid == pm.party.TilePosition))
+                        if ((pm.party.currentMember == PartyMember.Sailor && canUseAbility && clickGrid == pm.party.TilePosition))
                             justSang = true;
                     }
                     else
@@ -511,7 +511,7 @@ public class LevelController : MonoBehaviour
                     guardWillPress();
                     if (stasisCount > 0)
                         stasisCount--;
-                    if(distortionCount>0)
+                    if (distortionCount > 0)
                         distortionCount--;
                     hiddenCount = pm.party.Hidden;
                     movesTaken++;
@@ -523,9 +523,9 @@ public class LevelController : MonoBehaviour
                 }
             }
             //TODO: FIND A BETTER SOLUTION BECAUSE THIS IS DUMB
-            else if(justSang)
+            else if (justSang)
             {
-                justSang=false;
+                justSang = false;
             }
             yield return null;
         }
@@ -534,7 +534,12 @@ public class LevelController : MonoBehaviour
 
         // Wait for all animations to finish before continuing
         while (currentlyAnimatedObjects.Count > 0)
+        {
+            if (Input.GetKeyDown(KeyCode.P))
+                foreach (DynamicObject dobj in currentlyAnimatedObjects)
+                    Debug.Log(dobj);
             yield return null;
+        }
         // Officially end the turn
         deactivatedTiles.Clear();
 
@@ -548,12 +553,12 @@ public class LevelController : MonoBehaviour
 
         //Check if any boulders need to be destroyed
         GameObject[] boulders = GameObject.FindGameObjectsWithTag("Boulder");
-        foreach(GameObject boulder in boulders) 
+        foreach (GameObject boulder in boulders)
         {
             if (boulder.GetComponent<Boulder>().WillDestroy)
             {
                 DynamicObject b = boulder.GetComponent<DynamicObject>();
-                DestroyDynamicObject(b.TilePosition,b);
+                DestroyDynamicObject(b.TilePosition, b);
             }
         }
 
@@ -591,6 +596,8 @@ public class LevelController : MonoBehaviour
     /// </summary>
     private void DoPreAction()
     {
+        foreach (DynamicObject dobj in activeDynamicObjects)
+            dobj.ClearTriggers();
         foreach (DynamicObject dobj in activeDynamicObjects)
             dobj.PreAction();
     }
@@ -661,13 +668,13 @@ public class LevelController : MonoBehaviour
     private void guardWillPress()
     {
         GameObject[] plates = GameObject.FindGameObjectsWithTag("Pressure");
-        foreach(GameObject gPlate in plates)
+        foreach (GameObject gPlate in plates)
         {
-            foreach(Guard guard in gm.guardList)
+            foreach (Guard guard in gm.guardList)
             {
                 PressurePlate plate = gPlate.GetComponent<PressurePlate>();
-                if (gm.ToTranslate(guard)+guard.TilePosition==plate.TilePosition ||
-                    guard.TilePosition==plate.TilePosition)
+                if (gm.ToTranslate(guard) + guard.TilePosition == plate.TilePosition ||
+                    guard.TilePosition == plate.TilePosition)
                 {
                     plate.linkedObject.GetComponent<Door>().WillOpen = true;
                     break;
@@ -676,7 +683,7 @@ public class LevelController : MonoBehaviour
                 {
                     plate.linkedObject.GetComponent<Door>().WillOpen = false;
                 }
-                
+
             }
         }
     }

@@ -41,7 +41,7 @@ public class Spikes : DynamicObject
 
     public override void PostAction()
     {
-        Run(LevelController.Instance.StasisCount<1);
+        Run(LevelController.Instance.StasisCount<1, null);
         if (raised)
         {
             //Check if anything is on spikes that will be impaled
@@ -64,7 +64,7 @@ public class Spikes : DynamicObject
         ChangeSprite(gameObject.GetComponent<SpriteRenderer>());
     }
 
-    public override void Run(bool canRun)
+    public override void Run(bool canRun, DynamicObject trigger)
     {
         if(canRun)
             raised = !raised;

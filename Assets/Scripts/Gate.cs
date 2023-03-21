@@ -12,6 +12,7 @@ public class Gate : Door
 
     public override void PostAction()
     {
+        base.PostAction();
         if (!isOpen)
         {
             //Check if anything is on gate that will be crushed by gate
@@ -37,7 +38,5 @@ public class Gate : Door
                 isOpen = true;
             }
         }
-
-        ChangeSprite(gameObject.GetComponent<SpriteRenderer>());
     }
 }

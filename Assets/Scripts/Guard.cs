@@ -28,6 +28,8 @@ public class Guard : DynamicObject
     /// </summary>
     public Directions facing;
 
+    private bool moving = false;
+
     public override bool IsTraversable(DynamicObject mover)
     {
         if (mover is Party)
@@ -85,8 +87,19 @@ public class Guard : DynamicObject
             spriteRenderer.sprite = sprites[facing];
     }
 
+    public override void PreAction()
+    {
+        moving = false;
+    }
+    public override void PostAction()
+    {
+        if (!moving)
+            EndMove();
+    }
+
     public override void Move(Vector3Int tilePosition, object context)
     {
+        moving = true;
         Vector3 start = transform.position;
         Vector3 end = LevelController.Instance.CellToWorld(TilePosition) + new Vector3(0.5f, 0.5f, 0);
         StartAnimation(MoveAnimation(start, end));
@@ -101,7 +114,20 @@ public class Guard : DynamicObject
     private IEnumerator MoveAnimation(Vector3 start, Vector3 end)
     {
         yield return AnimationUtility.StandardLerp(transform, start, end, AnimationUtility.StandardAnimationDuration);
+
+        // Notify any pressure plates that the object has finished moving
+        foreach (DynamicObject dobj in LevelController.Instance.GetDynamicObjectsOnTile(TilePosition))
+            dobj.AnimationTrigger("press");
+
+        EndMove();
         StopAnimation();
+    }
+
+    private void EndMove()
+    {
+        // Notify any pressure plates that the object has finished moving
+        foreach (DynamicObject dobj in LevelController.Instance.GetDynamicObjectsOnTile<PressurePlate>(TilePosition))
+            dobj.AnimationTrigger("press");
     }
 
     private IEnumerator DestroyAnimation(object context)

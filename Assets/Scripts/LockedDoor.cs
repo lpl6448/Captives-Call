@@ -32,8 +32,7 @@ public class LockedDoor : Door
     {
         if(keyCount > 0)
         {
-            isOpen = true;
-            ChangeSprite(gameObject.GetComponent<SpriteRenderer>());
+            ChangeState(true, null);
             return keyCount - 1;
         }
         else

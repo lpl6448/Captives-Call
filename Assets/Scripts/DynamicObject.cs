@@ -44,6 +44,11 @@ public abstract class DynamicObject : MonoBehaviour
 
     private List<string> pendingTriggers = new List<string>();
 
+    public void ClearTriggers()
+    {
+        pendingTriggers.Clear();
+    }
+
     /// <summary>
     /// Updates this object's tile position variable (and other useful related values in the future)
     /// </summary>
@@ -99,8 +104,8 @@ public abstract class DynamicObject : MonoBehaviour
     /// <returns>Reference to the Coroutine object that can be stopped if needed</returns>
     protected Coroutine StartAnimation(IEnumerator routine)
     {
-        Coroutine crt = StartCoroutine(routine);
         LevelController.Instance.RegisterAnimationBegin(this);
+        Coroutine crt = StartCoroutine(routine);
         return crt;
     }
 
@@ -129,9 +134,14 @@ public abstract class DynamicObject : MonoBehaviour
     /// <returns>IEnumerator coroutine</returns>
     protected IEnumerator WaitForTrigger(string triggerName)
     {
-        while (!pendingTriggers.Contains(triggerName))
+        while (!HasTrigger(triggerName))
             yield return null;
         pendingTriggers.Remove(triggerName);
+    }
+
+    protected bool HasTrigger(string triggerName)
+    {
+        return pendingTriggers.Contains(triggerName);
     }
 
     /// <summary>
@@ -155,5 +165,5 @@ public abstract class DynamicObject : MonoBehaviour
     /// <summary>
     /// Classes that need to wait for a pressure plate signal will use Run() to check their activation status
     /// </summary>
-    public virtual void Run(bool canRun) { }
+    public virtual void Run(bool canRun, DynamicObject trigger) { }
 }

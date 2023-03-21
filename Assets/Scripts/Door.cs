@@ -20,15 +20,15 @@ public class Door : DynamicObject
     protected bool willOpen;
     public bool WillOpen
     {
-        get  { return willOpen;} 
-        set 
+        get { return willOpen; }
+        set
         {
             if (!triggered)
             {
                 willOpen = value;
                 triggered = value;
             }
-        } 
+        }
     }
 
     /// <summary>
@@ -38,7 +38,7 @@ public class Door : DynamicObject
 
     public override bool IsTraversable(DynamicObject mover)
     {
-        if (willOpen||isOpen)
+        if (willOpen || isOpen)
         {
             if (mover is Party)
                 return true;
@@ -55,13 +55,19 @@ public class Door : DynamicObject
         return false;
     }
 
-    public override void Run(bool canRun)
+    public override void Run(bool canRun, DynamicObject trigger)
     {
         if (LevelController.Instance.StasisCount < 1)
         {
-            if (!triggered) { isOpen = canRun; }
+            if (!triggered) { ChangeState(canRun, trigger); }
             if (isOpen) { triggered = true; }
         }
+    }
+
+    protected virtual void ChangeState(bool open, DynamicObject trigger)
+    {
+        isOpen = open;
+        StartAnimation(WaitToChangeSprite(trigger));
     }
 
     public override void PreAction()
@@ -81,6 +87,20 @@ public class Door : DynamicObject
     void Start()
     {
 
+    }
+
+    protected IEnumerator WaitToChangeSprite(DynamicObject trigger)
+    {
+        if (trigger != null)
+            if (isOpen)
+                yield return WaitForTrigger("activate");
+            else
+                yield return WaitForTrigger("deactivate");
+
+        // If the trigger was a pressure plate, we should only change the sprite if this was actually the pressure plate that triggered opening/closing
+        if (!(trigger is PressurePlate) || (trigger as PressurePlate).IsPressed == IsOpen)
+            ChangeSprite(gameObject.GetComponent<SpriteRenderer>());
+        StopAnimation();
     }
 
     /// <summary>

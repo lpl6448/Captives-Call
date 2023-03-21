@@ -67,6 +67,8 @@ public class Party : DynamicObject
     /// </summary>
     private Coroutine moveCoroutine;
 
+    private bool moving = false;
+
     public override bool IsTraversable(DynamicObject mover)
     {
         if (mover is Party)
@@ -98,6 +100,7 @@ public class Party : DynamicObject
     //Before every turn, drop cloaking by 1
     public override void PreAction()
     {
+        moving = false;
         if (hidden > 0)
             hidden--;
     }
@@ -138,7 +141,7 @@ public class Party : DynamicObject
         if(locks.Count>0)
         {
             if (!locks[0].IsOpen)
-            keyCount = locks[0].Unlock(keyCount);
+                keyCount = locks[0].Unlock(keyCount);
         }
 
         //currentMemberIndex++;
@@ -147,6 +150,9 @@ public class Party : DynamicObject
         currentMember = partyMembers[currentMemberIndex];
 
         UpdateSprite();
+        
+        if (!moving)
+            EndMove();
     }
 
     /// <summary>
@@ -172,8 +178,8 @@ public class Party : DynamicObject
                 }
                 if(bWall.Count>0) 
                 {
-                    bWall[0].Run(true);
-                    bWall[0].ChangeSprite(bWall[0].GetComponent<SpriteRenderer>());
+                    bWall[0].Run(true, this);
+                    bWall[0].AnimationTrigger("activate");
                     poweredUp = false;
                     break;
                 }
@@ -320,9 +326,17 @@ public class Party : DynamicObject
 
     public override void Move(Vector3Int tilePosition, object context)
     {
+        moving = true;
         Vector3 start = transform.position;
         Vector3 end = LevelController.Instance.CellToWorld(TilePosition) + new Vector3(0.5f, 0.5f, 0);
         moveCoroutine = StartAnimation(MoveAnimation(start, end));
+    }
+
+    private void EndMove()
+    {
+        // Notify any pressure plates that the object has finished moving
+        foreach (DynamicObject dobj in LevelController.Instance.GetDynamicObjectsOnTile<PressurePlate>(TilePosition))
+            dobj.AnimationTrigger("press");
     }
 
     public override void DestroyObject(object context)
@@ -333,6 +347,12 @@ public class Party : DynamicObject
     private IEnumerator MoveAnimation(Vector3 start, Vector3 end)
     {
         yield return AnimationUtility.StandardLerp(transform, start, end, AnimationUtility.StandardAnimationDuration);
+
+        // Notify any pressure plates that the object has finished moving
+        foreach (DynamicObject dobj in LevelController.Instance.GetDynamicObjectsOnTile(TilePosition))
+            dobj.AnimationTrigger("press");
+
+        EndMove();
         StopAnimation();
     }
 

@@ -28,6 +28,8 @@ public class PressurePlate : DynamicObject
     //Holds if the pressure plate is pressed or not
     private bool isPressed;
 
+    public bool IsPressed => isPressed;
+
     public override bool IsTraversable(DynamicObject mover)
     {
         if (mover is Party)
@@ -48,7 +50,7 @@ public class PressurePlate : DynamicObject
     void Start()
     {
         sprites = new Dictionary<int, Sprite>();
-        for(int i=0;i<loadSprites.Count;i++)
+        for (int i = 0; i < loadSprites.Count; i++)
         {
             sprites.Add(i, loadSprites[i]);
         }
@@ -57,10 +59,11 @@ public class PressurePlate : DynamicObject
         FindPotentialTriggers();
     }
 
-    public override void PostAction() 
+    public override void PostAction()
     {
-        CheckIfPressed(LevelController.Instance.StasisCount<1);
+        CheckIfPressed(LevelController.Instance.StasisCount < 1);
         SendSignal();
+        StartAnimation(AnimateState());
     }
 
     /// <summary>
@@ -68,7 +71,7 @@ public class PressurePlate : DynamicObject
     /// </summary>
     public void SendSignal()
     {
-        linkedObject.Run(isPressed);
+        linkedObject.Run(isPressed, this);
     }
 
     /// <summary>
@@ -78,17 +81,31 @@ public class PressurePlate : DynamicObject
     {
         if (!notFrozen)
             return;
-        foreach(DynamicObject presser in potentialTriggers)
+        foreach (DynamicObject presser in potentialTriggers)
         {
-            if(presser.TilePosition==grid.WorldToCell(this.transform.position))
+            if (presser.TilePosition == grid.WorldToCell(this.transform.position))
             {
                 isPressed = true;
-                changeSprite();
                 return;
             }
         }
-        isPressed=false;
+
+        isPressed = false;
+    }
+
+    private IEnumerator AnimateState()
+    {
+        if (isPressed)
+            yield return WaitForTrigger("press");
         changeSprite();
+
+        // Notify the linkedObject that this pressure plate was activated/deactivated
+        if (isPressed)
+            linkedObject.AnimationTrigger("activate");
+        else
+            linkedObject.AnimationTrigger("deactivate");
+
+        StopAnimation();
     }
 
     /// <summary>
