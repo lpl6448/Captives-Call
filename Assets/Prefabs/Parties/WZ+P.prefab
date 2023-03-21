@@ -46,9 +46,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   partyMembers: 0100000002000000
+  hiddenAlphaEffect: {fileID: 5024331508059110244}
   currentMember: 1
   nextMember: 0
   poweredUp: 0
+  hidden: 0
   dead: 0
   keyCount: 0
   sprites:

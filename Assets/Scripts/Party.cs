@@ -21,6 +21,12 @@ public class Party : DynamicObject
     public List<PartyMember> partyMembers;
 
     /// <summary>
+    /// SpriteRenderer to apply the transparency/alpha effect to when the party is hidden
+    /// </summary>
+    [SerializeField]
+    private SpriteRenderer hiddenAlphaEffect;
+
+    /// <summary>
     /// Index of the PartyMember whose turn it is (from partyMembers)
     /// </summary>
     private int currentMemberIndex = 0;
@@ -112,7 +118,7 @@ public class Party : DynamicObject
     {
         //Check for key collision
         GameObject[] keys = GameObject.FindGameObjectsWithTag("Key");
-        if(keys.Length>0)
+        if (keys.Length > 0)
         {
             foreach (GameObject key in keys)
             {
@@ -138,7 +144,7 @@ public class Party : DynamicObject
         }
         //Check for locked door collision
         List<LockedDoor> locks = LevelController.Instance.GetDynamicObjectsOnTile<LockedDoor>(TilePosition);
-        if(locks.Count>0)
+        if (locks.Count > 0)
         {
             if (!locks[0].IsOpen)
                 keyCount = locks[0].Unlock(keyCount);
@@ -150,7 +156,7 @@ public class Party : DynamicObject
         currentMember = partyMembers[currentMemberIndex];
 
         UpdateSprite();
-        
+
         if (!moving)
             EndMove();
     }
@@ -168,7 +174,7 @@ public class Party : DynamicObject
                 //Check target tile for which ability is being used
                 List<Boulder> boulder = LevelController.Instance.GetDynamicObjectsOnTile<Boulder>(target);
                 List<BreakableWall> bWall = LevelController.Instance.GetDynamicObjectsOnTile<BreakableWall>(target);
-                if (boulder.Count>0)
+                if (boulder.Count > 0)
                 {
                     // Telekinetic Push
                     Vector3Int movementDir = target - TilePosition;
@@ -176,7 +182,7 @@ public class Party : DynamicObject
                     audio.Boulder();
                     break;
                 }
-                if(bWall.Count>0) 
+                if (bWall.Count > 0)
                 {
                     bWall[0].Run(true, this);
                     bWall[0].AnimationTrigger("activate");
@@ -208,14 +214,14 @@ public class Party : DynamicObject
                 }
                 break;
             case PartyMember.Sailor:
-                if(poweredUp && target!=TilePosition)
+                if (poweredUp && target != TilePosition)
                 {
                     LevelController.Instance.MoveDynamicObject(target, this);
                     poweredUp = false;
                     return;
                 }
                 GameObject[] listeners = GameObject.FindGameObjectsWithTag("Guard");
-                foreach(GameObject guard in listeners)
+                foreach (GameObject guard in listeners)
                 {
                     guard.GetComponent<Guard>().HearShanty();
                 }
@@ -256,7 +262,7 @@ public class Party : DynamicObject
                     if (breakables.Count > 0)
                     {
                         BreakableWall bWall = breakables[0];
-                        if(!bWall.IsOpen)
+                        if (!bWall.IsOpen)
                         {
                             return true;
                         }
@@ -276,7 +282,7 @@ public class Party : DynamicObject
                 if (guards.Count > 0)
                     return true;
                 //Sneak
-                if(poweredUp)
+                if (poweredUp)
                     return true;
                 return false;
             case PartyMember.Sailor:
@@ -372,5 +378,25 @@ public class Party : DynamicObject
         dead = true;
         StopAllAnimations();
         //Destroy(gameObject);
+    }
+
+    /// <summary>
+    /// Every frame, checks if the party is hidden and updates the alpha accordingly
+    /// </summary>
+    private void Update()
+    {
+        Color color = hiddenAlphaEffect.color;
+        if (hidden > 0)
+        {
+            float frequency = hidden == 2 ? 0.75f
+                : hidden == 1 ? 1.5f
+                : 0;
+            float t = Mathf.Cos(Mathf.PI * 2 * frequency * Time.time) / 2 + 0.5f;
+            float st = t * t;
+            color.a = Mathf.Lerp(0.7f, 0.35f, st);
+        }
+        else
+            color.a = 1;
+        hiddenAlphaEffect.color = color;
     }
 }

@@ -67,7 +67,7 @@ public class Door : DynamicObject
     protected virtual void ChangeState(bool open, DynamicObject trigger)
     {
         isOpen = open;
-        StartAnimation(WaitToChangeSprite(trigger));
+        StartAnimation(WaitToUpdateState(trigger));
     }
 
     public override void PreAction()
@@ -89,7 +89,7 @@ public class Door : DynamicObject
 
     }
 
-    protected IEnumerator WaitToChangeSprite(DynamicObject trigger)
+    protected IEnumerator WaitToUpdateState(DynamicObject trigger)
     {
         if (trigger != null)
             if (isOpen)
@@ -99,15 +99,16 @@ public class Door : DynamicObject
 
         // If the trigger was a pressure plate, we should only change the sprite if this was actually the pressure plate that triggered opening/closing
         if (!(trigger is PressurePlate) || (trigger as PressurePlate).IsPressed == IsOpen)
-            ChangeSprite(gameObject.GetComponent<SpriteRenderer>());
+            UpdateState();
         StopAnimation();
     }
 
     /// <summary>
-    /// Switch between the door's open and closed sprites
+    /// By default, switch between the door's open and closed sprites
     /// </summary>
-    public void ChangeSprite(SpriteRenderer spriteRenderer)
+    protected virtual void UpdateState()
     {
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
         if (isOpen)
             spriteRenderer.sprite = sprites[1];
         else

@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class BreakableWall : Door
 {
+    [SerializeField]
+    private GameObject breakEffectPrefab;
+
     public override bool IsTraversable(DynamicObject mover)
     {
         if (isOpen)
@@ -18,9 +21,10 @@ public class BreakableWall : Door
         return false;
     }
 
-    // Start is called before the first frame update
-    void Start()
+    protected override void UpdateState()
     {
-
+        base.UpdateState();
+        if (isOpen)
+            Instantiate(breakEffectPrefab, LevelController.Instance.CellToWorld(TilePosition) + Vector3.one / 2, Quaternion.identity);
     }
 }

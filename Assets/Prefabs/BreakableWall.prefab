@@ -100,3 +100,4 @@ MonoBehaviour:
   sprites:
   - {fileID: 21300000, guid: d89093d3f2774c94f876cdb3548b6700, type: 3}
   - {fileID: 7482667652216324306, guid: 0d9bd597a0934d54b899e5f222fd1119, type: 3}
+  breakEffectPrefab: {fileID: 1465269017039653444, guid: 96d1efa1b23be91408d19d80a1ac413c, type: 3}
