@@ -421,7 +421,8 @@ public class LevelController : MonoBehaviour
         characterSwitch = false;
 
         //Remove coin from level if already collected 
-        if (GameData.CoinsCollected[int.Parse(currentLevel)])
+        int.TryParse(currentLevel, out int levelNum);
+        if (GameData.CoinsCollected[levelNum])
         {
             GameObject[] coins = GameObject.FindGameObjectsWithTag("Coin");
             if (coins.Length > 0)
@@ -560,6 +561,9 @@ public class LevelController : MonoBehaviour
         if (pm.party.dead)
         {
             am.Defeat(rs);
+            //Reset coin for level
+            int.TryParse(currentLevel, out int levelNum);
+            GameData.LoseCoin(levelNum);
             acceptingUserInput = false;
             yield break;
         }

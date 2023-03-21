@@ -138,7 +138,8 @@ public class Party : DynamicObject
                 DynamicObject dCoin = coin.GetComponent<DynamicObject>();
                 if (TilePosition == dCoin.TilePosition)
                 {
-                    GameData.CollectCoin(int.Parse(LevelController.Instance.CurrentLevel));
+                    int.TryParse(LevelController.Instance.CurrentLevel, out int currentLevel);
+                    GameData.CollectCoin(currentLevel);
                     LevelController.Instance.DestroyDynamicObject(dCoin.TilePosition, dCoin);
                 }
             }

@@ -10,6 +10,7 @@ public static class GameData
 
     static GameData()
     {
+        coinsCollected.Add(0, false);
         for(int i=1; i<18; i++)
         {
             coinsCollected.Add(i, false);
@@ -21,6 +22,17 @@ public static class GameData
         coinsCollected[level] = true;
         CoinCount = 0;
         foreach(KeyValuePair<int, bool> entry in coinsCollected)
+        {
+            if (entry.Value)
+                CoinCount++;
+        }
+    }
+
+    public static void LoseCoin(int level)
+    {
+        coinsCollected[level] = false;
+        CoinCount = 0;
+        foreach (KeyValuePair<int, bool> entry in coinsCollected)
         {
             if (entry.Value)
                 CoinCount++;
