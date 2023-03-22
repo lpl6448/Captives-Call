@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
 /// <summary>
@@ -22,11 +23,17 @@ public static class AnimationUtility
     /// <returns>IEnumerator coroutine</returns>
     public static IEnumerator StandardLerp(Transform transform, Vector3 start, Vector3 end, float duration)
     {
+        yield return CustomInterpolate(transform, start, end, duration, t => t);
+    }
+
+    public static IEnumerator CustomInterpolate(Transform transform, Vector3 start, Vector3 end, float duration, Func<float, float> interpolationFunc)
+    {
         float startTime = Time.time;
         while (Time.time - startTime < duration)
         {
             float t = (Time.time - startTime) / duration;
-            transform.position = Vector3.Lerp(start, end, t);
+            float st = interpolationFunc(t);
+            transform.position = Vector3.Lerp(start, end, st);
             yield return null;
         }
         transform.position = end;

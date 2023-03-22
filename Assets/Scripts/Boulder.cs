@@ -14,6 +14,9 @@ public class Boulder : DynamicObject
     [SerializeField]
     private TileData water;
 
+    [SerializeField]
+    private ParticleSystem dirtEffect;
+
     private bool willDestroy;
     public bool WillDestroy => willDestroy;
 
@@ -122,7 +125,22 @@ public class Boulder : DynamicObject
 
     private IEnumerator MoveAnimation(Vector3 start, Vector3 end, bool destroyBrush, bool fillGap, bool sink, List<Guard> destroyGuards)
     {
-        yield return AnimationUtility.StandardLerp(transform, start, end, AnimationUtility.StandardAnimationDuration);
+        yield return AnimationUtility.CustomInterpolate(transform, start, end, AnimationUtility.StandardAnimationDuration,
+            t =>
+            {
+                float bt = 0.125f;
+                float bp = 0.15f;
+                if (t < bt)
+                {
+                    float mt = t / bt;
+                    return mt * mt * bp;
+                }
+                else
+                {
+                    float mt = (t - bt) / (1 - bt);
+                    return Mathf.Lerp(bp, 1, 1 - (1 - mt) * (1 - mt));
+                }
+            });
 
         if (destroyBrush)
             LevelController.Instance.wallMap.SetTile(TilePosition, null);
