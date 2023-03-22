@@ -153,7 +153,7 @@ public class Party : DynamicObject
                 if (TilePosition == pUp.GetComponent<DynamicObject>().TilePosition)
                 {
                     poweredUp = true;
-                    Destroy(pUp);
+                    LevelController.Instance.DestroyDynamicObject(TilePosition, pUp.GetComponent<DynamicObject>(), this);
                 }
             }
         }
@@ -235,11 +235,7 @@ public class Party : DynamicObject
                     poweredUp = false;
                     return;
                 }
-                GameObject[] listeners = GameObject.FindGameObjectsWithTag("Guard");
-                foreach (GameObject guard in listeners)
-                {
-                    guard.GetComponent<Guard>().HearShanty();
-                }
+                StartAnimation(DoShanty());
                 break;
         }
     }
@@ -363,6 +359,7 @@ public class Party : DynamicObject
     public override void DestroyObject(object context)
     {
         StartAnimation(DestroyAnimation(context as Guard));
+        dead = true;
     }
 
     private IEnumerator MoveAnimation(Vector3 start, Vector3 end)
@@ -390,9 +387,23 @@ public class Party : DynamicObject
             yield return new WaitForSeconds(AnimationUtility.StandardAnimationDuration);
         }
 
-        dead = true;
         StopAllAnimations();
         //Destroy(gameObject);
+    }
+
+    private IEnumerator DoShanty()
+    {
+        // Once we have shanty music in, we could let the music play for a few seconds before triggering the UI effect
+
+        UIEffects.Instance.AnimateArrowRotate();
+        yield return new WaitForSeconds(4 / 3f);
+        GameObject[] listeners = GameObject.FindGameObjectsWithTag("Guard");
+        foreach (GameObject guard in listeners)
+        {
+            guard.GetComponent<Guard>().HearShanty();
+        }
+
+        StopAnimation();
     }
 
     /// <summary>

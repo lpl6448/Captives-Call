@@ -557,6 +557,10 @@ public class LevelController : MonoBehaviour
         // Officially end the turn
         deactivatedTiles.Clear();
 
+        // Since guards can currently turn after animations are finished (shantyman), we need the guards to attack again at the end of the turn.
+        hm.HighlightTiles(null, gm.guardList, dataFromTiles);
+        guardAttack();
+
         // Check if the party has died
         if (pm.party.dead)
         {
