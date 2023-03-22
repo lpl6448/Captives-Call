@@ -2,6 +2,7 @@
 using UnityEngine.Tilemaps;
 using System.Collections;
 using System.Collections.Generic;
+using static UnityEngine.GraphicsBuffer;
 
 /// <summary>
 /// Main playable unit in the game, containing a list of PartyMembers and controlling
@@ -217,8 +218,7 @@ public class Party : DynamicObject
                 List<Guard> guards = LevelController.Instance.GetDynamicObjectsOnTile<Guard>(target);
                 if (guards.Count > 0)
                 {
-                    foreach (Guard guard in guards)
-                        LevelController.Instance.DestroyDynamicObject(target, guard, this);
+                    StartAnimation(DoSneakAttack(guards));
                     return;
                 }
                 if (poweredUp)
@@ -402,6 +402,23 @@ public class Party : DynamicObject
         {
             guard.GetComponent<Guard>().HearShanty();
         }
+
+        StopAnimation();
+    }
+
+    private IEnumerator DoSneakAttack(List<Guard> guards)
+    {
+        foreach (Guard guard in guards)
+            LevelController.Instance.DestroyDynamicObject(guard.TilePosition, guard, "sneak-attack");
+
+        Vector3 tileWorld = LevelController.Instance.CellToWorld(TilePosition) + new Vector3(0.5f, 0.5f, 0);
+        Vector3 guardWorld = LevelController.Instance.CellToWorld(guards[0].TilePosition) + new Vector3(0.5f, 0.5f, 0);
+        yield return AnimationUtility.StandardLerp(transform, tileWorld, Vector3.Lerp(tileWorld, guardWorld, 0.5f), 0.2f);
+
+        foreach (Guard guard in guards)
+            guard.AnimationTrigger("kill");
+
+        yield return AnimationUtility.StandardLerp(transform, Vector3.Lerp(tileWorld, guardWorld, 0.5f), tileWorld, 0.5f);
 
         StopAnimation();
     }
