@@ -132,8 +132,10 @@ public class Guard : DynamicObject
 
     private IEnumerator DestroyAnimation(object context)
     {
-        if(context is Boulder)
+        if (context is Boulder)
             yield return WaitForTrigger("crush");
+        else if (context is string && context as string == "sneak-attack")
+            yield return WaitForTrigger("kill");
         StopAnimation();
         Destroy(gameObject);
     }
