@@ -41,9 +41,9 @@ public class HighlightManager : MonoBehaviour
         //Change highlight sorting layer
         highlightMap.GetComponent<TilemapRenderer>().sortingOrder = 2;
         //Make all highlight tiles clear
-        for (int x = -6; x < 4; x++)
+        for (int x = -10; x < 10; x++)
         {
-            for (int y = -5; y < 5; y++)
+            for (int y = -10; y < 10; y++)
             {
                 Vector3Int gridPos = new Vector3Int(x, y, 0);
                 if (highlightMap.GetTile(gridPos) != null)

@@ -17,3 +17,4 @@ MonoBehaviour:
   isAccessible: 0
   isPartyAccessible: 0
   isBoulderAccessible: 1
+  isDashable: 1

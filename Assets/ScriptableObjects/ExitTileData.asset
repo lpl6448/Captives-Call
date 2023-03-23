@@ -19,3 +19,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ef4c19255b0a37e4695a6f9aef29832a, type: 2}
   isAccessible: 0
   isPartyAccessible: 1
+  isBoulderAccessible: 0
+  isDashable: 1
