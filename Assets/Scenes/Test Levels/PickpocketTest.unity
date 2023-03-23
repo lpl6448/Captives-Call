@@ -644,7 +644,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8608783176596436495, guid: 238667af2fb29d34b8a244d8cfa0b5c4, type: 3}
       propertyPath: partyMembers.Array.data[1]
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8608783176596436529, guid: 238667af2fb29d34b8a244d8cfa0b5c4, type: 3}
       propertyPath: m_Name

@@ -56,6 +56,13 @@ public class Door : DynamicObject
         return false;
     }
 
+    public override bool BlocksLOS()
+    {
+        if(!isOpen)
+            return true;
+        return false;
+    }
+
     public override void Run(bool canRun, DynamicObject trigger)
     {
         if (LevelController.Instance.StasisCount < 1)
