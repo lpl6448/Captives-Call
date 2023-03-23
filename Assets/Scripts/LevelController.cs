@@ -724,8 +724,9 @@ public class LevelController : MonoBehaviour
 
     private IEnumerator GameEndAnimation()
     {
-        am.Defeat();
+        yield return new WaitForSeconds(0.25f);
 
+        am.Defeat();
         hm.BlinkTile(pm.party.TilePosition);
 
         yield return new WaitForSeconds(0.75f);
@@ -773,7 +774,7 @@ public class LevelController : MonoBehaviour
         GameData.LoseCoin(levelNum);
 
         yield return new WaitForSeconds(0.5f);
-        yield return UIEffects.Instance.AnimateFade(0.5f);
+        yield return UIEffects.Instance.AnimateFade(0.75f);
         yield return new WaitForSeconds(1);
 
         rs.Reset();
