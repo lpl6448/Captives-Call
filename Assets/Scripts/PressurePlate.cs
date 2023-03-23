@@ -20,7 +20,7 @@ public class PressurePlate : DynamicObject
     /// Object that will be changed by pressure plate status
     /// </summary>
     [SerializeField]
-    public DynamicObject linkedObject;
+    public List<DynamicObject> linkedObjects;
 
     private Grid grid;
     //Holds a list of every potential trigger for the pressure plate in the scene
@@ -71,7 +71,10 @@ public class PressurePlate : DynamicObject
     /// </summary>
     public void SendSignal()
     {
-        linkedObject.Run(isPressed, this);
+        foreach (DynamicObject linkedObject in linkedObjects)
+        {
+            linkedObject.Run(isPressed, this);
+        }
     }
 
     /// <summary>
@@ -100,10 +103,13 @@ public class PressurePlate : DynamicObject
         changeSprite();
 
         // Notify the linkedObject that this pressure plate was activated/deactivated
-        if (isPressed)
-            linkedObject.AnimationTrigger("activate");
-        else
-            linkedObject.AnimationTrigger("deactivate");
+        foreach (DynamicObject linkedObject in linkedObjects)
+        {
+            if (isPressed)
+                linkedObject.AnimationTrigger("activate");
+            else
+                linkedObject.AnimationTrigger("deactivate");
+        }
 
         StopAnimation();
     }
