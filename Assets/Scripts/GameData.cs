@@ -11,7 +11,7 @@ public static class GameData
     static GameData()
     {
         coinsCollected.Add(0, false);
-        for(int i=1; i<18; i++)
+        for(int i=1; i<19; i++)
         {
             coinsCollected.Add(i, false);
         }
