@@ -13,25 +13,32 @@ public class FxController : MonoBehaviour
     public AudioSource source;
 
     Dictionary<FX, AudioClip> fxClips;
+    Dictionary<FX, AudioClip> musicClips;
 
 
     // Start is called before the first frame update
     void Start()
     {
         fxClips = new Dictionary<FX, AudioClip>();
-        fxClips.Add(FX.Victory, fxClipsList[0]);
-        fxClips.Add(FX.Defeat, fxClipsList[1]);
-        fxClips.Add(FX.Boulder, fxClipsList[2]);
-        fxClips.Add(FX.Good, fxClipsList[3]);
-        fxClips.Add(FX.Bad, fxClipsList[4]);
+        fxClips.Add(FX.Bad, fxClipsList[0]);
+        fxClips.Add(FX.Boulder, fxClipsList[1]);
+        fxClips.Add(FX.HighClick, fxClipsList[2]);
+        fxClips.Add(FX.Gate, fxClipsList[3]);
+        fxClips.Add(FX.LowClick, fxClipsList[4]);
+        fxClips.Add(FX.Hit, fxClipsList[5]);
+        fxClips.Add(FX.Water, fxClipsList[6]);
+        musicClips = new Dictionary<FX, AudioClip>();
+        musicClips.Add(FX.Victory, musicClipsList[0]);
+        musicClips.Add(FX.Defeat, musicClipsList[1]);
+        musicClips.Add(FX.Shanty, musicClipsList[2]);
         GameObject[] level = GameObject.FindGameObjectsWithTag("LevelMusic");
         if (level.Length > 0) { StartCoroutine(FadeIn(level[0].GetComponent<AudioSource>(), 1f)); }
     }
 
     public void GoodClick()
     {
-        source.clip = fxClips[FX.Good];
-        source.PlayOneShot(fxClips[FX.Good], 0.9f);
+        source.clip = fxClips[FX.LowClick];
+        source.PlayOneShot(fxClips[FX.LowClick], 0.9f);
         return;
     }
     public void BadClick()
@@ -48,7 +55,7 @@ public class FxController : MonoBehaviour
     }
     public void Victory(string nextLevel)
     {
-        source.clip = fxClips[FX.Victory];
+        source.clip = musicClips[FX.Victory];
         GameObject[] level = GameObject.FindGameObjectsWithTag("LevelMusic");
         if (level.Length > 0) {StartCoroutine(FadeOut(level[0].GetComponent<AudioSource>(), 0.1f)); }
         source.Play();
@@ -57,7 +64,7 @@ public class FxController : MonoBehaviour
     }
     public void Defeat()
     {
-        source.clip = fxClips[FX.Defeat];
+        source.clip = musicClips[FX.Defeat];
         GameObject[] level = GameObject.FindGameObjectsWithTag("LevelMusic");
         if (level.Length > 0) { StartCoroutine(FadeOut(level[0].GetComponent<AudioSource>(), 0.1f)); }
         source.Play();

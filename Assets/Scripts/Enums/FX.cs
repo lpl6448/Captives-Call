@@ -5,7 +5,12 @@ public enum FX
 {
     Victory,
     Defeat,
+    Shanty,
     Boulder,
-    Good,
-    Bad
+    HighClick,
+    LowClick,
+    Bad,
+    Gate,
+    Hit,
+    Water
 }
