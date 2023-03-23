@@ -724,11 +724,11 @@ public class LevelController : MonoBehaviour
 
     private IEnumerator GameEndAnimation()
     {
-        am.Defeat(rs);
+        am.Defeat();
 
         hm.BlinkTile(pm.party.TilePosition);
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.75f);
 
         // Find guard that saw player
         if (hm.HasLOS(pm.party.TilePosition))
@@ -774,5 +774,8 @@ public class LevelController : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
         yield return UIEffects.Instance.AnimateFade(0.5f);
+        yield return new WaitForSeconds(1);
+
+        rs.Reset();
     }
 }
