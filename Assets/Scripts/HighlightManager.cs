@@ -9,12 +9,17 @@ public class HighlightManager : MonoBehaviour
     private float blendLerp;
 
     [SerializeField]
-    private Color moveHColor, moveHoverColor, abilityHColor, abilityHoverColor, guardLOSColor, clearColor;
+    private Color moveHColor, moveHoverColor, abilityHColor, abilityHoverColor, guardLOSColor, blinkColor, clearColor;
 
+    [SerializeField]
+    private float blinkFrequency;
 
     private Dictionary<Vector3Int, Highlight> highlighted;
 
     private Dictionary<Vector3Int, Color> goalHighlightColors;
+
+    private bool hasBlink = false;
+    private Vector3Int blinkTile;
 
     private Vector3Int hoverGrid;
 
@@ -79,6 +84,18 @@ public class HighlightManager : MonoBehaviour
         if (highlightsDirty)
             UpdateHighlightMap();
 
+        // Blink a tile if needed
+        if (hasBlink)
+        {
+            if (!highlighted.TryGetValue(blinkTile, out Highlight h))
+                h = Highlight.LineOfSight;
+            Color color = GetHighlightColor(h, true);
+            if (!goalHighlightColors.ContainsKey(blinkTile))
+                goalHighlightColors.Add(blinkTile, color);
+            else
+                goalHighlightColors[blinkTile] = color;
+        }
+
         // Every frame, update the actual colors to interpolate toward the goal colors
         foreach (KeyValuePair<Vector3Int, Color> goalData in goalHighlightColors)
         {
@@ -106,7 +123,6 @@ public class HighlightManager : MonoBehaviour
         if (!highlighted.ContainsKey(gridPosition))
             highlighted.Add(gridPosition, highlight);
         else
-
             highlighted[gridPosition] |= highlight;
     }
 
@@ -143,6 +159,12 @@ public class HighlightManager : MonoBehaviour
         UpdateHighlightMap();
     }
 
+    public void BlinkTile(Vector3Int blinkTile)
+    {
+        hasBlink = true;
+        this.blinkTile = blinkTile;
+    }
+
     /// <summary>
     /// Removes all highlighted tiles on the board
     /// </summary>
@@ -163,7 +185,7 @@ public class HighlightManager : MonoBehaviour
     /// </summary>
     /// <param name="gridPosition">Grid position to check</param>
     /// <returns>Whether the grid position blocks LOS of guards</returns>
-    private bool BlocksLOS(Vector3Int gridPosition)
+    public bool BlocksLOS(Vector3Int gridPosition)
     {
         TileBase target = wallMap.GetTile(gridPosition);
         if (target != null && !LevelController.Instance.GetTileData(target).isAccessible)
@@ -287,23 +309,7 @@ public class HighlightManager : MonoBehaviour
             Highlight highlight = tile.Value;
 
             // Overlay/blend corresponding colors for each highlight
-            Color color = Color.clear;
-            if (highlight.HasFlag(Highlight.Movement))
-            {
-                color = BlendColors(moveHColor, color);
-                if (highlight.HasFlag(Highlight.Hover))
-                    color = BlendColors(moveHoverColor, color);
-            }
-            if (highlight.HasFlag(Highlight.Ability))
-            {
-                color = BlendColors(abilityHColor, color);
-                if (highlight.HasFlag(Highlight.Hover))
-                    color = BlendColors(abilityHoverColor, color);
-            }
-            if (highlight.HasFlag(Highlight.LineOfSight))
-            {
-                color = BlendColors(guardLOSColor, color);
-            }
+            Color color = GetHighlightColor(highlight, false);
 
             // Update the highlight map
             if (goalHighlightColors.ContainsKey(gridPosition))
@@ -311,6 +317,32 @@ public class HighlightManager : MonoBehaviour
             else
                 goalHighlightColors.Add(gridPosition, color);
         }
+    }
+
+    private Color GetHighlightColor(Highlight highlight, bool blink)
+    {
+        Color color = Color.clear;
+        if (highlight.HasFlag(Highlight.Movement))
+        {
+            color = BlendColors(moveHColor, color);
+            if (highlight.HasFlag(Highlight.Hover))
+                color = BlendColors(moveHoverColor, color);
+        }
+        if (highlight.HasFlag(Highlight.Ability))
+        {
+            color = BlendColors(abilityHColor, color);
+            if (highlight.HasFlag(Highlight.Hover))
+                color = BlendColors(abilityHoverColor, color);
+        }
+        if (highlight.HasFlag(Highlight.LineOfSight))
+        {
+            color = BlendColors(guardLOSColor, color);
+        }
+        if (blink && Time.time % (1 / blinkFrequency) > 0.5f / blinkFrequency)
+        {
+            color = BlendColors(blinkColor, color);
+        }
+        return color;
     }
 
     private Color BlendColors(Color top, Color bottom)

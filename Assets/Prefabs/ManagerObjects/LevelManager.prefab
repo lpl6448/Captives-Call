@@ -44,12 +44,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74301860d5d6b2c4c912b45b083e5625, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clips:
+  fxClipsList:
+  - {fileID: 8300000, guid: 5fcf10be63dc34f418a2c5c1d11ce468, type: 3}
+  - {fileID: 8300000, guid: 09d223e34249f774e83b9c3646234370, type: 3}
+  - {fileID: 8300000, guid: 977f94e788c15fa4fa5c1666e4893051, type: 3}
+  - {fileID: 8300000, guid: b4bdfdf9930d2a34b8c132ba0fc70b51, type: 3}
+  - {fileID: 8300000, guid: 677d82967f14ed847bd535c748c42b01, type: 3}
+  - {fileID: 8300000, guid: 72f46f520309ab14caf31298d212a1f0, type: 3}
+  - {fileID: 8300000, guid: 3e9080af37d7eef49a549cc317403bcb, type: 3}
+  musicClipsList:
   - {fileID: 8300000, guid: 94bdff84e2b12a64291774004af71bcc, type: 3}
   - {fileID: 8300000, guid: f9726783fc65cb543ab964a9618186e5, type: 3}
-  - {fileID: 8300000, guid: 09d223e34249f774e83b9c3646234370, type: 3}
-  - {fileID: 8300000, guid: 677d82967f14ed847bd535c748c42b01, type: 3}
-  - {fileID: 8300000, guid: 5fcf10be63dc34f418a2c5c1d11ce468, type: 3}
+  - {fileID: 8300000, guid: de46fc4e27994954abf782167a9b63c0, type: 3}
   source: {fileID: 306510677666125099}
 --- !u!1 &673203595410598268
 GameObject:
@@ -273,7 +279,9 @@ MonoBehaviour:
   abilityHColor: {r: 0.9339623, g: 0.09163401, b: 0.92043257, a: 0.16862746}
   abilityHoverColor: {r: 0.93333334, g: 0.09019608, b: 0.92156863, a: 0.23137255}
   guardLOSColor: {r: 0.9622642, g: 0.24873616, b: 0.24873616, a: 0.23529412}
+  blinkColor: {r: 1, g: 0.255, b: 0.255, a: 0.4627451}
   clearColor: {r: 0, g: 0, b: 0, a: 0}
+  blinkFrequency: 1.6666666
 --- !u!1 &7277537200466364003
 GameObject:
   m_ObjectHideFlags: 0
