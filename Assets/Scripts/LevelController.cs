@@ -427,7 +427,7 @@ public class LevelController : MonoBehaviour
             GameObject[] coins = GameObject.FindGameObjectsWithTag("Coin");
             if (coins.Length > 0)
             {
-                foreach(GameObject coin in coins)
+                foreach (GameObject coin in coins)
                 {
                     DynamicObject dCoin = coin.GetComponent<DynamicObject>();
                     DestroyDynamicObject(dCoin.TilePosition, dCoin);
@@ -568,11 +568,8 @@ public class LevelController : MonoBehaviour
         // Check if the party has died
         if (pm.party.dead)
         {
-            am.Defeat(rs);
-            //Reset coin for level
-            int.TryParse(currentLevel, out int levelNum);
-            GameData.LoseCoin(levelNum);
             acceptingUserInput = false;
+            StartCoroutine(GameEndAnimation());
             yield break;
         }
 
@@ -723,5 +720,62 @@ public class LevelController : MonoBehaviour
     {
         characterSwitch = true;
         pm.party.ChangeCharacter(characterIndex);
+    }
+
+    private IEnumerator GameEndAnimation()
+    {
+        am.Defeat();
+
+        hm.BlinkTile(pm.party.TilePosition);
+
+        yield return new WaitForSeconds(0.75f);
+
+        // Find guard that saw player
+        if (hm.HasLOS(pm.party.TilePosition))
+        {
+            Guard foundGuard = null;
+            foreach (Guard guard in gm.guardList)
+            {
+                Vector3Int faceDir = guard.facing == Directions.Right ? Vector3Int.right
+                    : guard.facing == Directions.Up ? Vector3Int.up
+                    : guard.facing == Directions.Left ? Vector3Int.left
+                    : guard.facing == Directions.Down ? Vector3Int.down : Vector3Int.zero;
+                Vector3Int losTile = guard.TilePosition + faceDir;
+                bool foundPlayer = false;
+                for (int i = 0; i < 2; i++)
+                {
+                    if (hm.BlocksLOS(losTile) || !guard.CanMove(losTile))
+                        break;
+
+                    if (pm.party.TilePosition == losTile)
+                    {
+                        foundPlayer = true;
+                        break;
+                    }
+                    losTile += faceDir;
+                }
+                if (foundPlayer)
+                {
+                    foundGuard = guard;
+                    break;
+                }
+            }
+            
+            if (foundGuard != null)
+            {
+                int dif = (int)(pm.party.TilePosition - foundGuard.TilePosition).magnitude;
+                MoveDynamicObject(pm.party.TilePosition, foundGuard, dif * 4f);
+            }
+        }
+
+        //Reset coin for level
+        int.TryParse(currentLevel, out int levelNum);
+        GameData.LoseCoin(levelNum);
+
+        yield return new WaitForSeconds(0.5f);
+        yield return UIEffects.Instance.AnimateFade(0.5f);
+        yield return new WaitForSeconds(1);
+
+        rs.Reset();
     }
 }

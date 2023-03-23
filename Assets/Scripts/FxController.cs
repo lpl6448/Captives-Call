@@ -55,13 +55,12 @@ public class FxController : MonoBehaviour
         StartCoroutine(WaitForVictory(nextLevel));
         return;
     }
-    public void Defeat(ResetScene reset)
+    public void Defeat()
     {
         source.clip = fxClips[FX.Defeat];
         GameObject[] level = GameObject.FindGameObjectsWithTag("LevelMusic");
         if (level.Length > 0) { StartCoroutine(FadeOut(level[0].GetComponent<AudioSource>(), 0.1f)); }
         source.Play();
-        StartCoroutine(WaitForDefeat(reset));
         return;
     }
 
@@ -72,15 +71,6 @@ public class FxController : MonoBehaviour
             yield return null;
         }
         SceneManager.LoadScene(nextLevel);
-    }
-
-    public IEnumerator WaitForDefeat(ResetScene reset)
-    {
-        while (source.isPlaying)
-        {
-            yield return null;
-        }
-        reset.Reset();
     }
 
     public static IEnumerator FadeOut(AudioSource source, float fadeTime)
