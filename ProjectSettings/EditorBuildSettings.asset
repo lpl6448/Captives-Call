@@ -66,6 +66,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Levels/18.unity
     guid: 281421c83c73b5e4f8e748856e0a881d
   - enabled: 1
+    path: Assets/Scenes/Levels/19.unity
+    guid: 6ac59eb552d5a2e45830e65ddd4361e9
+  - enabled: 1
     path: Assets/Scenes/Menus+Controls/Thanks.unity
     guid: b0c6d8ae4b69a884c925bdef7de1ad42
   - enabled: 0

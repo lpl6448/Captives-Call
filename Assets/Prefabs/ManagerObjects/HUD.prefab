@@ -1682,6 +1682,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6527aa4e7900e5d41a61dfcbb2629407, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  powerUps:
+  - {fileID: 21300000, guid: af6b4e9f3b0ffa24881639f566d6c41e, type: 3}
+  - {fileID: 21300000, guid: 62fe8e95cd88b054c8896876d558db66, type: 3}
   canvasRect: {fileID: 5617206080251388109}
   canvas: {fileID: 5617206080251388108}
   currentCharacterText: {fileID: 1511423254737287389}
@@ -2134,7 +2137,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: bb1f6a6faf98edb418e73ed2ba09ae12, type: 3}
+  m_Sprite: {fileID: 21300000, guid: af6b4e9f3b0ffa24881639f566d6c41e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

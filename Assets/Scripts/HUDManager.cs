@@ -8,6 +8,8 @@ public class HUDManager : MonoBehaviour
 {
     public static HUDManager Instance;
 
+    [SerializeField]
+    private List<Sprite> powerUps;
     //Variable to hold canvas transform space
     [SerializeField]
     private RectTransform canvasRect;
@@ -163,10 +165,12 @@ public class HUDManager : MonoBehaviour
         if (!party.poweredUp)
         {
             powerUpSprite.color = new Color(powerUpSprite.color.r, powerUpSprite.color.g, powerUpSprite.color.b, 0.2f);
+            powerUpSprite.sprite = powerUps[0];
         }
         else
         {
             powerUpSprite.color = new Color(powerUpSprite.color.r, powerUpSprite.color.g, powerUpSprite.color.b, 1.0f);
+            powerUpSprite.sprite = powerUps[1];
         }
 
         //Update abiltiy text boxes
