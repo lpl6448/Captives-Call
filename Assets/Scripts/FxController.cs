@@ -6,20 +6,24 @@ using UnityEngine.SceneManagement;
 public class FxController : MonoBehaviour
 {
     [SerializeField]
-    private List<AudioClip> clips;
+    private List<AudioClip> fxClipsList;
+    [SerializeField]
+    private List<AudioClip> musicClipsList;
     [SerializeField]
     public AudioSource source;
 
     Dictionary<FX, AudioClip> fxClips;
+
+
     // Start is called before the first frame update
     void Start()
     {
         fxClips = new Dictionary<FX, AudioClip>();
-        fxClips.Add(FX.Victory, clips[0]);
-        fxClips.Add(FX.Defeat, clips[1]);
-        fxClips.Add(FX.Boulder, clips[2]);
-        fxClips.Add(FX.Good, clips[3]);
-        fxClips.Add(FX.Bad, clips[4]);
+        fxClips.Add(FX.Victory, fxClipsList[0]);
+        fxClips.Add(FX.Defeat, fxClipsList[1]);
+        fxClips.Add(FX.Boulder, fxClipsList[2]);
+        fxClips.Add(FX.Good, fxClipsList[3]);
+        fxClips.Add(FX.Bad, fxClipsList[4]);
         GameObject[] level = GameObject.FindGameObjectsWithTag("LevelMusic");
         if (level.Length > 0) { StartCoroutine(FadeIn(level[0].GetComponent<AudioSource>(), 1f)); }
     }

@@ -13,6 +13,7 @@ public class Door : DynamicObject
     /// <summary>
     /// Tracks if the "door" is accessible to move on
     /// </summary>
+    [SerializeField]
     protected bool isOpen;
 
     public bool IsOpen => isOpen;
