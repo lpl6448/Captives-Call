@@ -1620,6 +1620,9 @@ MonoBehaviour:
   coinsText: {fileID: 4646885044240098783}
   moveButton: {fileID: 7071319231114673820}
   abilityButton: {fileID: 5299177371425545286}
+  leftButton: {fileID: 5302500179272455167}
+  rightButton: {fileID: 6109268932531840163}
+  switchButton: {fileID: 1967610905410933016}
   currentSprite: {fileID: 5617206081446471769}
   nextSprite: {fileID: 5617206079841525623}
   rightCharacterSprite: {fileID: 677770992970555975}

@@ -446,7 +446,11 @@ public class LevelController : MonoBehaviour
             Application.Quit();
 
         if (Input.GetKeyDown(KeyCode.R))
+        {
+            int.TryParse(currentLevel, out int levelNum);
+            GameData.LoseCoin(levelNum);
             rs.Reset();
+        }
     }
 
     /// <summary>

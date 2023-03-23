@@ -31,6 +31,9 @@ public class HUDManager : MonoBehaviour
     //Variables for move prompt buttons
     public Button moveButton;
     public Button abilityButton;
+    public Button leftButton;
+    public Button rightButton;
+    public Button switchButton;
     
     
     //Variables for the UI sprite objects
@@ -102,6 +105,23 @@ public class HUDManager : MonoBehaviour
         rightCharacterSprite.sprite = characterPorts[party.partyMembers[(party.CurrentMemberIndex + rightIndexer) % partySize]];
         leftCharacterSprite.sprite = characterPorts[party.partyMembers[(party.CurrentMemberIndex + leftIndexer) % partySize]];
         nextCharacterText.text = "Party Members: " + party.partyMembers[(party.CurrentMemberIndex + nextIndexer) % partySize].ToString();
+
+        //Darken character switch buttons if there is only one character
+        Button[] rotateButtons = { leftButton, rightButton, switchButton };
+        if(partySize<2)
+        {
+            foreach(Button button in rotateButtons)
+            {
+                button.interactable = false;
+            }
+        }
+        else
+        {
+            foreach(Button button in rotateButtons)
+            {
+                button.interactable = true;
+            }
+        }
 
         //Update the current level using the nextLevel value from the levelcontroller
         levelText.text = $"Level: \n{levelController.CurrentLevel}";
