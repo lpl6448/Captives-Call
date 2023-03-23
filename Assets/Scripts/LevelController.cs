@@ -386,7 +386,7 @@ public class LevelController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //Define nextLevel
+        //Define nextLevel as the next scene or "Thanks" if there are no more scenes
         int.TryParse(currentLevel, out int current);
         if (current + 1 > GameData.levelCount)
             nextLevel = "Thanks";

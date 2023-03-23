@@ -16,4 +16,6 @@ public class TileData : ScriptableObject
     public bool isPartyAccessible;
 
     public bool isBoulderAccessible;
+
+    public bool isDashable;
 }

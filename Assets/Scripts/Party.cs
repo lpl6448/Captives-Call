@@ -300,7 +300,35 @@ public class Party : DynamicObject
                 //Grapple dash
                 if (((Mathf.Abs(target.x - TilePosition.x) == 2 && target.y == TilePosition.y) ||
                     (Mathf.Abs(target.y - TilePosition.y) == 2 && target.x == TilePosition.x)) && poweredUp && CanMove(target))
-                    return true;
+                {
+                    //Check if tile being skipped can be dashed through
+                    if(target.y==TilePosition.y)
+                    {
+                        if(target.x>TilePosition.x)
+                        {
+                            Vector3Int inBetween = new Vector3Int(TilePosition.x + 1, TilePosition.y, TilePosition.z);
+                            return CanDashThrough(inBetween);
+                        }
+                        else
+                        {
+                            Vector3Int inBetween = new Vector3Int(TilePosition.x - 1, TilePosition.y, TilePosition.z);
+                            return CanDashThrough(inBetween);
+                        }
+                    }
+                    else
+                    {
+                        if (target.y > TilePosition.y)
+                        {
+                            Vector3Int inBetween = new Vector3Int(TilePosition.x, TilePosition.y+1, TilePosition.z);
+                            return CanDashThrough(inBetween);
+                        }
+                        else
+                        {
+                            Vector3Int inBetween = new Vector3Int(TilePosition.x, TilePosition.y-1, TilePosition.z);
+                            return CanDashThrough(inBetween);
+                        }
+                    }
+                }
                 //Shanty
                 if (target == TilePosition)
                     return true;
@@ -309,6 +337,30 @@ public class Party : DynamicObject
 
         // For any unimplemented PartyMembers, return false
         return false;
+    }
+
+    /// <summary>
+    /// Helper method to determing if the party can dash through a certain tile
+    /// </summary>
+    /// <param name="target"></param>
+    /// <returns></returns>
+    private bool CanDashThrough(Vector3Int target)
+    {
+        // Party cannot dash through a wall
+        TileBase tile = LevelController.Instance.wallMap.GetTile(target);
+        if (tile != null && !LevelController.Instance.GetTileData(tile).isPartyAccessible)
+            return false;
+
+        tile = LevelController.Instance.floorMap.GetTile(target);
+        if (tile != null && !LevelController.Instance.GetTileData(tile).isDashable)
+            return false;
+
+        // Party cannot move to a tile with another DynamicObject on it if the object is not traversable
+        foreach (DynamicObject collidingObj in LevelController.Instance.GetDynamicObjectsOnTile(target))
+            if (!collidingObj.IsTraversable(this))
+                return false;
+        
+        return true;
     }
 
     /// <summary>
