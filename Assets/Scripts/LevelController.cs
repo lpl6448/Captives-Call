@@ -42,6 +42,13 @@ public class LevelController : MonoBehaviour
     private List<TileData> tileDatas;
 
     /// <summary>
+    /// List of exit tiles (up, down, left, right), used to figure out what direction
+    /// to move the player off-screen after beating the level
+    /// </summary>
+    [SerializeField]
+    private Tile[] exitTiles;
+
+    /// <summary>
     /// List of all DynamicObjects present at the beginning of the level
     /// </summary>
     private List<DynamicObject> initialDynamicObjects;
@@ -574,7 +581,7 @@ public class LevelController : MonoBehaviour
         if (pm.party.dead)
         {
             acceptingUserInput = false;
-            StartCoroutine(GameEndAnimation());
+            StartCoroutine(DefeatAnimation());
             yield break;
         }
 
@@ -592,7 +599,7 @@ public class LevelController : MonoBehaviour
         //Check if the party has reached the exit
         if (pm.party.TilePosition == grid.WorldToCell(exit.transform.position))
         {
-            am.Victory(nextLevel);
+            StartCoroutine(VictoryAnimation());
             acceptingUserInput = false;
             yield break;
         }
@@ -704,7 +711,7 @@ public class LevelController : MonoBehaviour
                     guard.TilePosition == plate.TilePosition)
                 {
                     foreach (DynamicObject linkedObject in plate.linkedObjects)
-                    { 
+                    {
                         linkedObject.GetComponent<Door>().WillOpen = true;
                     }
                     break;
@@ -727,7 +734,7 @@ public class LevelController : MonoBehaviour
         pm.party.ChangeCharacter(characterIndex);
     }
 
-    private IEnumerator GameEndAnimation()
+    private IEnumerator DefeatAnimation()
     {
         yield return new WaitForSeconds(0.25f);
 
@@ -766,7 +773,7 @@ public class LevelController : MonoBehaviour
                     break;
                 }
             }
-            
+
             if (foundGuard != null)
             {
                 int dif = (int)(pm.party.TilePosition - foundGuard.TilePosition).magnitude;
@@ -783,5 +790,29 @@ public class LevelController : MonoBehaviour
         yield return new WaitForSeconds(1);
 
         rs.Reset();
+    }
+    private IEnumerator VictoryAnimation()
+    {
+        am.Victory();
+
+        yield return new WaitForSeconds(2);
+
+        // Find the exit tile that the player is on
+        int tileIndex = Array.IndexOf(exitTiles, GetWallTile(pm.party.TilePosition));
+        if (tileIndex != -1)
+        {
+            // Move the player off-screen using the exit tile direction
+            Vector3Int dir = tileIndex == 0 ? Vector3Int.up
+                : tileIndex == 1 ? Vector3Int.down
+                : tileIndex == 2 ? Vector3Int.left
+                : tileIndex == 3 ? Vector3Int.right : Vector3Int.zero;
+            MoveDynamicObject(pm.party.TilePosition - dir, pm.party, 2f);
+        }
+
+        yield return new WaitForSeconds(0.25f);
+        yield return UIEffects.Instance.AnimateFade(0.75f);
+        yield return new WaitForSeconds(1);
+
+        SceneManager.LoadScene(nextLevel);
     }
 }

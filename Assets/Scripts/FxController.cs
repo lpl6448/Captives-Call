@@ -53,13 +53,12 @@ public class FxController : MonoBehaviour
         source.PlayOneShot(fxClips[FX.Boulder]);
         return;
     }
-    public void Victory(string nextLevel)
+    public void Victory()
     {
         source.clip = musicClips[FX.Victory];
         GameObject[] level = GameObject.FindGameObjectsWithTag("LevelMusic");
         if (level.Length > 0) {StartCoroutine(FadeOut(level[0].GetComponent<AudioSource>(), 0.1f)); }
         source.Play();
-        StartCoroutine(WaitForVictory(nextLevel));
         return;
     }
     public void Defeat()
@@ -69,15 +68,6 @@ public class FxController : MonoBehaviour
         if (level.Length > 0) { StartCoroutine(FadeOut(level[0].GetComponent<AudioSource>(), 0.1f)); }
         source.Play();
         return;
-    }
-
-    private IEnumerator WaitForVictory(string nextLevel)
-    {
-        while (source.isPlaying)
-        {
-            yield return null;
-        }
-        SceneManager.LoadScene(nextLevel);
     }
 
     public static IEnumerator FadeOut(AudioSource source, float fadeTime)

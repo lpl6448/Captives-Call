@@ -398,7 +398,7 @@ public class Party : DynamicObject
         moving = true;
         Vector3 start = transform.position;
         Vector3 end = LevelController.Instance.CellToWorld(TilePosition) + new Vector3(0.5f, 0.5f, 0);
-        moveCoroutine = StartAnimation(MoveAnimation(start, end));
+        moveCoroutine = StartAnimation(MoveAnimation(start, end, context is float ? (float)context : 1));
     }
 
     private void EndMove()
@@ -414,9 +414,9 @@ public class Party : DynamicObject
         dead = true;
     }
 
-    private IEnumerator MoveAnimation(Vector3 start, Vector3 end)
+    private IEnumerator MoveAnimation(Vector3 start, Vector3 end, float multiplier)
     {
-        yield return AnimationUtility.StandardLerp(transform, start, end, AnimationUtility.StandardAnimationDuration);
+        yield return AnimationUtility.StandardLerp(transform, start, end, AnimationUtility.StandardAnimationDuration * multiplier);
 
         // Notify any pressure plates that the object has finished moving
         foreach (DynamicObject dobj in LevelController.Instance.GetDynamicObjectsOnTile(TilePosition))
