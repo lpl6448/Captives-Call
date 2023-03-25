@@ -397,7 +397,7 @@ public class Party : DynamicObject
     {
         moving = true;
         Vector3 start = transform.position;
-        Vector3 end = LevelController.Instance.CellToWorld(TilePosition) + new Vector3(0.5f, 0.5f, 0);
+        Vector3 end = LevelController.Instance.CellToWorld(tilePosition) + new Vector3(0.5f, 0.5f, 0);
         moveCoroutine = StartAnimation(MoveAnimation(start, end, context is float ? (float)context : 1));
     }
 

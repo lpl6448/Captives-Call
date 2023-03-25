@@ -357,6 +357,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8baf700e444f1fe499cd284cc360a7d8, type: 2}
   - {fileID: 11400000, guid: f3ae69bab40941645b371a36cd6a4e54, type: 2}
   - {fileID: 11400000, guid: ef4c19255b0a37e4695a6f9aef29832a, type: 2}
+  startTiles:
+  - {fileID: 11400000, guid: e8aef4bfa5cef72459c0c5e1073ee6a2, type: 2}
+  - {fileID: 11400000, guid: 94d3410735042f04d8d5a1e44fd0c650, type: 2}
+  - {fileID: 11400000, guid: 5fa91ae7d1da1144fa9711202571e053, type: 2}
+  - {fileID: 11400000, guid: b5c0456f0654d3a45af8e71fe118f59e, type: 2}
 --- !u!1 &7277537201348297681
 GameObject:
   m_ObjectHideFlags: 0
