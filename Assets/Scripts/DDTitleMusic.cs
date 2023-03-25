@@ -8,6 +8,7 @@ public class DDTitleMusic : MonoBehaviour
     {
         GameObject[] titleObj = GameObject.FindGameObjectsWithTag("TitleMusic");
         GameObject[] levelObj = GameObject.FindGameObjectsWithTag("LevelMusic");
+        //Replace title music with level music
         if (titleObj.Length > 1 || levelObj.Length>1)
             Destroy(this.gameObject);
         DontDestroyOnLoad(this.gameObject);

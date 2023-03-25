@@ -53,9 +53,13 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 72f46f520309ab14caf31298d212a1f0, type: 3}
   - {fileID: 8300000, guid: 3e9080af37d7eef49a549cc317403bcb, type: 3}
   musicClipsList:
-  - {fileID: 8300000, guid: 94bdff84e2b12a64291774004af71bcc, type: 3}
+  - {fileID: 8300000, guid: 4b0b59544f14ccd44990c6ed13c31648, type: 3}
   - {fileID: 8300000, guid: f9726783fc65cb543ab964a9618186e5, type: 3}
   - {fileID: 8300000, guid: de46fc4e27994954abf782167a9b63c0, type: 3}
+  - {fileID: 8300000, guid: 025e856fd44511f49bc2c9d73b6bcf2f, type: 3}
+  - {fileID: 8300000, guid: ef9379bc471fd344180088a022a93cb7, type: 3}
+  - {fileID: 8300000, guid: be6571e52163a8149ba2558b9bdcaf80, type: 3}
+  - {fileID: 8300000, guid: af21bc76a1ad4894cac3e183756e94d2, type: 3}
   source: {fileID: 306510677666125099}
 --- !u!1 &673203595410598268
 GameObject:
