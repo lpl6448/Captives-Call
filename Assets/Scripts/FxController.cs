@@ -64,6 +64,14 @@ public class FxController : MonoBehaviour
         source.PlayOneShot(fxClips[FX.Boulder]);
         return;
     }
+    public void Shanty()
+    {
+        source.clip = musicClips[FX.Shanty];
+        GameObject[] level = GameObject.FindGameObjectsWithTag("LevelMusic");
+        if (level.Length > 0) { level[0].GetComponent<AudioSource>().volume = 0f; }
+        source.PlayOneShot(musicClips[FX.Shanty]);
+        if (level.Length > 0) { StartCoroutine(FadeIn(level[0].GetComponent<AudioSource>(), 8f)); }
+    }
     public void Victory()
     {
         source.clip = musicClips[FX.Victory];

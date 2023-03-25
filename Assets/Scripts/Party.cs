@@ -235,7 +235,7 @@ public class Party : DynamicObject
                     poweredUp = false;
                     return;
                 }
-                StartAnimation(DoShanty());
+                StartAnimation(DoShanty(audio));
                 break;
         }
     }
@@ -443,12 +443,12 @@ public class Party : DynamicObject
         //Destroy(gameObject);
     }
 
-    private IEnumerator DoShanty()
+    private IEnumerator DoShanty(FxController audio)
     {
         // Once we have shanty music in, we could let the music play for a few seconds before triggering the UI effect
-
+        audio.Shanty();
         UIEffects.Instance.AnimateArrowRotate();
-        yield return new WaitForSeconds(4 / 3f);
+        yield return new WaitForSeconds(9 / 3f);
         GameObject[] listeners = GameObject.FindGameObjectsWithTag("Guard");
         foreach (GameObject guard in listeners)
         {
