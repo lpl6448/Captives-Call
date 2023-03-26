@@ -98,7 +98,7 @@ public class PressurePlate : DynamicObject
 
     private IEnumerator AnimateState()
     {
-        if (isPressed)
+        if (isPressed && LevelController.Instance.StasisCount < 1)
             yield return WaitForTrigger("press");
         changeSprite();
 
