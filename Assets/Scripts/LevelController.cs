@@ -530,7 +530,10 @@ public class LevelController : MonoBehaviour
 
         acceptingUserInput = true;
         while (acceptingUserInput)
+        {
             yield return DoTurn();
+            yield return null;
+        }
     }
 
     /// <summary>
