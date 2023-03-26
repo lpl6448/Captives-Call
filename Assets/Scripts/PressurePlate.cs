@@ -82,6 +82,8 @@ public class PressurePlate : DynamicObject
     /// </summary>
     private void CheckIfPressed(bool notFrozen)
     {
+        //Former state for SFX check
+        bool wasPressed = isPressed;
         if (!notFrozen)
             return;
         foreach (DynamicObject presser in potentialTriggers)
@@ -89,6 +91,8 @@ public class PressurePlate : DynamicObject
             if (presser.TilePosition == grid.WorldToCell(this.transform.position))
             {
                 isPressed = true;
+                if (wasPressed != isPressed)
+                    FxController.Instance.Plate();
                 return;
             }
         }

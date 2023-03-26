@@ -14,7 +14,7 @@ public enum FX
     HighClick,
     LowClick,
     Bad,
-    Gate,
+    Plate,
     Hit,
     Water
 }

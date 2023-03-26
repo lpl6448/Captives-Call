@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class FxController : MonoBehaviour
 {
+    public static FxController Instance;
+
     [SerializeField]
     private List<AudioClip> fxClipsList;
     [SerializeField]
@@ -15,7 +17,10 @@ public class FxController : MonoBehaviour
     Dictionary<FX, AudioClip> fxClips;
     Dictionary<FX, AudioClip> musicClips;
 
-
+    void Awake()
+    {
+        Instance = this;
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -24,7 +29,7 @@ public class FxController : MonoBehaviour
         fxClips.Add(FX.Bad, fxClipsList[0]);
         fxClips.Add(FX.Boulder, fxClipsList[1]);
         fxClips.Add(FX.HighClick, fxClipsList[2]);
-        fxClips.Add(FX.Gate, fxClipsList[3]);
+        fxClips.Add(FX.Plate, fxClipsList[3]);
         fxClips.Add(FX.LowClick, fxClipsList[4]);
         fxClips.Add(FX.Hit, fxClipsList[5]);
         fxClips.Add(FX.Water, fxClipsList[6]);
@@ -63,6 +68,11 @@ public class FxController : MonoBehaviour
         source.clip = fxClips[FX.Boulder];
         source.PlayOneShot(fxClips[FX.Boulder]);
         return;
+    }
+    public void Plate()
+    {
+        source.clip = fxClips[FX.Plate];
+        source.PlayOneShot(fxClips[FX.Plate]);
     }
     public void Shanty()
     {
