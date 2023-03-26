@@ -501,6 +501,7 @@ public class LevelController : MonoBehaviour
     /// <returns>IEnumerator coroutine</returns>
     private IEnumerator DoLevel()
     {
+        hm.HighlightTiles(null, gm.guardList, dataFromTiles);
         UIEffects.Instance.SetFade(1);
 
         // First, we animate the party in from the start tile

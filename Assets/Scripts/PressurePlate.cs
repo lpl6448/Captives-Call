@@ -120,7 +120,7 @@ public class PressurePlate : DynamicObject
 
     private IEnumerator WaitForSound()
     {
-        yield return WaitForTrigger("press");
+        yield return WaitForTrigger("press", false);
         FxController.Instance.Plate();
         StopAnimation();
     }
