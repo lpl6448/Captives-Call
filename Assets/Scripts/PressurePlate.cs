@@ -92,7 +92,7 @@ public class PressurePlate : DynamicObject
             {
                 isPressed = true;
                 if (wasPressed != isPressed)
-                    FxController.Instance.Plate();
+                    StartAnimation(WaitForSound());
                 return;
             }
         }
@@ -115,6 +115,13 @@ public class PressurePlate : DynamicObject
                 linkedObject.AnimationTrigger("deactivate");
         }
 
+        StopAnimation();
+    }
+
+    private IEnumerator WaitForSound()
+    {
+        yield return WaitForTrigger("press");
+        FxController.Instance.Plate();
         StopAnimation();
     }
 

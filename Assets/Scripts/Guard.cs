@@ -128,6 +128,7 @@ public class Guard : DynamicObject
         // Notify any pressure plates that the object has finished moving
         foreach (DynamicObject dobj in LevelController.Instance.GetDynamicObjectsOnTile<PressurePlate>(TilePosition))
             dobj.AnimationTrigger("press");
+        AnimationTrigger("end-move");
     }
 
     private IEnumerator DestroyAnimation(object context)
@@ -136,6 +137,8 @@ public class Guard : DynamicObject
             yield return WaitForTrigger("crush");
         else if (context is string && context as string == "sneak-attack")
             yield return WaitForTrigger("kill");
+        else if (context is Gate || context is Spikes)
+            yield return WaitForTrigger("end-move");
         StopAnimation();
         Destroy(gameObject);
     }
