@@ -452,3 +452,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   guardList: []
+  temporalDistortionMarkerPrefab: {fileID: 1059155816527985226, guid: 4177edd6a7ca89246892de390d6ec660, type: 3}

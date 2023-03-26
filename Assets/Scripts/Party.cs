@@ -195,10 +195,10 @@ public class Party : DynamicObject
                 }
                 break;
             case PartyMember.Wizard:
-                LevelController.Instance.StasisCount = 3;
+                LevelController.Instance.BeginStasis(3);
                 if (poweredUp)
                 {
-                    LevelController.Instance.DistortionCount = 4;
+                    LevelController.Instance.BeginTemporalDistortion(4);
                     poweredUp = false;
                 }
                 break;

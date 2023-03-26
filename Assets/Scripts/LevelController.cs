@@ -391,6 +391,28 @@ public class LevelController : MonoBehaviour
             currentlyAnimatedObjects.Remove(dobj);
     }
 
+    public void BeginStasis(int turns)
+    {
+        StasisCount = turns;
+        UIEffects.Instance.SetMagicOverlay(true);
+    }
+    public void BeginTemporalDistortion(int turns)
+    {
+        DistortionCount = turns;
+        gm.AddTemporalDistortionMarkers();
+    }
+
+    private void EndStasis()
+    {
+        StasisCount = 0;
+        UIEffects.Instance.SetMagicOverlay(false);
+    }
+    private void EndTemporalDistortion()
+    {
+        DistortionCount = 0;
+        gm.RemoveTemporalDistortionMarkers();
+    }
+
     private void Awake()
     {
         Instance = this;
@@ -574,9 +596,17 @@ public class LevelController : MonoBehaviour
                     guardAttack();
                     guardWillPress();
                     if (stasisCount > 0)
+                    {
                         stasisCount--;
+                        if (stasisCount == 0)
+                            EndStasis();
+                    }
                     if (distortionCount > 0)
+                    {
                         distortionCount--;
+                        if (distortionCount == 0)
+                            EndTemporalDistortion();
+                    }
                     hiddenCount = pm.party.Hidden;
                     movesTaken++;
                     break;
@@ -595,9 +625,6 @@ public class LevelController : MonoBehaviour
         }
 
         characterSwitch = false;
-
-        // Update magic overlay
-        UIEffects.Instance.SetMagicOverlay(StasisCount > 0);
 
         // Wait for all animations to finish before continuing
         while (currentlyAnimatedObjects.Count > 0)
