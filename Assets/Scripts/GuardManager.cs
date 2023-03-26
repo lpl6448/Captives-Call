@@ -10,6 +10,14 @@ public class GuardManager : MonoBehaviour
     /// </summary>
     public List<Guard> guardList;
 
+    /// <summary>
+    /// Prefab used to visualize guards getting "locked" in-place by Temporal Distortion
+    /// </summary>
+    [SerializeField]
+    private TemporalDistortionMarker temporalDistortionMarkerPrefab;
+
+    private List<TemporalDistortionMarker> currentMarkers;
+
     private Tilemap wallMap;
 
 
@@ -25,6 +33,8 @@ public class GuardManager : MonoBehaviour
         }
         //Find wall tilemap and assign to wallMap
         wallMap = GameObject.FindGameObjectsWithTag("Walls")[0].GetComponent<Tilemap>();
+
+        currentMarkers = new List<TemporalDistortionMarker>();
     }
 
     // Update is called once per frame
@@ -105,5 +115,23 @@ public class GuardManager : MonoBehaviour
             default:
                 return new Vector3Int();
         }
+    }
+
+    public void AddTemporalDistortionMarkers()
+    {
+        RemoveTemporalDistortionMarkers();
+
+        foreach (Guard guard in guardList)
+        {
+            TemporalDistortionMarker marker = Instantiate(temporalDistortionMarkerPrefab, guard.transform, false);
+            currentMarkers.Add(marker);
+        }
+    }
+    public void RemoveTemporalDistortionMarkers()
+    {
+        foreach (TemporalDistortionMarker marker in currentMarkers)
+            if (marker != null)
+                marker.DestroyMarker();
+        currentMarkers.Clear();
     }
 }
