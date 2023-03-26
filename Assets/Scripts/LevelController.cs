@@ -544,7 +544,8 @@ public class LevelController : MonoBehaviour
                         hm.ClearHighlights();
                     //Don't move guards if there is a temporal distortion cast or sea shanty is being sung
                     if (distortionCount < 1 && !(canUseAbility && canMove) &&
-                        !(pm.party.currentMember == PartyMember.Sailor && canUseAbility && clickGrid == pm.party.TilePosition))
+                        !(pm.party.currentMember == PartyMember.Sailor && canUseAbility && clickGrid == pm.party.TilePosition) &&
+                        !(pm.party.currentMember == PartyMember.Wizard && canUseAbility && pm.party.poweredUp && clickGrid == pm.party.TilePosition))
                         gm.MoveGuards(dataFromTiles, hm);
 
 

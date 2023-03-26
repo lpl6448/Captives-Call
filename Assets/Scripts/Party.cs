@@ -198,7 +198,7 @@ public class Party : DynamicObject
                 LevelController.Instance.StasisCount = 3;
                 if (poweredUp)
                 {
-                    LevelController.Instance.DistortionCount = 3;
+                    LevelController.Instance.DistortionCount = 4;
                     poweredUp = false;
                 }
                 break;
