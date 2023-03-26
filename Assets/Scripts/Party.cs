@@ -131,33 +131,21 @@ public class Party : DynamicObject
             }
         }
         //Check for coin collision
-        GameObject[] coins = GameObject.FindGameObjectsWithTag("Coin");
-        if(coins.Length>0)
+        List<Coin> coins = LevelController.Instance.GetDynamicObjectsOnTile<Coin>(TilePosition);
+        foreach (Coin coin in new List<Coin>(coins))
         {
-            foreach(GameObject coin in coins)
-            {
-                DynamicObject dCoin = coin.GetComponent<DynamicObject>();
-                if (TilePosition == dCoin.TilePosition)
-                {
-                    int.TryParse(LevelController.Instance.CurrentLevel, out int currentLevel);
-                    GameData.CollectCoin(currentLevel);
-                    LevelController.Instance.DestroyDynamicObject(dCoin.TilePosition, dCoin);
-                }
-            }
+            int.TryParse(LevelController.Instance.CurrentLevel, out int currentLevel);
+            GameData.CollectCoin(currentLevel);
+            LevelController.Instance.DestroyDynamicObject(coin.TilePosition, coin);
         }
         //Check for powerup collision
-        GameObject[] powerUps = GameObject.FindGameObjectsWithTag("Power");
-        if (powerUps.Length > 0)
+        List<PowerUp> powerUps = LevelController.Instance.GetDynamicObjectsOnTile<PowerUp>(TilePosition);
+        foreach (PowerUp pUp in new List<PowerUp>(powerUps))
         {
-            foreach (GameObject pUp in powerUps)
-            {
-                if (TilePosition == pUp.GetComponent<DynamicObject>().TilePosition)
-                {
-                    poweredUp = true;
-                    LevelController.Instance.DestroyDynamicObject(TilePosition, pUp.GetComponent<DynamicObject>(), this);
-                }
-            }
+            poweredUp = true;
+            LevelController.Instance.DestroyDynamicObject(TilePosition, pUp, this);
         }
+
         //Check for locked door collision
         List<LockedDoor> locks = LevelController.Instance.GetDynamicObjectsOnTile<LockedDoor>(TilePosition);
         if (locks.Count > 0)
@@ -302,9 +290,9 @@ public class Party : DynamicObject
                     (Mathf.Abs(target.y - TilePosition.y) == 2 && target.x == TilePosition.x)) && poweredUp && CanMove(target))
                 {
                     //Check if tile being skipped can be dashed through
-                    if(target.y==TilePosition.y)
+                    if (target.y == TilePosition.y)
                     {
-                        if(target.x>TilePosition.x)
+                        if (target.x > TilePosition.x)
                         {
                             Vector3Int inBetween = new Vector3Int(TilePosition.x + 1, TilePosition.y, TilePosition.z);
                             return CanDashThrough(inBetween);
@@ -319,12 +307,12 @@ public class Party : DynamicObject
                     {
                         if (target.y > TilePosition.y)
                         {
-                            Vector3Int inBetween = new Vector3Int(TilePosition.x, TilePosition.y+1, TilePosition.z);
+                            Vector3Int inBetween = new Vector3Int(TilePosition.x, TilePosition.y + 1, TilePosition.z);
                             return CanDashThrough(inBetween);
                         }
                         else
                         {
-                            Vector3Int inBetween = new Vector3Int(TilePosition.x, TilePosition.y-1, TilePosition.z);
+                            Vector3Int inBetween = new Vector3Int(TilePosition.x, TilePosition.y - 1, TilePosition.z);
                             return CanDashThrough(inBetween);
                         }
                     }
@@ -359,7 +347,7 @@ public class Party : DynamicObject
         foreach (DynamicObject collidingObj in LevelController.Instance.GetDynamicObjectsOnTile(target))
             if (!collidingObj.IsTraversable(this))
                 return false;
-        
+
         return true;
     }
 
@@ -397,7 +385,7 @@ public class Party : DynamicObject
     {
         moving = true;
         Vector3 start = transform.position;
-        Vector3 end = LevelController.Instance.CellToWorld(TilePosition) + new Vector3(0.5f, 0.5f, 0);
+        Vector3 end = LevelController.Instance.CellToWorld(tilePosition) + new Vector3(0.5f, 0.5f, 0);
         moveCoroutine = StartAnimation(MoveAnimation(start, end, context is float ? (float)context : 1));
     }
 

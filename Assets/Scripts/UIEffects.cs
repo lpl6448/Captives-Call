@@ -13,6 +13,9 @@ public class UIEffects : MonoBehaviour
     [SerializeField]
     private Image fadeImage;
 
+    [SerializeField]
+    private Animator magicOverlayAnimator;
+
     private void Awake()
     {
         Instance = this;
@@ -24,18 +27,32 @@ public class UIEffects : MonoBehaviour
         arrowRotateAnimation.Play();
     }
 
-    public IEnumerator AnimateFade(float duration)
+    public void SetFade(float fade)
     {
         Color color = fadeImage.color;
+        color.a = fade;
+        fadeImage.color = color;
+    }
+
+    public IEnumerator AnimateFade(float duration, bool fadeIn = true)
+    {
+        Color color = fadeImage.color;
+        float startAlpha = color.a;
+        float goalAlpha = fadeIn ? 1 : 0;
         float startTime = Time.time;
         while (Time.time - startTime < duration)
         {
             float t = (Time.time - startTime) / duration;
-            color.a = t;
+            color.a = Mathf.Lerp(startAlpha, goalAlpha, t);
             fadeImage.color = color;
             yield return null;
         }
-        color.a = 1;
+        color.a = goalAlpha;
         fadeImage.color = color;
+    }
+
+    public void SetMagicOverlay(bool active)
+    {
+        magicOverlayAnimator.SetBool("Active", active);
     }
 }

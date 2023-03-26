@@ -47,6 +47,12 @@ public class LevelController : MonoBehaviour
     /// </summary>
     [SerializeField]
     private Tile[] exitTiles;
+    /// <summary>
+    /// List of tile tiles (up, down, left, right), used to figure out what direction
+    /// to move the player from at the beginning of the level
+    /// </summary>
+    [SerializeField]
+    private Tile[] startTiles;
 
     /// <summary>
     /// List of all DynamicObjects present at the beginning of the level
@@ -471,6 +477,33 @@ public class LevelController : MonoBehaviour
     /// <returns>IEnumerator coroutine</returns>
     private IEnumerator DoLevel()
     {
+        UIEffects.Instance.SetFade(1);
+
+        // First, we animate the party in from the start tile
+        Vector3Int startDir = Vector3Int.zero;
+        for (int i = 0; i < 4; i++)
+        {
+            Vector3Int dir = i == 0 ? Vector3Int.up
+                : i == 1 ? Vector3Int.down
+                : i == 2 ? Vector3Int.left
+                : i == 3 ? Vector3Int.right : Vector3Int.zero;
+            if (Array.IndexOf(startTiles, GetWallTile(pm.party.TilePosition + dir)) != -1)
+            {
+                startDir = dir;
+                break;
+            }
+        }
+        if (startDir != Vector3Int.zero)
+        {
+            pm.party.transform.position = CellToWorld(pm.party.TilePosition) + new Vector3(0.5f, 0.5f, 0) + (Vector3)startDir * 1.5f;
+            pm.party.Move(pm.party.TilePosition, 3f);
+            yield return UIEffects.Instance.AnimateFade(0.75f, false);
+            while (currentlyAnimatedObjects.Count > 0)
+                yield return null;
+        }
+        else
+            yield return UIEffects.Instance.AnimateFade(0.75f, false);
+
         acceptingUserInput = true;
         while (acceptingUserInput)
             yield return DoTurn();
@@ -561,6 +594,9 @@ public class LevelController : MonoBehaviour
         }
 
         characterSwitch = false;
+
+        // Update magic overlay
+        UIEffects.Instance.SetMagicOverlay(StasisCount > 0);
 
         // Wait for all animations to finish before continuing
         while (currentlyAnimatedObjects.Count > 0)
