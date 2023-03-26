@@ -595,6 +595,9 @@ public class LevelController : MonoBehaviour
 
         characterSwitch = false;
 
+        // Update magic overlay
+        UIEffects.Instance.SetMagicOverlay(StasisCount > 0);
+
         // Wait for all animations to finish before continuing
         while (currentlyAnimatedObjects.Count > 0)
         {

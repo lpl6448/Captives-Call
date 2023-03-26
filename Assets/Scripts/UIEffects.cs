@@ -13,6 +13,9 @@ public class UIEffects : MonoBehaviour
     [SerializeField]
     private Image fadeImage;
 
+    [SerializeField]
+    private Animator magicOverlayAnimator;
+
     private void Awake()
     {
         Instance = this;
@@ -46,5 +49,10 @@ public class UIEffects : MonoBehaviour
         }
         color.a = goalAlpha;
         fadeImage.color = color;
+    }
+
+    public void SetMagicOverlay(bool active)
+    {
+        magicOverlayAnimator.SetBool("Active", active);
     }
 }
