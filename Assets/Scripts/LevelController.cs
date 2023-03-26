@@ -401,8 +401,10 @@ public class LevelController : MonoBehaviour
     {
         //Define nextLevel as the next scene or "Thanks" if there are no more scenes
         int.TryParse(currentLevel, out int current);
-        if (current + 1 > GameData.levelCount)
+        if (current + 1 > GameData.levelCount+11)
             nextLevel = "Thanks";
+        else if (current == 19)
+            nextLevel = "31";
         else
             nextLevel = $"{current + 1}";
         //Use level 1 literals since party manager is not fully defined when this function runs
@@ -440,7 +442,7 @@ public class LevelController : MonoBehaviour
 
         //Remove coin from level if already collected 
         int.TryParse(currentLevel, out int levelNum);
-        if (GameData.CoinsCollected[levelNum])
+        if (GameData.CoinsCollected[GameData.CorrectLevel(levelNum)])
         {
             GameObject[] coins = GameObject.FindGameObjectsWithTag("Coin");
             if (coins.Length > 0)
