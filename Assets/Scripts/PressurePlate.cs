@@ -88,7 +88,7 @@ public class PressurePlate : DynamicObject
             return;
         foreach (DynamicObject presser in potentialTriggers)
         {
-            if (presser.TilePosition == grid.WorldToCell(this.transform.position))
+            if (presser != null && presser.TilePosition == TilePosition)
             {
                 isPressed = true;
                 if (wasPressed != isPressed)
