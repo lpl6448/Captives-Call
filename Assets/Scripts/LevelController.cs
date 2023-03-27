@@ -596,7 +596,6 @@ public class LevelController : MonoBehaviour
                     hm.HighlightTiles(null, gm.guardList, dataFromTiles);
                     //Check if player is in the guardLOS
                     guardAttack();
-                    guardWillPress();
                     if (stasisCount > 0)
                     {
                         stasisCount--;
@@ -642,6 +641,7 @@ public class LevelController : MonoBehaviour
         // Since guards can currently turn after animations are finished (shantyman), we need the guards to attack again at the end of the turn.
         hm.HighlightTiles(null, gm.guardList, dataFromTiles);
         guardAttack();
+        guardWillPress();
 
         // Check if the party has died
         if (pm.party.dead)
@@ -767,12 +767,9 @@ public class LevelController : MonoBehaviour
 
     private void guardWillPress()
     {
-        // First, assume all doors will close
-        foreach (Door door in GetDynamicObjectsByType<Door>())
-            door.WillOpen = false;
-
         foreach (PressurePlate plate in GetDynamicObjectsByType<PressurePlate>())
         {
+            // Check if this plate will be pressed by a boulder or party next turn
             bool isPressedByNotGuard = false;
             if (GetDynamicObjectsOnTile<Boulder>(plate.TilePosition).Count > 0
                 || GetDynamicObjectsOnTile<Party>(plate.TilePosition).Count > 0)
@@ -791,12 +788,15 @@ public class LevelController : MonoBehaviour
                     willPressByGuard = true;
                     break;
                 }
-
             }
 
-            foreach (DynamicObject dobj in plate.linkedObjects)
-                if (dobj is Door)
-                    (dobj as Door).WillOpen = isPressedByNotGuard || willPressByGuard;
+            if (isPressedByNotGuard || willPressByGuard)
+                foreach (DynamicObject dobj in plate.linkedObjects)
+                    if (dobj is Door)
+                    {
+                        Door door = dobj as Door;
+                        door.WillActivate = true;
+                    }
         }
     }
 
