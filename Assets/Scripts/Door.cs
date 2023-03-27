@@ -70,13 +70,12 @@ public class Door : DynamicObject
         if (LevelController.Instance.StasisCount < 1)
         {
             if (!triggered) { ChangeState(canRun, trigger); }
-            if (!inactive) { triggered = true; }
+            if (isOpen!=inactive) { triggered = true; }
         }
     }
 
     protected virtual void ChangeState(bool open, DynamicObject trigger)
     {
-        Debug.Log("entered changeState");
         if (open)
         {
             isOpen = !inactive;
@@ -85,7 +84,6 @@ public class Door : DynamicObject
         {
             isOpen = inactive;
         }
-        Debug.Log("IsOpen="+isOpen);
         StartAnimation(WaitToUpdateState(trigger));
     }
 

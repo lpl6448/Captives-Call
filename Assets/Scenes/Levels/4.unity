@@ -1302,6 +1302,63 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: db4666400102b9249b827898502d8d9c, type: 3}
+--- !u!1001 &1292039588
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 7445635922718701882, guid: f9c065803a611f846a4e91af72c391d8, type: 3}
+      propertyPath: m_Name
+      value: LevelMusic
+      objectReference: {fileID: 0}
+    - target: {fileID: 7445635922718701895, guid: f9c065803a611f846a4e91af72c391d8, type: 3}
+      propertyPath: m_RootOrder
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 7445635922718701895, guid: f9c065803a611f846a4e91af72c391d8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.2055104
+      objectReference: {fileID: 0}
+    - target: {fileID: 7445635922718701895, guid: f9c065803a611f846a4e91af72c391d8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.108861
+      objectReference: {fileID: 0}
+    - target: {fileID: 7445635922718701895, guid: f9c065803a611f846a4e91af72c391d8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -10.751906
+      objectReference: {fileID: 0}
+    - target: {fileID: 7445635922718701895, guid: f9c065803a611f846a4e91af72c391d8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7445635922718701895, guid: f9c065803a611f846a4e91af72c391d8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7445635922718701895, guid: f9c065803a611f846a4e91af72c391d8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7445635922718701895, guid: f9c065803a611f846a4e91af72c391d8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7445635922718701895, guid: f9c065803a611f846a4e91af72c391d8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7445635922718701895, guid: f9c065803a611f846a4e91af72c391d8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7445635922718701895, guid: f9c065803a611f846a4e91af72c391d8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f9c065803a611f846a4e91af72c391d8, type: 3}
 --- !u!1839735485 &1357559078 stripped
 Tilemap:
   m_CorrespondingSourceObject: {fileID: 1760025435726958643, guid: 7e279a26f0e190348ae5cbf99ff21494, type: 3}

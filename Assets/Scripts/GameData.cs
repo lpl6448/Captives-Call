@@ -51,6 +51,24 @@ public static class GameData
         return levels.Contains(level);
     }
 
+    public static string GetNextLevel(string level)
+    {
+        int nextLevel;
+        //int index = levels.scenes.IndexOf(level);
+        int.TryParse(level, out int current);
+        nextLevel = int.MaxValue;
+        foreach(string scene in levels.scenes)
+        {
+            int.TryParse(scene, out int next);
+            if(next>current && next<nextLevel)
+                nextLevel = next;
+        }
+        if (levels.scenes.Contains($"{nextLevel}"))
+            return $"{nextLevel}";
+        else
+            return "Thanks";
+    }
+
     /// <summary>
     /// Temporary helper method to turn the level num of wizard levels to a lower key while warlock levels aren't there
     /// </summary>

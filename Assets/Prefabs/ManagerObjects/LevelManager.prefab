@@ -343,7 +343,6 @@ MonoBehaviour:
   am: {fileID: 1524337131}
   floorMap: {fileID: 0}
   wallMap: {fileID: 0}
-  currentLevel: 
   tileDatas:
   - {fileID: 11400000, guid: 608ff28d6367ed94d8b375954fb97549, type: 2}
   - {fileID: 11400000, guid: 1123c4d9f21207f44ae4206b4b795665, type: 2}

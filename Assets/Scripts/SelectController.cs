@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class SelectController : MonoBehaviour
 {
@@ -11,12 +12,15 @@ public class SelectController : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI charText;
 
+    private Button selectedButton;
+
     private int page;
 
     // Start is called before the first frame update
     void Start()
     {
         page = 0;
+        UpdatePage();
     }
 
     // Update is called once per frame
@@ -107,5 +111,10 @@ public class SelectController : MonoBehaviour
             //    }
             //    break;
         }
+    }
+
+    public void LevelSelected(Button button)
+    {
+
     }
 }
