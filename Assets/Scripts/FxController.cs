@@ -136,7 +136,6 @@ public class FxController : MonoBehaviour
                     }
                     break;
                 case PartyMember.Wizard:
-                    Debug.Log("In wizard");
                     if (levelMusic.clip != musicClips[FX.Wizard])
                     {
                         levelMusic.clip = musicClips[FX.Wizard];
@@ -152,6 +151,7 @@ public class FxController : MonoBehaviour
                     break;
                 case PartyMember.Sailor:
                     //Implement when sailor theme is written
+                    DefaultMusic(levelMusic);
                     break;
             }
             return;
@@ -161,12 +161,14 @@ public class FxController : MonoBehaviour
         if (members[0]==PartyMember.Wizard && members[1]==PartyMember.Pickpocket)
         {
             //Implement when theme is written
+            DefaultMusic(levelMusic);
             return;
         }
         //Wizard+Pickpocket+Sailor
         if (members[0] == PartyMember.Wizard && members[1] == PartyMember.Pickpocket && members[2] == PartyMember.Sailor)
         {
             //Implement when theme is written
+            DefaultMusic(levelMusic);
             return;
         }
         //Full party
@@ -176,5 +178,17 @@ public class FxController : MonoBehaviour
             levelMusic.Play();
         }
         return;
+    }
+
+    /// <summary>
+    /// Remove when all themes have been written
+    /// </summary>
+    private void DefaultMusic(AudioSource levelMusic)
+    {
+        if (levelMusic.clip != musicClips[FX.All])
+        {
+            levelMusic.clip = musicClips[FX.All];
+            levelMusic.Play();
+        }
     }
 }

@@ -39,6 +39,11 @@ public class SelectController : MonoBehaviour
             leftArrow.interactable = false;
         else
             leftArrow.interactable = true;
+        //Right arrow limit is arbitrary, just a temporary wall so infinite pages aren't available
+        if (page > 20)
+            rightArrow.interactable = false;
+        else
+            rightArrow.interactable = true;
         switch(page)
         {
             case 0:

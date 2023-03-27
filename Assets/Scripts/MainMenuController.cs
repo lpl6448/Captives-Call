@@ -9,6 +9,10 @@ public class MainMenuController : MonoBehaviour
     {
         SceneManager.LoadScene("Instructions");
     }
+    public void ToLS()
+    {
+        SceneManager.LoadScene("LevelSelect");
+    }
     public void StartGame()
     {
         Destroy(GameObject.FindGameObjectsWithTag("TitleMusic")[0]);
