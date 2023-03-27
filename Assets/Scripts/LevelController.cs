@@ -596,7 +596,6 @@ public class LevelController : MonoBehaviour
                     hm.HighlightTiles(null, gm.guardList, dataFromTiles);
                     //Check if player is in the guardLOS
                     guardAttack();
-                    guardWillPress();
                     if (stasisCount > 0)
                     {
                         stasisCount--;
@@ -642,6 +641,7 @@ public class LevelController : MonoBehaviour
         // Since guards can currently turn after animations are finished (shantyman), we need the guards to attack again at the end of the turn.
         hm.HighlightTiles(null, gm.guardList, dataFromTiles);
         guardAttack();
+        guardWillPress();
 
         // Check if the party has died
         if (pm.party.dead)
@@ -767,30 +767,36 @@ public class LevelController : MonoBehaviour
 
     private void guardWillPress()
     {
-        GameObject[] plates = GameObject.FindGameObjectsWithTag("Pressure");
-        foreach (GameObject gPlate in plates)
+        foreach (PressurePlate plate in GetDynamicObjectsByType<PressurePlate>())
         {
+            // Check if this plate will be pressed by a boulder or party next turn
+            bool isPressedByNotGuard = false;
+            if (GetDynamicObjectsOnTile<Boulder>(plate.TilePosition).Count > 0
+                || GetDynamicObjectsOnTile<Party>(plate.TilePosition).Count > 0)
+                isPressedByNotGuard = true;
+
+            // Check if this plate will be pressed by a guard next turn
+            bool willPressByGuard = false;
             foreach (Guard guard in gm.guardList)
             {
-                PressurePlate plate = gPlate.GetComponent<PressurePlate>();
-                if (gm.ToTranslate(guard) + guard.TilePosition == plate.TilePosition ||
-                    guard.TilePosition == plate.TilePosition)
+                Vector3Int nextTile =
+                    guard.CanMove(guard.TilePosition + gm.ToTranslate(guard)) ? guard.TilePosition + gm.ToTranslate(guard)
+                    : guard.CanMove(guard.TilePosition - gm.ToTranslate(guard)) ? guard.TilePosition - gm.ToTranslate(guard) : guard.TilePosition;
+
+                if (nextTile == plate.TilePosition)
                 {
-                    foreach (DynamicObject linkedObject in plate.linkedObjects)
-                    {
-                        linkedObject.GetComponent<Door>().WillOpen = true;
-                    }
+                    willPressByGuard = true;
                     break;
                 }
-                else
-                {
-                    foreach (DynamicObject linkedObject in plate.linkedObjects)
-                    {
-                        linkedObject.GetComponent<Door>().WillOpen = false;
-                    }
-                }
-
             }
+
+            if (isPressedByNotGuard || willPressByGuard)
+                foreach (DynamicObject dobj in plate.linkedObjects)
+                    if (dobj is Door)
+                    {
+                        Door door = dobj as Door;
+                        door.WillActivate = true;
+                    }
         }
     }
 

@@ -21,10 +21,10 @@ public class BreakableWall : Door
         return false;
     }
 
-    protected override void UpdateState()
+    protected override void UpdateState(bool opened)
     {
-        base.UpdateState();
-        if (isOpen)
+        base.UpdateState(opened);
+        if (opened)
             Instantiate(breakEffectPrefab, LevelController.Instance.CellToWorld(TilePosition) + Vector3.one / 2, Quaternion.identity);
     }
 }
