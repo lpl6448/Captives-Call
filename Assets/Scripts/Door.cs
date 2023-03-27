@@ -70,12 +70,13 @@ public class Door : DynamicObject
         if (LevelController.Instance.StasisCount < 1)
         {
             if (!triggered) { ChangeState(canRun, trigger); }
-            if (isOpen) { triggered = true; }
+            if (!inactive) { triggered = true; }
         }
     }
 
     protected virtual void ChangeState(bool open, DynamicObject trigger)
     {
+        Debug.Log("entered changeState");
         if (open)
         {
             isOpen = !inactive;
@@ -118,6 +119,7 @@ public class Door : DynamicObject
 
         // If the trigger was a pressure plate, we should only change the sprite if this was actually the pressure plate that triggered opening/closing
         //if (!(trigger is PressurePlate) || (trigger as PressurePlate).IsPressed == !inactive)
+        //if(!triggered)
             UpdateState();
         StopAnimation();
     }
