@@ -66,12 +66,8 @@ public class Door : DynamicObject
     {
         if (LevelController.Instance.StasisCount < 1)
         {
-            bool prevOpen = isOpen;
             if (!triggered || canRun)
-            {
                 ChangeState(canRun, trigger);
-                triggered = true;
-            }
         }
     }
 
@@ -85,6 +81,7 @@ public class Door : DynamicObject
         {
             isOpen = inactive;
         }
+        triggered = true;
     }
 
     public override void PreAction()
