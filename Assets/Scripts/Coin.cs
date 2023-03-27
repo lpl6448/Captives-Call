@@ -6,6 +6,8 @@ public class Coin : DynamicObject
 {
     [SerializeField]
     private Animation collectAnimation;
+    [SerializeField]
+    private SpriteRenderer coinRenderer;
 
     // Start is called before the first frame update
     public override bool IsTraversable(DynamicObject mover)
@@ -27,6 +29,10 @@ public class Coin : DynamicObject
 
     private IEnumerator WaitToDestroy()
     {
+        // Set the coin to display above the player and walls
+        coinRenderer.sortingLayerName = "Party";
+        coinRenderer.sortingOrder = 11;
+
         yield return new WaitForSeconds(AnimationUtility.StandardAnimationDuration / 4);
         collectAnimation.Play();
         while (collectAnimation.isPlaying)

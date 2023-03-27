@@ -8,6 +8,7 @@ public class PowerUp : DynamicObject
     private ParticleSystem Particles;
     [SerializeField]
     private Animation Animation;
+    private Vector3Int oldLocation;
 
     public override bool IsTraversable(DynamicObject mover)
     {
@@ -38,6 +39,7 @@ public class PowerUp : DynamicObject
 
         yield return new WaitForSeconds(2);
 
-        Destroy(gameObject);
+        oldLocation = TilePosition;
+        Move(new Vector3Int(100, 100, 0), Party.Instance);
     }
 }

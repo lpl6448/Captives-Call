@@ -35,8 +35,6 @@ public class SceneFinder
     /// <returns></returns>
     public bool Contains(string scene)
     {
-        if (scene.Contains(scene))
-            return true;
-        return false;
+        return scenes.Contains(scene);
     }
 }

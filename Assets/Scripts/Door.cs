@@ -15,27 +15,21 @@ public class Door : DynamicObject
     /// </summary>
     [SerializeField]
     protected bool isOpen;
-
     public bool IsOpen => isOpen;
 
-    protected bool willOpen;
-    public bool WillOpen
-    {
-        get { return willOpen; }
-        set
-        {
-            if (!triggered)
-            {
-                willOpen = value;
-                triggered = value;
-            }
-        }
-    }
-
-    private bool inactive;
+    /// <summary>
+    /// Whether this door will be activated from a pressure plate next turn
+    /// </summary>
+    public bool WillActivate { get; set; }
 
     /// <summary>
-    /// Holds if the gate has been triggered this turn already
+    /// Whether this door is inverted (meaning that it is closed when activated and opened when deactivated)
+    /// </summary>
+    private bool inactive;
+    public bool Inactive => inactive;
+
+    /// <summary>
+    /// Holds if the door has been activated/deactivated so far this turn
     /// </summary>
     protected bool triggered;
 
@@ -46,7 +40,7 @@ public class Door : DynamicObject
             if (mover is Guard)
                 return true;
         }
-        if (willOpen || isOpen)
+        if (WillActivate != inactive || isOpen)
         {
             if (mover is Party)
                 return true;
@@ -63,7 +57,7 @@ public class Door : DynamicObject
 
     public override bool BlocksLOS()
     {
-        if(!isOpen)
+        if (!isOpen)
             return true;
         return false;
     }
@@ -72,8 +66,8 @@ public class Door : DynamicObject
     {
         if (LevelController.Instance.StasisCount < 1)
         {
-            if (!triggered) { ChangeState(canRun, trigger); }
-            if (isOpen!=inactive) { triggered = true; }
+            if (!triggered || canRun)
+                ChangeState(canRun, trigger);
         }
     }
 
@@ -87,19 +81,25 @@ public class Door : DynamicObject
         {
             isOpen = inactive;
         }
-        StartAnimation(WaitToUpdateState(trigger));
+        triggered = true;
     }
 
     public override void PreAction()
     {
         triggered = false;
+        WillActivate = false;
+    }
+    public override void PostAction()
+    {
+        if (triggered)
+            StartAnimation(WaitToUpdateState());
     }
 
 
     protected void Awake()
     {
         //isOpen = false;
-        willOpen = false;
+        WillActivate = false;
         triggered = false;
         inactive = isOpen;
     }
@@ -110,29 +110,32 @@ public class Door : DynamicObject
 
     }
 
-    protected IEnumerator WaitToUpdateState(DynamicObject trigger)
+    protected IEnumerator WaitToUpdateState()
     {
-        if (trigger != null)
-            if (isOpen!=inactive)
-                yield return WaitForTrigger("activate");
-            else
-                yield return WaitForTrigger("deactivate");
+        if (isOpen != inactive)
+        {
+            yield return WaitForTrigger("activate");
+            UpdateState(!inactive);
+        }
+        else
+        {
+            yield return WaitForTrigger("deactivate");
+            UpdateState(inactive);
+        }
 
         // If the trigger was a pressure plate, we should only change the sprite if this was actually the pressure plate that triggered opening/closing
         //if (!(trigger is PressurePlate) || (trigger as PressurePlate).IsPressed == !inactive)
         //if(!triggered)
-            UpdateState();
         StopAnimation();
     }
 
     /// <summary>
     /// By default, switch between the door's open and closed sprites
     /// </summary>
-    protected virtual void UpdateState()
+    protected virtual void UpdateState(bool opened)
     {
-        Debug.Log("Before sprite change: " + isOpen);
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-        if (isOpen)
+        if (opened)
             spriteRenderer.sprite = sprites[1];
         else
             spriteRenderer.sprite = sprites[0];
