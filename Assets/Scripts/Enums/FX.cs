@@ -6,11 +6,15 @@ public enum FX
     Victory,
     Defeat,
     Shanty,
+    Warlock,
+    Wizard,
+    Pickpocket,
+    All,
     Boulder,
     HighClick,
     LowClick,
     Bad,
-    Gate,
+    Plate,
     Hit,
     Water
 }

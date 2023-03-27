@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class FxController : MonoBehaviour
 {
+    public static FxController Instance;
+
     [SerializeField]
     private List<AudioClip> fxClipsList;
     [SerializeField]
@@ -15,15 +17,19 @@ public class FxController : MonoBehaviour
     Dictionary<FX, AudioClip> fxClips;
     Dictionary<FX, AudioClip> musicClips;
 
-
+    void Awake()
+    {
+        Instance = this;
+    }
     // Start is called before the first frame update
     void Start()
     {
+        //Place clips from lists into dictionaries
         fxClips = new Dictionary<FX, AudioClip>();
         fxClips.Add(FX.Bad, fxClipsList[0]);
         fxClips.Add(FX.Boulder, fxClipsList[1]);
         fxClips.Add(FX.HighClick, fxClipsList[2]);
-        fxClips.Add(FX.Gate, fxClipsList[3]);
+        fxClips.Add(FX.Plate, fxClipsList[3]);
         fxClips.Add(FX.LowClick, fxClipsList[4]);
         fxClips.Add(FX.Hit, fxClipsList[5]);
         fxClips.Add(FX.Water, fxClipsList[6]);
@@ -31,8 +37,18 @@ public class FxController : MonoBehaviour
         musicClips.Add(FX.Victory, musicClipsList[0]);
         musicClips.Add(FX.Defeat, musicClipsList[1]);
         musicClips.Add(FX.Shanty, musicClipsList[2]);
+        musicClips.Add(FX.Warlock, musicClipsList[3]);
+        musicClips.Add(FX.Wizard, musicClipsList[4]);
+        musicClips.Add(FX.Pickpocket, musicClipsList[5]);
+        musicClips.Add(FX.All, musicClipsList[6]);
+        //Get reference to level music
         GameObject[] level = GameObject.FindGameObjectsWithTag("LevelMusic");
-        if (level.Length > 0) { StartCoroutine(FadeIn(level[0].GetComponent<AudioSource>(), 1f)); }
+        if (level.Length > 0)
+        {
+            AudioSource levelMusic = level[0].GetComponent<AudioSource>();
+            UpdateLevelMusic(levelMusic);
+            StartCoroutine(FadeIn(levelMusic, 1f));
+        }
     }
 
     public void GoodClick()
@@ -53,13 +69,25 @@ public class FxController : MonoBehaviour
         source.PlayOneShot(fxClips[FX.Boulder]);
         return;
     }
-    public void Victory(string nextLevel)
+    public void Plate()
+    {
+        source.clip = fxClips[FX.Plate];
+        source.PlayOneShot(fxClips[FX.Plate]);
+    }
+    public void Shanty()
+    {
+        source.clip = musicClips[FX.Shanty];
+        GameObject[] level = GameObject.FindGameObjectsWithTag("LevelMusic");
+        if (level.Length > 0) { level[0].GetComponent<AudioSource>().volume = 0f; }
+        source.PlayOneShot(musicClips[FX.Shanty]);
+        if (level.Length > 0) { StartCoroutine(FadeIn(level[0].GetComponent<AudioSource>(), 8f)); }
+    }
+    public void Victory()
     {
         source.clip = musicClips[FX.Victory];
         GameObject[] level = GameObject.FindGameObjectsWithTag("LevelMusic");
         if (level.Length > 0) {StartCoroutine(FadeOut(level[0].GetComponent<AudioSource>(), 0.1f)); }
         source.Play();
-        StartCoroutine(WaitForVictory(nextLevel));
         return;
     }
     public void Defeat()
@@ -69,15 +97,6 @@ public class FxController : MonoBehaviour
         if (level.Length > 0) { StartCoroutine(FadeOut(level[0].GetComponent<AudioSource>(), 0.1f)); }
         source.Play();
         return;
-    }
-
-    private IEnumerator WaitForVictory(string nextLevel)
-    {
-        while (source.isPlaying)
-        {
-            yield return null;
-        }
-        SceneManager.LoadScene(nextLevel);
     }
 
     public static IEnumerator FadeOut(AudioSource source, float fadeTime)
@@ -98,5 +117,64 @@ public class FxController : MonoBehaviour
             source.volume += Time.deltaTime / fadeTime;
             yield return null;
         }
+    }
+
+    private void UpdateLevelMusic(AudioSource levelMusic)
+    {
+        List<PartyMember> members = Party.Instance.partyMembers;
+        //Change the audio clip if the level has different character composition than before
+        //Run four character switch if the party only has one member
+        if (members.Count == 1)
+        {
+            switch (Party.Instance.currentMember)
+            {
+                case PartyMember.Warlock:
+                    if (levelMusic.clip != musicClips[FX.Warlock])
+                    {
+                        levelMusic.clip = musicClips[FX.Warlock];
+                        levelMusic.Play();
+                    }
+                    break;
+                case PartyMember.Wizard:
+                    Debug.Log("In wizard");
+                    if (levelMusic.clip != musicClips[FX.Wizard])
+                    {
+                        levelMusic.clip = musicClips[FX.Wizard];
+                        levelMusic.Play();
+                    }
+                    break;
+                case PartyMember.Pickpocket:
+                    if (levelMusic.clip != musicClips[FX.Pickpocket])
+                    {
+                        levelMusic.clip = musicClips[FX.Pickpocket];
+                        levelMusic.Play();
+                    }
+                    break;
+                case PartyMember.Sailor:
+                    //Implement when sailor theme is written
+                    break;
+            }
+            return;
+        }
+        //Check all of the possible multi-char party comps
+        //Wizard+Pickpocket
+        if (members[0]==PartyMember.Wizard && members[1]==PartyMember.Pickpocket)
+        {
+            //Implement when theme is written
+            return;
+        }
+        //Wizard+Pickpocket+Sailor
+        if (members[0] == PartyMember.Wizard && members[1] == PartyMember.Pickpocket && members[2] == PartyMember.Sailor)
+        {
+            //Implement when theme is written
+            return;
+        }
+        //Full party
+        if (levelMusic.clip != musicClips[FX.All])
+        {
+            levelMusic.clip = musicClips[FX.All];
+            levelMusic.Play();
+        }
+        return;
     }
 }

@@ -131,12 +131,14 @@ public abstract class DynamicObject : MonoBehaviour
     /// Waits until a trigger has been called on this object using the AnimationTrigger() function
     /// </summary>
     /// <param name="triggerName">Case-sensitive trigger name to check for</param>
+    /// <param name="removeTrigger">Whether the trigger should afterwards be removed from the pending triggers</param>
     /// <returns>IEnumerator coroutine</returns>
-    protected IEnumerator WaitForTrigger(string triggerName)
+    protected IEnumerator WaitForTrigger(string triggerName, bool removeTrigger = true)
     {
         while (!HasTrigger(triggerName))
             yield return null;
-        pendingTriggers.Remove(triggerName);
+        if (removeTrigger)
+            pendingTriggers.Remove(triggerName);
     }
 
     protected bool HasTrigger(string triggerName)

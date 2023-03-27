@@ -25,7 +25,7 @@ public static class GameData
     
     public static void CollectCoin(int level)
     {
-        coinsCollected[level] = true;
+        coinsCollected[CorrectLevel(level)] = true;
         CoinCount = 0;
         foreach(KeyValuePair<int, bool> entry in coinsCollected)
         {
@@ -36,12 +36,24 @@ public static class GameData
 
     public static void LoseCoin(int level)
     {
-        coinsCollected[level] = false;
+        coinsCollected[CorrectLevel(level)] = false;
         CoinCount = 0;
         foreach (KeyValuePair<int, bool> entry in coinsCollected)
         {
             if (entry.Value)
                 CoinCount++;
         }
+    }
+
+    /// <summary>
+    /// Temporary helper method to turn the level num of wizard levels to a lower key while warlock levels aren't there
+    /// </summary>
+    /// <param name="level"></param>
+    /// <returns></returns>
+    public static int CorrectLevel(int level)
+    {
+        if (level > 19)
+            return level - 11;
+        return level;
     }
 }

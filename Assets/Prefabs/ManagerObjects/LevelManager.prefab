@@ -53,9 +53,13 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 72f46f520309ab14caf31298d212a1f0, type: 3}
   - {fileID: 8300000, guid: 3e9080af37d7eef49a549cc317403bcb, type: 3}
   musicClipsList:
-  - {fileID: 8300000, guid: 94bdff84e2b12a64291774004af71bcc, type: 3}
+  - {fileID: 8300000, guid: 4b0b59544f14ccd44990c6ed13c31648, type: 3}
   - {fileID: 8300000, guid: f9726783fc65cb543ab964a9618186e5, type: 3}
   - {fileID: 8300000, guid: de46fc4e27994954abf782167a9b63c0, type: 3}
+  - {fileID: 8300000, guid: 025e856fd44511f49bc2c9d73b6bcf2f, type: 3}
+  - {fileID: 8300000, guid: ef9379bc471fd344180088a022a93cb7, type: 3}
+  - {fileID: 8300000, guid: be6571e52163a8149ba2558b9bdcaf80, type: 3}
+  - {fileID: 8300000, guid: af21bc76a1ad4894cac3e183756e94d2, type: 3}
   source: {fileID: 306510677666125099}
 --- !u!1 &673203595410598268
 GameObject:
@@ -340,7 +344,6 @@ MonoBehaviour:
   floorMap: {fileID: 0}
   wallMap: {fileID: 0}
   currentLevel: 
-  nextLevel: 
   tileDatas:
   - {fileID: 11400000, guid: 608ff28d6367ed94d8b375954fb97549, type: 2}
   - {fileID: 11400000, guid: 1123c4d9f21207f44ae4206b4b795665, type: 2}
@@ -349,6 +352,16 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 18053eec50863d947aace631261291f1, type: 2}
   - {fileID: 11400000, guid: 091686179f97e15428cd5c6497234078, type: 2}
   - {fileID: 11400000, guid: 0d629ef15716a0e4ead08fad125cc253, type: 2}
+  exitTiles:
+  - {fileID: 11400000, guid: d8cd5f5485f090d4cacdb62b259dc044, type: 2}
+  - {fileID: 11400000, guid: 8baf700e444f1fe499cd284cc360a7d8, type: 2}
+  - {fileID: 11400000, guid: f3ae69bab40941645b371a36cd6a4e54, type: 2}
+  - {fileID: 11400000, guid: ef4c19255b0a37e4695a6f9aef29832a, type: 2}
+  startTiles:
+  - {fileID: 11400000, guid: e8aef4bfa5cef72459c0c5e1073ee6a2, type: 2}
+  - {fileID: 11400000, guid: 94d3410735042f04d8d5a1e44fd0c650, type: 2}
+  - {fileID: 11400000, guid: 5fa91ae7d1da1144fa9711202571e053, type: 2}
+  - {fileID: 11400000, guid: b5c0456f0654d3a45af8e71fe118f59e, type: 2}
 --- !u!1 &7277537201348297681
 GameObject:
   m_ObjectHideFlags: 0
@@ -439,3 +452,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   guardList: []
+  temporalDistortionMarkerPrefab: {fileID: 1059155816527985226, guid: 4177edd6a7ca89246892de390d6ec660, type: 3}

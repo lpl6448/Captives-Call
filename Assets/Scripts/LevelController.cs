@@ -42,6 +42,19 @@ public class LevelController : MonoBehaviour
     private List<TileData> tileDatas;
 
     /// <summary>
+    /// List of exit tiles (up, down, left, right), used to figure out what direction
+    /// to move the player off-screen after beating the level
+    /// </summary>
+    [SerializeField]
+    private Tile[] exitTiles;
+    /// <summary>
+    /// List of tile tiles (up, down, left, right), used to figure out what direction
+    /// to move the player from at the beginning of the level
+    /// </summary>
+    [SerializeField]
+    private Tile[] startTiles;
+
+    /// <summary>
     /// List of all DynamicObjects present at the beginning of the level
     /// </summary>
     private List<DynamicObject> initialDynamicObjects;
@@ -378,6 +391,28 @@ public class LevelController : MonoBehaviour
             currentlyAnimatedObjects.Remove(dobj);
     }
 
+    public void BeginStasis(int turns)
+    {
+        StasisCount = turns;
+        UIEffects.Instance.SetMagicOverlay(true);
+    }
+    public void BeginTemporalDistortion(int turns)
+    {
+        DistortionCount = turns;
+        gm.AddTemporalDistortionMarkers();
+    }
+
+    private void EndStasis()
+    {
+        StasisCount = 0;
+        UIEffects.Instance.SetMagicOverlay(false);
+    }
+    private void EndTemporalDistortion()
+    {
+        DistortionCount = 0;
+        gm.RemoveTemporalDistortionMarkers();
+    }
+
     private void Awake()
     {
         Instance = this;
@@ -388,8 +423,10 @@ public class LevelController : MonoBehaviour
     {
         //Define nextLevel as the next scene or "Thanks" if there are no more scenes
         int.TryParse(currentLevel, out int current);
-        if (current + 1 > GameData.levelCount)
+        if (current + 1 > GameData.levelCount+11)
             nextLevel = "Thanks";
+        else if (current == 19)
+            nextLevel = "31";
         else
             nextLevel = $"{current + 1}";
         //Use level 1 literals since party manager is not fully defined when this function runs
@@ -427,7 +464,7 @@ public class LevelController : MonoBehaviour
 
         //Remove coin from level if already collected 
         int.TryParse(currentLevel, out int levelNum);
-        if (GameData.CoinsCollected[levelNum])
+        if (GameData.CoinsCollected[GameData.CorrectLevel(levelNum)])
         {
             GameObject[] coins = GameObject.FindGameObjectsWithTag("Coin");
             if (coins.Length > 0)
@@ -464,9 +501,40 @@ public class LevelController : MonoBehaviour
     /// <returns>IEnumerator coroutine</returns>
     private IEnumerator DoLevel()
     {
+        hm.HighlightTiles(null, gm.guardList, dataFromTiles);
+        UIEffects.Instance.SetFade(1);
+
+        // First, we animate the party in from the start tile
+        Vector3Int startDir = Vector3Int.zero;
+        for (int i = 0; i < 4; i++)
+        {
+            Vector3Int dir = i == 0 ? Vector3Int.up
+                : i == 1 ? Vector3Int.down
+                : i == 2 ? Vector3Int.left
+                : i == 3 ? Vector3Int.right : Vector3Int.zero;
+            if (Array.IndexOf(startTiles, GetWallTile(pm.party.TilePosition + dir)) != -1)
+            {
+                startDir = dir;
+                break;
+            }
+        }
+        if (startDir != Vector3Int.zero)
+        {
+            pm.party.transform.position = CellToWorld(pm.party.TilePosition) + new Vector3(0.5f, 0.5f, 0) + (Vector3)startDir * 1.5f;
+            pm.party.Move(pm.party.TilePosition, 3f);
+            yield return UIEffects.Instance.AnimateFade(0.75f, false);
+            while (currentlyAnimatedObjects.Count > 0)
+                yield return null;
+        }
+        else
+            yield return UIEffects.Instance.AnimateFade(0.75f, false);
+
         acceptingUserInput = true;
         while (acceptingUserInput)
+        {
             yield return DoTurn();
+            yield return null;
+        }
     }
 
     /// <summary>
@@ -504,7 +572,8 @@ public class LevelController : MonoBehaviour
                         hm.ClearHighlights();
                     //Don't move guards if there is a temporal distortion cast or sea shanty is being sung
                     if (distortionCount < 1 && !(canUseAbility && canMove) &&
-                        !(pm.party.currentMember == PartyMember.Sailor && canUseAbility && clickGrid == pm.party.TilePosition))
+                        !(pm.party.currentMember == PartyMember.Sailor && canUseAbility && clickGrid == pm.party.TilePosition) &&
+                        !(pm.party.currentMember == PartyMember.Wizard && canUseAbility && pm.party.poweredUp && clickGrid == pm.party.TilePosition))
                         gm.MoveGuards(dataFromTiles, hm);
 
 
@@ -533,9 +602,17 @@ public class LevelController : MonoBehaviour
                     guardAttack();
                     guardWillPress();
                     if (stasisCount > 0)
+                    {
                         stasisCount--;
+                        if (stasisCount == 0)
+                            EndStasis();
+                    }
                     if (distortionCount > 0)
+                    {
                         distortionCount--;
+                        if (distortionCount == 0)
+                            EndTemporalDistortion();
+                    }
                     hiddenCount = pm.party.Hidden;
                     movesTaken++;
                     break;
@@ -574,7 +651,7 @@ public class LevelController : MonoBehaviour
         if (pm.party.dead)
         {
             acceptingUserInput = false;
-            StartCoroutine(GameEndAnimation());
+            StartCoroutine(DefeatAnimation());
             yield break;
         }
 
@@ -592,7 +669,7 @@ public class LevelController : MonoBehaviour
         //Check if the party has reached the exit
         if (pm.party.TilePosition == grid.WorldToCell(exit.transform.position))
         {
-            am.Victory(nextLevel);
+            StartCoroutine(VictoryAnimation());
             acceptingUserInput = false;
             yield break;
         }
@@ -704,7 +781,7 @@ public class LevelController : MonoBehaviour
                     guard.TilePosition == plate.TilePosition)
                 {
                     foreach (DynamicObject linkedObject in plate.linkedObjects)
-                    { 
+                    {
                         linkedObject.GetComponent<Door>().WillOpen = true;
                     }
                     break;
@@ -727,7 +804,7 @@ public class LevelController : MonoBehaviour
         pm.party.ChangeCharacter(characterIndex);
     }
 
-    private IEnumerator GameEndAnimation()
+    private IEnumerator DefeatAnimation()
     {
         yield return new WaitForSeconds(0.25f);
 
@@ -766,7 +843,7 @@ public class LevelController : MonoBehaviour
                     break;
                 }
             }
-            
+
             if (foundGuard != null)
             {
                 int dif = (int)(pm.party.TilePosition - foundGuard.TilePosition).magnitude;
@@ -783,5 +860,29 @@ public class LevelController : MonoBehaviour
         yield return new WaitForSeconds(1);
 
         rs.Reset();
+    }
+    private IEnumerator VictoryAnimation()
+    {
+        am.Victory();
+
+        yield return new WaitForSeconds(2);
+
+        // Find the exit tile that the player is on
+        int tileIndex = Array.IndexOf(exitTiles, GetWallTile(pm.party.TilePosition));
+        if (tileIndex != -1)
+        {
+            // Move the player off-screen using the exit tile direction
+            Vector3Int dir = tileIndex == 0 ? Vector3Int.up
+                : tileIndex == 1 ? Vector3Int.down
+                : tileIndex == 2 ? Vector3Int.left
+                : tileIndex == 3 ? Vector3Int.right : Vector3Int.zero;
+            MoveDynamicObject(pm.party.TilePosition - dir, pm.party, 2f);
+        }
+
+        yield return new WaitForSeconds(0.25f);
+        yield return UIEffects.Instance.AnimateFade(0.75f);
+        yield return new WaitForSeconds(1);
+
+        SceneManager.LoadScene(nextLevel);
     }
 }

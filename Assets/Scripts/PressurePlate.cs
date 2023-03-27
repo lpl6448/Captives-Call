@@ -82,6 +82,8 @@ public class PressurePlate : DynamicObject
     /// </summary>
     private void CheckIfPressed(bool notFrozen)
     {
+        //Former state for SFX check
+        bool wasPressed = isPressed;
         if (!notFrozen)
             return;
         foreach (DynamicObject presser in potentialTriggers)
@@ -89,6 +91,8 @@ public class PressurePlate : DynamicObject
             if (presser.TilePosition == grid.WorldToCell(this.transform.position))
             {
                 isPressed = true;
+                if (wasPressed != isPressed)
+                    StartAnimation(WaitForSound());
                 return;
             }
         }
@@ -98,7 +102,7 @@ public class PressurePlate : DynamicObject
 
     private IEnumerator AnimateState()
     {
-        if (isPressed)
+        if (isPressed && LevelController.Instance.StasisCount < 1)
             yield return WaitForTrigger("press");
         changeSprite();
 
@@ -111,6 +115,13 @@ public class PressurePlate : DynamicObject
                 linkedObject.AnimationTrigger("deactivate");
         }
 
+        StopAnimation();
+    }
+
+    private IEnumerator WaitForSound()
+    {
+        yield return WaitForTrigger("press", false);
+        FxController.Instance.Plate();
         StopAnimation();
     }
 

@@ -563,6 +563,14 @@ PrefabInstance:
       propertyPath: linkedObject
       value: 
       objectReference: {fileID: 1249039487}
+    - target: {fileID: 6529530697670489314, guid: 1224df424f3bc9f4ab2d529a0e1fe7ad, type: 3}
+      propertyPath: linkedObjects.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6529530697670489314, guid: 1224df424f3bc9f4ab2d529a0e1fe7ad, type: 3}
+      propertyPath: linkedObjects.Array.data[0]
+      value: 
+      objectReference: {fileID: 1249039487}
     - target: {fileID: 6529530697670489319, guid: 1224df424f3bc9f4ab2d529a0e1fe7ad, type: 3}
       propertyPath: m_Name
       value: PressurePlate (1)
@@ -690,6 +698,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6529530697670489314, guid: 1224df424f3bc9f4ab2d529a0e1fe7ad, type: 3}
       propertyPath: linkedObject
+      value: 
+      objectReference: {fileID: 1249039487}
+    - target: {fileID: 6529530697670489314, guid: 1224df424f3bc9f4ab2d529a0e1fe7ad, type: 3}
+      propertyPath: linkedObjects.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6529530697670489314, guid: 1224df424f3bc9f4ab2d529a0e1fe7ad, type: 3}
+      propertyPath: linkedObjects.Array.data[0]
       value: 
       objectReference: {fileID: 1249039487}
     - target: {fileID: 6529530697670489319, guid: 1224df424f3bc9f4ab2d529a0e1fe7ad, type: 3}
