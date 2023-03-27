@@ -7,7 +7,7 @@ public class Gate : Door
     // Start is called before the first frame update
     void Start()
     {
-        isOpen = false;
+        //isOpen = false;
     }
 
     public override void PostAction()

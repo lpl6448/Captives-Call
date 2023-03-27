@@ -41,11 +41,14 @@ public class Door : DynamicObject
 
     public override bool IsTraversable(DynamicObject mover)
     {
+        if (isOpen)
+        {
+            if (mover is Guard)
+                return true;
+        }
         if (willOpen || isOpen)
         {
             if (mover is Party)
-                return true;
-            if (mover is Guard)
                 return true;
             if (mover is Boulder)
                 return true;
