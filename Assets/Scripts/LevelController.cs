@@ -767,30 +767,36 @@ public class LevelController : MonoBehaviour
 
     private void guardWillPress()
     {
-        GameObject[] plates = GameObject.FindGameObjectsWithTag("Pressure");
-        foreach (GameObject gPlate in plates)
+        // First, assume all doors will close
+        foreach (Door door in GetDynamicObjectsByType<Door>())
+            door.WillOpen = false;
+
+        foreach (PressurePlate plate in GetDynamicObjectsByType<PressurePlate>())
         {
+            bool isPressedByNotGuard = false;
+            if (GetDynamicObjectsOnTile<Boulder>(plate.TilePosition).Count > 0
+                || GetDynamicObjectsOnTile<Party>(plate.TilePosition).Count > 0)
+                isPressedByNotGuard = true;
+
+            // Check if this plate will be pressed by a guard next turn
+            bool willPressByGuard = false;
             foreach (Guard guard in gm.guardList)
             {
-                PressurePlate plate = gPlate.GetComponent<PressurePlate>();
-                if (gm.ToTranslate(guard) + guard.TilePosition == plate.TilePosition ||
-                    guard.TilePosition == plate.TilePosition)
+                Vector3Int nextTile =
+                    guard.CanMove(guard.TilePosition + gm.ToTranslate(guard)) ? guard.TilePosition + gm.ToTranslate(guard)
+                    : guard.CanMove(guard.TilePosition - gm.ToTranslate(guard)) ? guard.TilePosition - gm.ToTranslate(guard) : guard.TilePosition;
+
+                if (nextTile == plate.TilePosition)
                 {
-                    foreach (DynamicObject linkedObject in plate.linkedObjects)
-                    {
-                        linkedObject.GetComponent<Door>().WillOpen = true;
-                    }
+                    willPressByGuard = true;
                     break;
-                }
-                else
-                {
-                    foreach (DynamicObject linkedObject in plate.linkedObjects)
-                    {
-                        linkedObject.GetComponent<Door>().WillOpen = false;
-                    }
                 }
 
             }
+
+            foreach (DynamicObject dobj in plate.linkedObjects)
+                if (dobj is Door)
+                    (dobj as Door).WillOpen = isPressedByNotGuard || willPressByGuard;
         }
     }
 
