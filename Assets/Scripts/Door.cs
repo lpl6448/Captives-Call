@@ -130,7 +130,6 @@ public class Door : DynamicObject
     /// </summary>
     protected virtual void UpdateState()
     {
-        Debug.Log("Before sprite change: " + isOpen);
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
         if (isOpen)
             spriteRenderer.sprite = sprites[1];
