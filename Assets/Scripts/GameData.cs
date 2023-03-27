@@ -8,12 +8,13 @@ public static class GameData
     private static Dictionary<int, bool> coinsCollected = new Dictionary<int, bool>();
     public static Dictionary<int, bool> CoinsCollected { get { return coinsCollected; } }
     public static int CoinCount { get; set; }
+    public static SceneFinder levels;
     public static int levelCount;
 
     static GameData()
     {
         //Find level count
-        SceneFinder levels = new SceneFinder(@".\Assets\Scenes\Levels");
+        levels = new SceneFinder(@".\Assets\Scenes\Levels");
         levelCount = levels.SceneCount();
         //Create coin tracker pair for each level
         coinsCollected.Add(0, false);
@@ -43,6 +44,11 @@ public static class GameData
             if (entry.Value)
                 CoinCount++;
         }
+    }
+
+    public static bool ContainsLevel(string level)
+    {
+        return levels.Contains(level);
     }
 
     /// <summary>

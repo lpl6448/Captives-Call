@@ -32,6 +32,8 @@ public class Door : DynamicObject
         }
     }
 
+    private bool inactive;
+
     /// <summary>
     /// Holds if the gate has been triggered this turn already
     /// </summary>
@@ -74,7 +76,15 @@ public class Door : DynamicObject
 
     protected virtual void ChangeState(bool open, DynamicObject trigger)
     {
-        isOpen = open;
+        if (open)
+        {
+            isOpen = !inactive;
+        }
+        else
+        {
+            isOpen = inactive;
+        }
+        Debug.Log("IsOpen="+isOpen);
         StartAnimation(WaitToUpdateState(trigger));
     }
 
@@ -86,9 +96,10 @@ public class Door : DynamicObject
 
     protected void Awake()
     {
-        isOpen = false;
+        //isOpen = false;
         willOpen = false;
         triggered = false;
+        inactive = isOpen;
     }
 
     // Start is called before the first frame update
@@ -100,13 +111,13 @@ public class Door : DynamicObject
     protected IEnumerator WaitToUpdateState(DynamicObject trigger)
     {
         if (trigger != null)
-            if (isOpen)
+            if (isOpen!=inactive)
                 yield return WaitForTrigger("activate");
             else
                 yield return WaitForTrigger("deactivate");
 
         // If the trigger was a pressure plate, we should only change the sprite if this was actually the pressure plate that triggered opening/closing
-        if (!(trigger is PressurePlate) || (trigger as PressurePlate).IsPressed == IsOpen)
+        //if (!(trigger is PressurePlate) || (trigger as PressurePlate).IsPressed == !inactive)
             UpdateState();
         StopAnimation();
     }
@@ -116,6 +127,7 @@ public class Door : DynamicObject
     /// </summary>
     protected virtual void UpdateState()
     {
+        Debug.Log("Before sprite change: " + isOpen);
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
         if (isOpen)
             spriteRenderer.sprite = sprites[1];
