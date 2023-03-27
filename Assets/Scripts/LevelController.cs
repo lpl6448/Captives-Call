@@ -29,7 +29,7 @@ public class LevelController : MonoBehaviour
     private Grid grid;
     public Tilemap floorMap;
     public Tilemap wallMap;
-    [SerializeField]
+    //[SerializeField]
     private string currentLevel;
     public string CurrentLevel => currentLevel;
     //Get references to objects needed to advance to next level
@@ -421,14 +421,10 @@ public class LevelController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        currentLevel = SceneManager.GetActiveScene().name;
         //Define nextLevel as the next scene or "Thanks" if there are no more scenes
         int.TryParse(currentLevel, out int current);
-        if (current + 1 > GameData.levelCount+11)
-            nextLevel = "Thanks";
-        else if (current == 19)
-            nextLevel = "31";
-        else
-            nextLevel = $"{current + 1}";
+        nextLevel = GameData.GetNextLevel(currentLevel);
         //Use level 1 literals since party manager is not fully defined when this function runs
         lastPartyGrid = Vector3Int.FloorToInt(new Vector3(-2.5f, 1.5f, 0.0f));
         // Initialize all DynamicObjects
