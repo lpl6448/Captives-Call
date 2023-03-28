@@ -44,6 +44,8 @@ public abstract class DynamicObject : MonoBehaviour
 
     private List<string> pendingTriggers = new List<string>();
 
+    protected int currentAnimations = 0;
+
     public void ClearTriggers()
     {
         pendingTriggers.Clear();
@@ -104,6 +106,7 @@ public abstract class DynamicObject : MonoBehaviour
     /// <returns>Reference to the Coroutine object that can be stopped if needed</returns>
     protected Coroutine StartAnimation(IEnumerator routine)
     {
+        currentAnimations++;
         LevelController.Instance.RegisterAnimationBegin(this);
         Coroutine crt = StartCoroutine(routine);
         return crt;
@@ -116,6 +119,7 @@ public abstract class DynamicObject : MonoBehaviour
     protected void StopAnimation()
     {
         LevelController.Instance.RegisterAnimationEnd(this);
+        currentAnimations--;
     }
 
     /// <summary>
@@ -124,6 +128,7 @@ public abstract class DynamicObject : MonoBehaviour
     public void StopAllAnimations()
     {
         LevelController.Instance.RegisterAnimationEndAll(this);
+        currentAnimations = 0;
         StopAllCoroutines();
     }
 
@@ -162,6 +167,7 @@ public abstract class DynamicObject : MonoBehaviour
     private void OnDestroy()
     {
         LevelController.Instance.RegisterAnimationEndAll(this);
+        currentAnimations = 0;
     }
 
     /// <summary>

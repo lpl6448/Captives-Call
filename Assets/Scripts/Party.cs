@@ -424,7 +424,8 @@ public class Party : DynamicObject
         }
         else
         {
-            yield return new WaitForSeconds(AnimationUtility.StandardAnimationDuration);
+            while (currentAnimations > 1)
+                yield return null;
         }
 
         StopAllAnimations();
