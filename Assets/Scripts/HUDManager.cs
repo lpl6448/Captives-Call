@@ -338,9 +338,13 @@ public class HUDManager : MonoBehaviour
     /// <returns></returns>
     public IEnumerator Paused()
     {
-        pauseMenu.transform.position = new Vector3(850f, 700f, 0);
-        while (!resume&&!select&&!main&&!quit)
+        pauseMenu.SetActive(true);
+        while (!resume && !select && !main && !quit)
+        {
             yield return null;
+            if (Input.GetKeyDown(KeyCode.Escape))
+                resume = true;
+        }
         if(resume)
         {
             resume = false;
@@ -359,7 +363,7 @@ public class HUDManager : MonoBehaviour
         {
             Application.Quit();
         }
-        pauseMenu.transform.position = new Vector3(2000f, 2000f, 0);
+        pauseMenu.SetActive(false);
         yield break;
     }
 

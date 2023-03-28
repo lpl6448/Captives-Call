@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
 
 public class HighlightManager : MonoBehaviour
@@ -71,14 +72,17 @@ public class HighlightManager : MonoBehaviour
         }
 
         // Add new hover highlight
-        Vector3Int newHoverGrid = highlightMap.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-        if (highlighted.TryGetValue(newHoverGrid, out Highlight highlight))
-            if (!highlight.HasFlag(Highlight.Hover))
-            {
-                AddHighlight(newHoverGrid, Highlight.Hover);
-                highlightsDirty = true;
-            }
-        hoverGrid = newHoverGrid;
+        if (!EventSystem.current.IsPointerOverGameObject())
+        {
+            Vector3Int newHoverGrid = highlightMap.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+            if (highlighted.TryGetValue(newHoverGrid, out Highlight highlight))
+                if (!highlight.HasFlag(Highlight.Hover))
+                {
+                    AddHighlight(newHoverGrid, Highlight.Hover);
+                    highlightsDirty = true;
+                }
+            hoverGrid = newHoverGrid;
+        }
 
         // Update the highlight map if necessary
         if (highlightsDirty)

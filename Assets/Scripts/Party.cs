@@ -436,8 +436,9 @@ public class Party : DynamicObject
     {
         // Once we have shanty music in, we could let the music play for a few seconds before triggering the UI effect
         audio.Shanty();
+        yield return new WaitForSeconds(0.3f);
         UIEffects.Instance.AnimateArrowRotate();
-        yield return new WaitForSeconds(9 / 3f);
+        yield return new WaitForSeconds(2.7f);
         GameObject[] listeners = GameObject.FindGameObjectsWithTag("Guard");
         foreach (GameObject guard in listeners)
         {
