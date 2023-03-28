@@ -14,7 +14,7 @@ public static class GameData
     static GameData()
     {
         //Find level count
-        levels = new SceneFinder(@".\Assets\Scenes\Levels");
+        levels = new SceneFinder(@"Levels");
         levelCount = levels.SceneCount();
         //Create coin tracker pair for each level
         foreach(string scene in levels.scenes)

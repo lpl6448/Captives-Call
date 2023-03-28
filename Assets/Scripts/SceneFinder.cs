@@ -12,13 +12,22 @@ public class SceneFinder
     public SceneFinder(string s_path)
     {
         scenes = new List<string>();
-        path = s_path;
+        path = Path.Combine(Application.streamingAssetsPath, s_path);
         scenesFull = System.IO.Directory.GetFiles(path, "*.unity");
         foreach (string s in scenesFull)
         {
             //Truncates scene to just its number value
             string sTrunc = s.Substring(0, s.Length - 6);
-            sTrunc = sTrunc.Substring(23);
+            int truncNum = 0;
+            for (int i = 0; i < sTrunc.Length; i++)
+            {
+                if (int.TryParse(sTrunc.Substring(i, 1), out int num))
+                {
+                    truncNum = i;
+                    break;
+                }
+            }
+            sTrunc = sTrunc.Substring(truncNum);
             scenes.Add(sTrunc);
         }
     }
