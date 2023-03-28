@@ -131,6 +131,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collectAnimation: {fileID: 6451303788308879592}
+  coinRenderer: {fileID: 8525380740671538107}
 --- !u!111 &6451303788308879592
 Animation:
   m_ObjectHideFlags: 0

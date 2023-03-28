@@ -33,6 +33,7 @@ public class LockedDoor : Door
         if(keyCount > 0)
         {
             ChangeState(true, null);
+            AnimationTrigger("activate");
             return keyCount - 1;
         }
         else
