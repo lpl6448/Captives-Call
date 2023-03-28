@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class HUDManager : MonoBehaviour
 {
@@ -48,6 +49,10 @@ public class HUDManager : MonoBehaviour
     public Image keySprite;
     public Image powerUpSprite;
 
+    //Field that holds pause menu
+    [SerializeField]
+    private GameObject pauseMenu;
+
     private LevelController levelController;
     private Party party;
 
@@ -63,6 +68,11 @@ public class HUDManager : MonoBehaviour
 
     private bool moving;
     private bool usingAbility;
+
+    private bool resume;
+    private bool select;
+    private bool main;
+    private bool quit;
 
     private void Awake()
     {
@@ -320,5 +330,56 @@ public class HUDManager : MonoBehaviour
     public void AbilitySelected()
     {
         usingAbility = true;
+    }
+
+    /// <summary>
+    /// Pauses the game and waits for player to select an option
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator Paused()
+    {
+        pauseMenu.transform.position = new Vector3(850f, 700f, 0);
+        while (!resume&&!select&&!main&&!quit)
+            yield return null;
+        if(resume)
+        {
+            resume = false;
+        }    
+        else if(select)
+        {
+            SceneManager.LoadScene("LevelSelect");
+            select = false;
+        }
+        else if(main)
+        {
+            SceneManager.LoadScene("Title");
+            main = false;
+        }
+        else if(quit)
+        {
+            Application.Quit();
+        }
+        pauseMenu.transform.position = new Vector3(2000f, 2000f, 0);
+        yield break;
+    }
+
+    public void GoResume()
+    {
+        resume = true;
+    }
+    
+    public void GoSelect()
+    {
+        select = true;
+    }
+    
+    public void GoMain()
+    {
+        main = true;
+    }
+
+    public void GoQuit()
+    { 
+        quit = true; 
     }
 }

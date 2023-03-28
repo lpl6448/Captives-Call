@@ -479,9 +479,7 @@ public class LevelController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Check to close the game on "esc" press
-        if (Input.GetKeyDown(KeyCode.Escape))
-            Application.Quit();
+        //Application.Quit();
 
         if (Input.GetKeyDown(KeyCode.R))
         {
@@ -548,6 +546,11 @@ public class LevelController : MonoBehaviour
         // Perform an action once the player clicks on a tile
         while (true)
         {
+            //Check to close the game on "esc" press
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                yield return HUDManager.Instance.Paused();
+            }
             // Check if the player has just clicked (not over the UI) or if the character has been switched
             if ((Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject() || characterSwitch) && !justSang)
             {

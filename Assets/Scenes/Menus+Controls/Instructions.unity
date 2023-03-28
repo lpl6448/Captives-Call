@@ -2103,7 +2103,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Additional Controls:\n\nR:\n  Restart Level\n\nEsc: \n  Quit Game"
+  m_text: "Additional Controls:\n\nR:\n  Restart Level\n\nEsc: \n  Pause Game"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: bd11605275d33264ca643122b04a96d6, type: 2}
   m_sharedMaterial: {fileID: 7560613546084316169, guid: bd11605275d33264ca643122b04a96d6, type: 2}
