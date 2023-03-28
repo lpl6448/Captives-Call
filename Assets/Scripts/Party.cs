@@ -134,8 +134,8 @@ public class Party : DynamicObject
         List<Coin> coins = LevelController.Instance.GetDynamicObjectsOnTile<Coin>(TilePosition);
         foreach (Coin coin in new List<Coin>(coins))
         {
-            int.TryParse(LevelController.Instance.CurrentLevel, out int currentLevel);
-            GameData.CollectCoin(currentLevel);
+            //int.TryParse(LevelController.Instance.CurrentLevel, out int currentLevel);
+            GameData.CollectCoin(LevelController.Instance.CurrentLevel);
             LevelController.Instance.DestroyDynamicObject(coin.TilePosition, coin);
         }
         //Check for powerup collision

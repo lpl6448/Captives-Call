@@ -459,8 +459,8 @@ public class LevelController : MonoBehaviour
         characterSwitch = false;
 
         //Remove coin from level if already collected 
-        int.TryParse(currentLevel, out int levelNum);
-        if (GameData.CoinsCollected[GameData.CorrectLevel(levelNum)])
+        //int.TryParse(currentLevel, out int levelNum);
+        if (GameData.CoinsCollected[currentLevel])
         {
             GameObject[] coins = GameObject.FindGameObjectsWithTag("Coin");
             if (coins.Length > 0)
@@ -483,8 +483,8 @@ public class LevelController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            int.TryParse(currentLevel, out int levelNum);
-            GameData.LoseCoin(levelNum);
+            //int.TryParse(currentLevel, out int levelNum);
+            GameData.LoseCoin(currentLevel);
             rs.Reset();
         }
     }
@@ -857,8 +857,8 @@ public class LevelController : MonoBehaviour
         }
 
         //Reset coin for level
-        int.TryParse(currentLevel, out int levelNum);
-        GameData.LoseCoin(levelNum);
+        //int.TryParse(currentLevel, out int levelNum);
+        GameData.LoseCoin(currentLevel);
 
         yield return new WaitForSeconds(0.5f);
         yield return UIEffects.Instance.AnimateFade(0.75f);
