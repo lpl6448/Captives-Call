@@ -48,6 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Particles: {fileID: 5344224971109488781}
   Animation: {fileID: 852017504541265752}
+  powerUpRenderer: {fileID: 786570340280275339}
 --- !u!111 &852017504541265752
 Animation:
   m_ObjectHideFlags: 0

@@ -8,6 +8,8 @@ public class PowerUp : DynamicObject
     private ParticleSystem Particles;
     [SerializeField]
     private Animation Animation;
+    [SerializeField]
+    private SpriteRenderer powerUpRenderer;
     private Vector3Int oldLocation;
 
     public override bool IsTraversable(DynamicObject mover)
@@ -27,6 +29,10 @@ public class PowerUp : DynamicObject
 
     private IEnumerator WaitToDestroy()
     {
+        // Set the power-up to display above the player and walls
+        powerUpRenderer.sortingLayerName = "Party";
+        powerUpRenderer.sortingOrder = 11;
+
         yield return new WaitForSeconds(AnimationUtility.StandardAnimationDuration / 4);
         StopAnimation();
 
