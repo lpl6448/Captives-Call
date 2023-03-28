@@ -351,13 +351,19 @@ public class HUDManager : MonoBehaviour
         }    
         else if(select)
         {
-            SceneManager.LoadScene("LevelSelect");
+            GameObject[] levelObj = GameObject.FindGameObjectsWithTag("LevelMusic");
+            if (levelObj.Length > 0)
+                Destroy(levelObj[0].gameObject);
             select = false;
+            SceneManager.LoadScene("LevelSelect");
         }
         else if(main)
         {
-            SceneManager.LoadScene("Title");
+            GameObject[] levelObj = GameObject.FindGameObjectsWithTag("LevelMusic");
+            if (levelObj.Length > 0)
+                Destroy(levelObj[0].gameObject);
             main = false;
+            SceneManager.LoadScene("Title");       
         }
         else if(quit)
         {

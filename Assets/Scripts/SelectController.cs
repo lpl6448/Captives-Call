@@ -208,6 +208,9 @@ public class SelectController : MonoBehaviour
         GameObject childText = button.transform.GetChild(0).gameObject;
         TextMeshProUGUI btnText = childText.GetComponent<TextMeshProUGUI>();
         string levelNum = btnText.text;
+        GameObject[] titleObj = GameObject.FindGameObjectsWithTag("TitleMusic");
+        if(titleObj.Length>0)
+            Destroy(titleObj[0].gameObject);
         SceneManager.LoadScene(levelNum);
     }
 
