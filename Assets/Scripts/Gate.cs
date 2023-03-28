@@ -12,7 +12,6 @@ public class Gate : Door
 
     public override void PostAction()
     {
-        base.PostAction();
         if (!isOpen)
         {
             //Check if anything is on gate that will be crushed by gate
@@ -33,10 +32,15 @@ public class Gate : Door
 
             //Check if a boulder is present to stop the gate from closing
             List<Boulder> boulders = LevelController.Instance.GetDynamicObjectsOnTile<Boulder>(TilePosition);
-            foreach (Boulder boulder in boulders)
+            if (boulders.Count > 0)
             {
                 isOpen = true;
+                if (!Inactive)
+                    AnimationTrigger("activate");
+                else
+                    AnimationTrigger("deactivate");
             }
         }
+        base.PostAction();
     }
 }
