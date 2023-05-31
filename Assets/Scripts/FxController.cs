@@ -25,22 +25,26 @@ public class FxController : MonoBehaviour
     void Start()
     {
         //Place clips from lists into dictionaries
-        fxClips = new Dictionary<FX, AudioClip>();
-        fxClips.Add(FX.Bad, fxClipsList[0]);
-        fxClips.Add(FX.Boulder, fxClipsList[1]);
-        fxClips.Add(FX.HighClick, fxClipsList[2]);
-        fxClips.Add(FX.Plate, fxClipsList[3]);
-        fxClips.Add(FX.LowClick, fxClipsList[4]);
-        fxClips.Add(FX.Hit, fxClipsList[5]);
-        fxClips.Add(FX.Water, fxClipsList[6]);
-        musicClips = new Dictionary<FX, AudioClip>();
-        musicClips.Add(FX.Victory, musicClipsList[0]);
-        musicClips.Add(FX.Defeat, musicClipsList[1]);
-        musicClips.Add(FX.Shanty, musicClipsList[2]);
-        musicClips.Add(FX.Warlock, musicClipsList[3]);
-        musicClips.Add(FX.Wizard, musicClipsList[4]);
-        musicClips.Add(FX.Pickpocket, musicClipsList[5]);
-        musicClips.Add(FX.All, musicClipsList[6]);
+        fxClips = new Dictionary<FX, AudioClip>
+        {
+            { FX.Bad, fxClipsList[0] },
+            { FX.Boulder, fxClipsList[1] },
+            { FX.HighClick, fxClipsList[2] },
+            { FX.Plate, fxClipsList[3] },
+            { FX.LowClick, fxClipsList[4] },
+            { FX.Hit, fxClipsList[5] },
+            { FX.Water, fxClipsList[6] }
+        };
+        musicClips = new Dictionary<FX, AudioClip>
+        {
+            { FX.Victory, musicClipsList[0] },
+            { FX.Defeat, musicClipsList[1] },
+            { FX.Shanty, musicClipsList[2] },
+            { FX.Warlock, musicClipsList[3] },
+            { FX.Wizard, musicClipsList[4] },
+            { FX.Pickpocket, musicClipsList[5] },
+            { FX.All, musicClipsList[6] }
+        };
         //Get reference to level music
         GameObject[] level = GameObject.FindGameObjectsWithTag("LevelMusic");
         if (level.Length > 0)

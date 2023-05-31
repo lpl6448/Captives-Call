@@ -317,8 +317,8 @@ public class HUDManager : MonoBehaviour
             levelController.CallMoveGuards();
             usingAbility = false;
         }
-        moveButton.transform.position = new Vector3(2000,0,0);
-        abilityButton.transform.position = new Vector3(2000, 0, 0);
+        moveButton.transform.position = new Vector3(2500,-1000,0);
+        abilityButton.transform.position = new Vector3(2500, -1000, 0);
         levelController.AcceptingActionInput = false;
         yield break;
     }

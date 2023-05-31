@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7445635922718701895}
   - component: {fileID: 7445635922718701880}
-  - component: {fileID: 7445635922718701881}
+  - component: {fileID: 1161096587500674725}
   m_Layer: 0
   m_Name: LevelMusic
   m_TagString: LevelMusic
@@ -129,7 +129,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &7445635922718701881
+--- !u!114 &1161096587500674725
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

@@ -85,9 +85,9 @@ public class SelectController : MonoBehaviour
                     Button btn = levelBtns[i];
                     GameObject childText = btn.transform.GetChild(0).gameObject;
                     TextMeshProUGUI btnText = childText.GetComponent<TextMeshProUGUI>();
-                    btnText.color = new Color(0.20f, 0.18f, 0.93f, 1);
+                    btnText.color = new Color(0.26f, 0.03f, 0.43f, 1);
                     btnText.text = $"{i + 1 + (page * 15)}";
-                    charText.text = "Wizard";
+                    charText.text = "Pickpocket";
                 }
                 break;
             case 4:
@@ -98,7 +98,7 @@ public class SelectController : MonoBehaviour
                     TextMeshProUGUI btnText = childText.GetComponent<TextMeshProUGUI>();
                     btnText.color = new Color(0.26f, 0.03f, 0.43f, 1);
                     btnText.text = $"{i + 1 + (page * 15)}";
-                    charText.text = "Pickpocket";
+                    charText.text = "Pickpocket&Wizard";
                 }
                 break;
             case 5:
@@ -107,9 +107,9 @@ public class SelectController : MonoBehaviour
                     Button btn = levelBtns[i];
                     GameObject childText = btn.transform.GetChild(0).gameObject;
                     TextMeshProUGUI btnText = childText.GetComponent<TextMeshProUGUI>();
-                    btnText.color = new Color(0.26f, 0.03f, 0.43f, 1);
+                    btnText.color = new Color(0.03f, 0.43f, 0.06f, 1);
                     btnText.text = $"{i + 1 + (page * 15)}";
-                    charText.text = "Pickpocket";
+                    charText.text = "Sailor";
                 }
                 break;
             case 6:
@@ -120,7 +120,7 @@ public class SelectController : MonoBehaviour
                     TextMeshProUGUI btnText = childText.GetComponent<TextMeshProUGUI>();
                     btnText.color = new Color(0.03f, 0.43f, 0.06f, 1);
                     btnText.text = $"{i + 1 + (page * 15)}";
-                    charText.text = "Wizard&Pickpocket";
+                    charText.text = "Wizard&Pickpocket&Sailor";
                 }
                 break;
             case 7:
@@ -129,62 +129,62 @@ public class SelectController : MonoBehaviour
                     Button btn = levelBtns[i];
                     GameObject childText = btn.transform.GetChild(0).gameObject;
                     TextMeshProUGUI btnText = childText.GetComponent<TextMeshProUGUI>();
-                    btnText.color = new Color(0.03f, 0.43f, 0.06f, 1);
+                    btnText.color = new Color(0.93f, 0.29f, 0.19f, 1);
                     btnText.text = $"{i + 1 + (page * 15)}";
-                    charText.text = "Wizard+Pickpocket";
+                    charText.text = "Full Party";
                 }
                 break;
-            case 8:
-                for (int i = 0; i < levelBtns.Count; i++)
-                {
-                    Button btn = levelBtns[i];
-                    GameObject childText = btn.transform.GetChild(0).gameObject;
-                    TextMeshProUGUI btnText = childText.GetComponent<TextMeshProUGUI>();
-                    btnText.color = new Color(0.03f, 0.43f, 0.06f, 1);
-                    btnText.text = $"{i + 1 + (page * 15)}";
-                    charText.text = "Sailor";
-                }
-                break;
-            case 9:
-                for (int i = 0; i < levelBtns.Count; i++)
-                {
-                    Button btn = levelBtns[i];
-                    GameObject childText = btn.transform.GetChild(0).gameObject;
-                    TextMeshProUGUI btnText = childText.GetComponent<TextMeshProUGUI>();
-                    btnText.color = new Color(0.03f, 0.43f, 0.06f, 1);
-                    btnText.text = $"{i + 1 + (page * 15)}";
-                    charText.text = "Sailor";
-                }
-                break;
-            case 10:
-                for (int i = 0; i < levelBtns.Count; i++)
-                {
-                    Button btn = levelBtns[i];
-                    GameObject childText = btn.transform.GetChild(0).gameObject;
-                    TextMeshProUGUI btnText = childText.GetComponent<TextMeshProUGUI>();
-                    btnText.color = new Color(0.03f, 0.43f, 0.06f, 1);
-                    btnText.text = $"{i + 1 + (page * 15)}";
-                    charText.text = "Wizard & Pickpocket & Sailor";
-                }
-                break;
-            case 11:
-                for (int i = 0; i < levelBtns.Count; i++)
-                {
-                    Button btn = levelBtns[i];
-                    GameObject childText = btn.transform.GetChild(0).gameObject;
-                    TextMeshProUGUI btnText = childText.GetComponent<TextMeshProUGUI>();
-                    btnText.color = new Color(0.03f, 0.43f, 0.06f, 1);
-                    btnText.text = $"{i + 1 + (page * 15)}";
-                    charText.text = "Wizard & Pickpocket & Sailor";
-                }
-                break;
+            //case 8:
+            //    for (int i = 0; i < levelBtns.Count; i++)
+            //    {
+            //        Button btn = levelBtns[i];
+            //        GameObject childText = btn.transform.GetChild(0).gameObject;
+            //        TextMeshProUGUI btnText = childText.GetComponent<TextMeshProUGUI>();
+            //        btnText.color = new Color(0.03f, 0.43f, 0.06f, 1);
+            //        btnText.text = $"{i + 1 + (page * 15)}";
+            //        charText.text = "Sailor";
+            //    }
+            //    break;
+            //case 9:
+            //    for (int i = 0; i < levelBtns.Count; i++)
+            //    {
+            //        Button btn = levelBtns[i];
+            //        GameObject childText = btn.transform.GetChild(0).gameObject;
+            //        TextMeshProUGUI btnText = childText.GetComponent<TextMeshProUGUI>();
+            //        btnText.color = new Color(0.03f, 0.43f, 0.06f, 1);
+            //        btnText.text = $"{i + 1 + (page * 15)}";
+            //        charText.text = "Sailor";
+            //    }
+            //    break;
+            //case 10:
+            //    for (int i = 0; i < levelBtns.Count; i++)
+            //    {
+            //        Button btn = levelBtns[i];
+            //        GameObject childText = btn.transform.GetChild(0).gameObject;
+            //        TextMeshProUGUI btnText = childText.GetComponent<TextMeshProUGUI>();
+            //        btnText.color = new Color(0.03f, 0.43f, 0.06f, 1);
+            //        btnText.text = $"{i + 1 + (page * 15)}";
+            //        charText.text = "Wizard & Pickpocket & Sailor";
+            //    }
+            //    break;
+            //case 11:
+            //    for (int i = 0; i < levelBtns.Count; i++)
+            //    {
+            //        Button btn = levelBtns[i];
+            //        GameObject childText = btn.transform.GetChild(0).gameObject;
+            //        TextMeshProUGUI btnText = childText.GetComponent<TextMeshProUGUI>();
+            //        btnText.color = new Color(0.03f, 0.43f, 0.06f, 1);
+            //        btnText.text = $"{i + 1 + (page * 15)}";
+            //        charText.text = "Wizard & Pickpocket & Sailor";
+            //    }
+            //    break;
             default:
                 for (int i = 0; i < levelBtns.Count; i++)
                 {
                     Button btn = levelBtns[i];
                     GameObject childText = btn.transform.GetChild(0).gameObject;
                     TextMeshProUGUI btnText = childText.GetComponent<TextMeshProUGUI>();
-                    btnText.color = new Color(0.03f, 0.43f, 0.06f, 1);
+                    btnText.color = new Color(0.93f, 0.29f, 0.19f, 1);
                     btnText.text = $"{i + 1 + (page * 15)}";
                     charText.text = "Full Party";
                 }
